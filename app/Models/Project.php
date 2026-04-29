@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+
+use App\Models\ProjectLibrary;
+use App\Models\User;
+
+class Project extends Model
+{
+    use HasFactory;
+    
+    protected $table = 'project';
+
+    protected $primaryKey = 'id';
+    public $incrementing  = true;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+	//'id',
+        'user_id',
+        'name',
+        'project_status_id',
+        'publish_library_img',
+        'publish_div',
+        'landing_page',
+    ];
+    
+    
+    protected $guarded = ['created_at'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'creation_date' => 'datetime',
+    ];
+    
+    
+    
+    public function projectLibrary(){
+        return $this->hasMany(ProjectLibrary::class, 'projectid', 'id')
+                    ->orderBy('position', 'ASC');
+    }
+    
+    
+    public function cuePoints(){
+        return $this->hasMany(CuePoint::class, 'projectid', 'id')
+                    ->orderBy('libraryid', 'ASC')
+                    ->orderBy('time',      'ASC');
+    }
+    
+    
+    public function delete(){
+        $this->projectLibrary->each(function ($projectLibrary) {
+            Log::debug('delete() ProjectLibrary each: ' . $projectLibrary->id);
+            $projectLibrary->delete();
+        });
+        
+        Log::debug('delete() Project ' . $this->id);
+        $this->projectLibrary()->delete();
+        
+        return parent::delete();
+    }
+    
+    public function getUser(){
+        return $this->hasOne(User::class, 'id', 'user_id');
+        
+    }
+}
