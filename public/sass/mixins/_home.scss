@@ -1,0 +1,17 @@
+@import "mixins/mixins";
+
+.formy{
+
+    top:-3rem;
+
+    form{
+        padding: 4rem 2rem 5rem;
+        border-radius: 15px;
+        @include Shadow1;
+    }
+}
+
+.logoImg{
+    height: auto;
+}
+

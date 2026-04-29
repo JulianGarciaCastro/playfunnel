@@ -1,0 +1,63 @@
+<div class="NavUp fixed-top m-0 p-0 d-flex px-2 align-items-center">
+    <nav class="navbar navbar-expand-lg  navbar-dark p-0 d-flex justify-content-between w-100">         
+                
+        <button class="navbar-toggler d-md-none d-inline mr-2" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon "></span>
+          <!--<a class="home" href="/dashboard"><i class="d-lg-none fas fa-home c03"></i></a>-->
+        </button>
+
+        <a href="/"><img src="images/SVG/Logo-Horizontal-BgDark.svg" class="logoImg col-6 col-md-2" alt="Descripción de la imagen"></a>        
+       
+        <div class="dropdown d-flex align-items-center">
+         
+        
+<!--
+  class="logo_playF col-12 d-flex justify-content-center justify-content-md-end mt-3 "
+ -->
+            <div id="langs" class="d-flex justify-content-center flex-column">
+                <a href="/locale/es" class="<?= (app()->getLocale()=='es')?'active':'d-none' ?>"><img src="https://flagicons.lipis.dev/flags/4x3/es.svg" class="  " alt="Descripción de la imagen" style="width:20px"></a>              
+                <a href="/locale/en" class="<?= (app()->getLocale()=='en')?'active':'d-none' ?>"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" class="  " alt="Descripción de la imagen" style="width:20px"></a>               
+            </div>
+            <i id="langs-down" class="ml-2 mr-4 fa fa-caret-down cWhite" aria-hidden="true"></i>
+
+          <a class="navbar-brand d-flex align-items-center" href="#" data-toggle="dropdown"><i class="far fa-user-circle"></i></a>
+          
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="profile"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
+            <a class="dropdown-item" href="billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
+            </div>
+        </div>
+      
+        <!--
+        <div class="collapse navbar-collapse" id="navbarNav">               
+        </div>-->
+    </nav>
+</div>
+
+
+<script>
+
+
+function goBack() {
+  //window.history.back();
+  window.location = document.referrer;
+}
+</script>
+<script>
+  window.onload = function() { 
+    
+    /*---------Langs--*/
+    $("#langs-down").click(function() {
+      $("#langs a").each(function(){
+          if(!$(this).hasClass("active")){
+              $(this).toggleClass("d-none");       
+          }else{
+            $(this).parent().prepend($(this));
+          }   
+      });
+      $("#langs-down").toggleClass("rotate"); 
+    });
+  }
+</script>

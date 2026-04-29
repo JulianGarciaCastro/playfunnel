@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/Style.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+        <title>	{{__('library.title')}} </title>
+        <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+        <script src="https://kit.fontawesome.com/0190c3506a.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="bg-white">
+    	@include('nav_bar')
+
+        <!-- Modal Eliminar Varios Ficheros-->
+        <div class="modal fade bd-example-modal-sm" id="deleteAllMediaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="col-12">
+                <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                  <button data-dismiss="modal" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                    <span class="material-icons d-flex justify-content-center">clear</span>
+                  </button>
+                </div>
+                <p class="text-h3 cMain text-center mt-3">{{__('library.delete_multimedia')}}</p>
+                <p class="text-center pb-2 c02">{{__('library.are_you_sure_delete')}}</p>
+                <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                  <button type="button" class="btn-square px-3 bg-Main cWhite" onclick="deleteAllMediaBtn()">{{__('library.confirm')}}</button>
+                  <button type="button" class="btn-square px-3 bg-05 cMain ml-5"  data-dismiss="modal" >{{__('library.discard')}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Eliminar Unico Fichero-->
+        <div class="modal fade bd-example-modal-sm" id="deleteMediaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="col-12">
+                <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                  <button data-dismiss="modal" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                    <span class="material-icons d-flex justify-content-center">clear</span>
+                  </button>
+                </div>
+                <p class="text-h3 cMain text-center mt-3">{{__('library.delete_multimedia')}}</p>
+                <p class="text-center pb-2 c02">{{__('library.are_you_sure_delete')}}</p>
+                <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                	<button type="button" class="btn-square px-3 bg-Main cWhite" onclick="deleteMediaModalBtn()">{{__('library.confirm')}}</button>
+                	<button type="button" class="btn-square px-3 bg-05 cMain ml-5"  data-dismiss="modal" >{{__('library.discard')}}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal PlayVideo-->
+        <div class="modal fade bd-example-modal-sm" id="playMediaModal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="col-12">
+                <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                  <button data-dismiss="modal" onclick="stopVideo()" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                    <span class="material-icons d-flex justify-content-center">clear</span>
+                  </button>
+                </div>
+                <p class="text-h3 cMain text-center mt-3">{{__('library.play')}}</p>
+                <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                	<video id="playVideo" controls class="col-12">
+                    	<source src="" type="video/mp4" class="col-12"/>
+                    	<p>{{__('library.video_is_not_visible')}}</p>
+                    	<!-- type='video/ogg; codecs="theora, vorbis"'   width=640 height=360-->
+                    </video>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Modal PlayImage-->
+        <div class="modal fade bd-example-modal-sm" id="playImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-md">
+            <div class="modal-content">
+              <div class="col-12">
+                <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                  <button data-dismiss="modal" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                    <span class="material-icons d-flex justify-content-center">clear</span>
+                  </button>
+                </div>
+                <p class="text-h3 cMain text-center mt-3">{{__('library.imagen')}}</p>
+                <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                	<img id="playImage" src="" class="col-12 img-fluid"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Modal Upload Media Progress-->
+        <div class="modal fade bd-example-modal-sm" id="uploadMediaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+          <div class="modal-dialog modal-md" >
+            <div class="modal-content">
+              <div class="col-12">
+                <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                  <button data-dismiss="modal" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                    <span class="material-icons d-flex justify-content-center">clear</span>
+                  </button>
+                </div>
+                <p class="text-h3 cMain text-center mt-3">{{__('library.uploading')}}</p>
+                <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                	<progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!--- Modal Messages --->
+	 	<div class="modal fade bd-example-modal-sm" id="msgModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md">
+              <div class="modal-content">
+                <div class="col-12">
+                  <div class="col-12 row justify-content-end p-0 m-0 pt-3">
+                    <button data-dismiss="modal" aria-label="Close"  type="submit" class="align-items-center justify-content-center mr-2 btn-square-min bg-03 cWhite">
+                      <span class="material-icons d-flex justify-content-center">clear</span>
+                    </button>
+                  </div>
+                  <p class="text-h3 cMain text-center mt-3" id="modalMsgTitle">Mensaje de Sistema</p>
+                  <p class="text-center pb-2 c02"  id="modalMsgContent">Mensaje a Presentar</p>
+                  <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                      <button type="button" class="btn-square px-3 bg-Main cWhite" id="msgOK" onclick="modalMsgClose()">Aceptar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+
+        <!--------------------------------MAIN------------------------------->
+        <div class="container-fluid m-0 p-0 vh-100">
+             <section class="projects row col-12  mx-0 p-0 w-100">
+                 <!--Menu Side Left -->
+                 <x-side-nav/>
+
+                <div class="mainContainer libraryPage col row p-0 m-0">
+                    <div class="main w-100 m-0 p-0">
+                        <div class="title w-100 ">
+                            <h2 class="font-weight-light cMain h3">{{__('library.library')}}</h2>
+                        </div>
+                        <div class="content row m-0 p-0">
+                          <div class="tabl bg-white m-0 w-100 col-12">
+                              <!--Botones-->
+                              <div class="row pt-3 m-0 col-12 justify-content-between">
+                                {{ csrf_field() }}
+                                <!-- <button type="submit" class="btn-square bg-Main cWhite mr-4 mt-2 px-3"><i class="fas fa-cloud-upload-alt mr-2"></i> Subir Archivo</button> -->
+                                @if ($user->isPlanSusbcriptionActive())
+                                	<label for="mediaFile" class="d-flex align-items-center justify-content-center btn btn-cMain bg-02 m-0"><i class="fas fa-cloud-upload-alt mr-2"></i> Subir archivo</label>
+                  	  				<input  style="visibility:hidden;" type="file" id="mediaFile" name="mediaFile" value="images/SVG/user-solid.svg" />
+								@endif
+                                <button type="submit" class="btn-square bg-No cWrong mr-4 mt-2 px-3" id="deleteMediaFileBtn" data-toggle="modal" data-target="#deleteAllMediaModal"><i class="fas fa-trash mr-2"></i>{{__('library.delete')}}</button>
+                              </div>
+
+                              <!--Folders-->
+                              <div class="pt-4 row w-100 m-0 justify-content-center">
+                                <div class="col-6 col-md-3 folder p-0 active " id="tabVideos" name="tabVideos">
+                                  <a class="nav-link text-md-left ml-0 ml-md-2 justify-content-center justify-content-md-start d-flex align-items-center" id="viewVideos" name="viewVideos"><i class="fas fa-folder mr-2"></i><span>{{__('library.videos')}}</span></a>
+                                </div>
+                                <div class="col-6 col-md-3 folder p-0 " id="tabImages" name="tabImages">
+                                  <a class="nav-link text-md-left ml-0 ml-md-2 justify-content-center justify-content-md-start d-flex align-items-center" id="viewImages" name="viewImages"><i class="fas fa-folder mr-2 "></i><span>{{__('library.images')}}</span></a>
+                                </div>
+
+                                <!--Cards-->
+                                <div id="myMedia" name="myMedia" class="row bg-06 tables p-0 m-0 col-12 p-3 align-items-star justify-content-around">
+                                @foreach ($library as $lib)
+                          		  @if(strstr($lib->type, "video/"))
+                          		  <div id="newDiv-{{$lib->id}}" name="newDiv-{{$lib->id}}" media-type="VIDEO" class="cards col-3 mt-3 mx-2 p-0">
+                          		  	<div class=" options d-flex col-12 justify-content-end p-0" ondblclick="playVideo('{{$lib->url}}')">
+                            		  <input type="checkbox" class="selecter mt-2 mr-2 checkMedia" id="checkMedia" name="{{$lib->id}}">
+                            		  <button class="deleter ml-2 mb-2" id="{{$lib->id}}" name="{{$lib->id}}" onclick="deleteMedia({{$lib->id}})" ><i class="fas fa-trash"></i></button>
+                          		    </div>
+                					<img class="img-fluid w-100 h-100" src="{{$lib->thumbnail}}" media-src="{{$lib->url}}" media-id="{{$lib->id}}"/>
+                				  </div>
+                				  @else
+                				  <div id="newDiv-{{$lib->id}}" name="newDiv-{{$lib->id}}" media-type="IMAGE" class="cards col-3 mt-3 mx-2 p-0">
+                				  	<div class=" options d-flex col-12 justify-content-end p-0" ondblclick="playImage('{{$lib->url}}')">
+                            		  <input type="checkbox" class="selecter mt-2 mr-2 checkMedia" id="checkMedia" name="{{$lib->id}}">
+                            		  <button class="deleter ml-2 mb-2" id="{{$lib->id}}" name="{{$lib->id}}" onclick="deleteMedia({{$lib->id}})" ><i class="fas fa-trash"></i></button>
+                            		</div>
+                					<img class="img-fluid w-100 h-100" src="{{$lib->url}}" media-src="{{$lib->url}}" media-id="{{$lib->id}}"/>
+                				  </div>
+                				  @endif
+                                @endforeach
+                                </div>
+                              </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+             </section>
+        </div>
+
+
+        <script src="https://code.jquery.com/jquery-3.5.1.js"                                   integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 					crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" 		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" 	integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <!------------SCRIPTS PAGE-->
+        <script type="text/javascript">
+
+    		var currentTab ="VIDEO";
+
+          	$(document).ready(function(){
+    			//$(".searchUp").click(function(){
+            	//	$(".search").toggleClass("active");
+            	//});
+
+              	$("#deleteMediaFileBtn").hide();
+
+    			$("#viewVideos").click(function(){
+            		$("#tabVideos").addClass("active");
+            		$("#tabImages").removeClass("active");
+            		currentTab="VIDEO";
+            		updateViewDivs();
+
+            	});
+
+            	$("#viewImages").click(function(){
+              		$("#tabVideos").removeClass("active");
+              		$("#tabImages").addClass("active");
+              		currentTab="IMAGE";
+              		updateViewDivs();
+            	});
+
+
+            	updateViewDivs();
+            	updateModalEvent();
+          	});
+
+            //Selected Media
+            const selectInputsMedia = (element) => {
+                console.log('CARGO INPUTS');
+                let inputsMedia = document.querySelectorAll('.checkMedia');
+                inputsMedia.forEach((element)=>{
+                    selectMedia(element);
+                })
+            }
+
+            //function
+            const selectMedia = (element) => {
+                // element.removeEventListener("change", () =>{}); // Fallo
+                element.addEventListener("change", (event) => {
+                    if (element.checked) {
+                        element.parentNode.classList.add('selected');
+                    }
+                    else{
+                        element.parentNode.classList.remove('selected');
+                    }
+            });}
+            //call funtion
+            selectInputsMedia();
+
+
+
+
+          	function updateViewDivs(){
+          		console.log("Updating views");
+                  selectInputsMedia();
+          		if(currentTab=="IMAGE"){
+          			$('div[media-type="VIDEO"]').each(function () {
+            			$(this).hide();
+            		});
+
+            		$('div[media-type="IMAGE"]').each(function () {
+            			$(this).show();
+            		});
+          		}
+          		else{
+          			$('div[media-type="VIDEO"]').each(function () {
+            			$(this).show();
+            		});
+
+            		$('div[media-type="IMAGE"]').each(function () {
+            			$(this).hide();
+            		});
+          		}
+          	}
+
+
+            function updateModalEvent(){
+          		$('input[type=checkbox]').click(function(){
+            		var one_checked = false
+
+            		$('input[type=checkbox]').each(function () {
+            			if(this.checked){
+            				one_checked = true;
+            				return;
+            			}
+            		});
+
+            		if(one_checked){
+            			$("#deleteMediaFileBtn").show();
+            		}else{
+            			$("#deleteMediaFileBtn").hide();
+            		}
+        		});
+          	}
+
+
+    		function uploadMedia(input) {
+            	if (input.files && input.files[0]) {
+            		//alert("Filename: " + input.files[0].name);
+            		//alert("Type: " + input.files[0].type);
+            		//alert("Size: " + input.files[0].size + " bytes");
+
+            		/*
+                	var fileTypes = ['svg','jpg', 'jpeg', 'png', 'bmp','mp4', 'avi', 'wmv', 'etc'];
+
+                	//if(currentTab =='IMAGE')
+                	//	fileTypes = ['svg','jpg', 'jpeg', 'png', 'bmp'];
+                	//else
+                	//	fileTypes = ['mp4', 'avi', 'wmv', 'etc'];
+
+                	var extension = input.files[0].name.split('.').pop().toLowerCase(); 	//file extension from input file
+                	var isSuccess = fileTypes.indexOf(extension) > -1;  					//is extension in acceptable types
+
+                	if(!isSuccess){
+                		alert('Tipo de Archivo no valido, tipos aceptados: ' + fileTypes);
+                		$("#mediaFile")[0].value = '';
+                		return null;
+                	}
+
+                	var fileTypesImg = ['svg','jpg', 'jpeg', 'png', 'bmp'];
+            		var fileTypesVid = ['mp4', 'avi', 'wmv', 'etc'];
+
+                	var isSuccessImg = fileTypesImg.indexOf(extension) > -1;
+                	var isSuccessVid = fileTypesVid.indexOf(extension) > -1;
+					var mediaType;
+
+                	if(isSuccessImg){
+						mediaType="IMAGE";
+					}
+					else if(isSuccessVid){
+						mediaType="VIDEO";
+					}
+					*/
+
+                	if(input.files[0].type.match('image/*'))
+                		mediaType = 'IMAGE';
+                	else if(input.files[0].type.match('video/*'))
+                		mediaType = 'VIDEO';
+                	else{
+                		//alert('Tipo de Archivo no valido, tipos aceptados: IMAGEN or VIDEO');
+                		modalMsgShow('Tipo de Archivo no valido, tipos aceptados: IMAGEN or VIDEO');
+                		$("#mediaFile")[0].value = '';
+                		return null;
+                    }
+
+                	var reader = new FileReader();
+
+                    reader.onload = function (e) {
+        				var form = new FormData();
+        				form.append('_token', $("input[name=_token]").val());
+        				form.append('mediaFile', input.files[0]);
+        				form.append('mediaType',  mediaType);
+                        $('#uploadMediaModal').modal('show');
+                        //cache: false,
+
+                        $.ajax({
+                        	url:  '/ajax-addMedia',
+                        	type: 'POST',
+                        	data: form,
+            				contentType: false,
+            				processData: false,
+            				dataType: 'json',
+            				async:true,
+            				xhr: function() {
+                        		var xhr = new window.XMLHttpRequest();
+                                xhr.upload.addEventListener("progress", function(evt) {
+                                	if (evt.lengthComputable) {
+                                    	var percentComplete = evt.loaded / evt.total;
+                                    	console.log(percentComplete);
+                                    	percentComplete = parseInt(percentComplete * 100);
+                                    	console.log(percentComplete);
+                                		$('#progressBar').val(Math.round(percentComplete));
+                                    	if (percentComplete >= 100) {
+                                			$("#uploadMediaModal").modal('hide');
+                                			setTimeout(
+                            				  function(){
+                            					console.log("voy a cerrar modal despues de 3 sec");
+                            				    $("#uploadMediaModal").modal("hide");
+                            				  }, 1500);
+                                    	}
+                                    }
+                                }, false);
+                                return xhr;
+                         	},
+                            success: function(response){
+                            	if(response.success == 'Y') {
+                            		newDiv = makeDiv(response.file, response.id, response.type, response.media);
+                            		$('#myMedia').append(newDiv);
+                            		updateModalEvent();
+                            		updateViewDivs();
+                            		$("#uploadMediaModal").modal('hide');
+                            		$("#mediaFile")[0].value = '';
+
+                            		setTimeout(
+                    				  function(){
+                    					console.log("voy a cerrar modal despues de 3 sec");
+                    				    $("#uploadMediaModal").modal("hide");
+                    				  }, 1500);
+                            	}
+                            	else{
+                            		console.log( 'Errores: ' + response.error );
+                            		//alert( response.error );
+                            		modalMsgShow(response.error);
+                            		$("#mediaFile")[0].value = '';
+                            	}
+                            	$("#uploadMediaModal").modal('hide');
+                                selectInputsMedia();
+                            	setTimeout(
+                				  function(){
+                					console.log("voy a cerrar modal despues de 3 sec");
+                				    $("#uploadMediaModal").modal("hide");
+                				  }, 1500);
+                            },
+                            error: function(request, error){
+                				console.log(error);
+                				console.log(request);
+                				//alert(JSON.stringify(error));
+                				modalMsgShow(JSON.stringify(error));
+                				$("#mediaFile")[0].value = '';
+                				$('#uploadMediaModal').modal('hide');
+                				setTimeout(
+                				  function(){
+                					console.log("voy a cerrar modal despues de 3 sec");
+                				    $("#uploadMediaModal").modal("hide");
+                				  }, 1500);
+            				}
+                        });
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+
+                }
+            }
+
+            $("#mediaFile").change(function () {
+            	uploadMedia(this);
+            });
+
+
+    		function makeDiv( url, id, type, media ){
+    			var newMedia = $('<img class="" />');
+        		newMedia.attr('src', 		url);
+        		newMedia.attr('media-src', 	media);
+        		newMedia.attr('media-id',  	id);
+
+        		var playVideo="";
+        		if(type=="VIDEO"){
+        			media = "'" + media + "'";
+        			playVideo = 'ondblclick="playVideo('+ media +')"';
+        		}
+        		if(type=="IMAGE"){
+        			media = "'" + media + "'";
+        			playVideo = 'ondblclick="playImage('+ media +')"';
+        		}
+
+        		var innerDiv = '<div id="newDiv-'+id+'" name="newDiv-'+id+'" media-type="'+type+'" class="cards col-3 mt-3 mx-2 p-0">'
+              		 		+	'<div class=" options d-flex col-12 justify-content-end p-0"'+playVideo+'>'
+                			+		'<input type="checkbox" class="selecter mt-2 mr-2 checkMedia" id="checkMedia" name="'+id+'">'
+                			+		'<button class="deleter ml-2 mb-2" id="' + id + '" name="'+ id +'" onclick="deleteMedia(' + id + ')" ><i class="fas fa-trash"></i></button>'
+              				+	'</div>'
+            				+'</div>';
+            	//onclick="deleteMedia(' + id + ')"
+            	//data-toggle="modal" data-target="#deleteMedia"
+            	var newDiv = $(innerDiv);
+            	newMedia.appendTo(newDiv);
+    			return newDiv;
+    		}
+
+
+
+
+    		function deleteAllMediaBtn(){
+
+    			$('input[type=checkbox]').each(function () {
+        			if(this.checked){
+        				var name = "#newDiv-"+$(this).attr("name");
+        				console.log("Borrando: " + name)
+        				deleteMediaAux($(this).attr("name"));
+        			}
+        		});
+
+        		$("#deleteMediaFileBtn").hide();
+        		$('#deleteAllMediaModal').modal('hide');
+    		}
+
+
+    		function deleteMediaAux( id ){
+    			var form = new FormData();
+    			form.append('_token', $("input[name=_token]").val());
+    			form.append('id', id);
+
+    			$.ajax({
+            		url:  '/ajax-delMedia',
+                	type: 'POST',
+                	data: form,
+                	cache: false,
+        			contentType: false,
+        			processData: false,
+        			dataType: 'json',
+                	success: function(response){
+                  		if(response.success == 'Y') {
+                  			var name = "#newDiv-"+id;
+                  			$(name).remove();
+                  		}
+                  		else if(response.success == 'N') {
+                  			//alert(response.message);
+                  			modalMsgShow(JSON.stringify(error));
+                  		}
+                  		else{
+							console.log('Respuesta: %o', response);
+                        }
+                	},
+                	error: function(request, error){
+        				console.log(error);
+        				console.log(request);
+        				//alert("Error: "+JSON.stringify(error));
+        				modalMsgShow(JSON.stringify(error));
+        			}
+               	});
+    		}
+
+
+    		function deleteMedia(id){
+    			$('#deleteMediaModal').modal('show');
+    			currentID=id;
+    		}
+
+    		function deleteMediaModalBtn(){
+    			deleteMediaAux(currentID);
+    			$('#deleteMediaModal').modal('hide');
+    			currentID=null;
+    		}
+
+
+    		function playVideo(media){
+    			$('source', $('#playVideo')).attr('src', media);
+
+    			$('#playMediaModal').modal('show');
+    			$('#playVideo').get(0).load();
+    			//$('#playVideo').get(0).play();
+    		}
+
+    		function stopVideo(){
+    			$('#playVideo').get(0).pause();
+    		}
+
+
+
+    		function playImage(media){
+    			$('#playImage').attr('src', media);
+    			$('#playImageModal').modal('show');
+    		}
+
+    		function modalMsgClose() {
+    			$('#msgModal').modal('hide');
+    		}
+
+            function modalMsgShow(texto) {
+    			$("#modalMsgContent").text(texto);
+    			$("#msgOK").attr("onClick","modalMsgClose()")
+    			//$('#msgModal').modal('show');
+    			//setTimeout(
+    			//	function(){
+                //       $("#msgModal").modal("hide");
+                //    }, 2000);
+    			$('#msgModal').modal('show');
+        	}
+        </script>
+    </body>
+</html>

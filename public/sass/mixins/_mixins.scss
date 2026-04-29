@@ -1,0 +1,150 @@
+
+//FONTS
+@font-face {
+    font-family: "OpenSans-Light";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/OpenSans-Light.ttf");
+}
+
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: normal;
+    src: url("../fonts/OpenSans-Regular.ttf");
+}
+@font-face {
+font-family: "OpenSans-Bold";
+font-style: normal;
+font-weight: normal;
+src: url("../fonts/OpenSans-SemiBold.ttf");
+}
+
+*{
+font-family: "OpenSans";
+}
+
+$fontlistP:0.9rem;
+$fontParrafo:1rem;
+$fontH2:2.4rem;
+$fontH3:2rem;
+$fontH4:1.6rem;
+$fontH5:1.3rem;
+$fontH6:1.1rem;
+
+
+
+//COLORS
+$cMain:#00026a;
+$c01:#00caf1 !default;
+$c02:#73A1C2;
+$c03:#B6C8DD;
+$c03-30:#B6C8DD30;
+$c04:#C6C6C7;
+$c05:#E8EFF7;
+$c06:#F2F5F9;
+$c07:#09EDF9;
+$c08:#8ba0b550;
+$c09:#405677;
+$cDark:#0D3958;
+$cBlack:#000;
+$cClose:#0D2736;
+$cWhite:#fff;
+$cSucess:#2DD1DB;
+$cWrong:#9B51E0;
+
+
+
+//MIXINS
+
+@mixin pDark {
+    color: $cDark;  
+}
+
+@mixin cMain {
+    color: $cMain;  
+}
+
+@mixin cBlue {
+    color: $c01;  
+}
+
+@mixin c02 {
+    color: $c02;  
+}
+
+@mixin cWhite {
+    color: $cWhite;    
+}
+
+//FONT
+@mixin text-l {       
+    font-family: "OpenSans-Light";
+}
+@mixin text-r {
+    font-weight: 400;
+}
+@mixin text-b {
+    font-family: "OpenSans-Bold";
+}
+
+@mixin pp {    
+    font-size: $fontlistP;    
+}
+
+@mixin p {    
+    font-size: $fontParrafo;    
+}
+
+@mixin h2 {    
+    font-size: $fontH2;     
+}
+
+@mixin h3 {    
+    font-size: $fontH3;     
+}
+
+
+@mixin h4 {   
+    font-size: $fontH4; 
+    font-weight: 800;
+}
+
+@mixin h5 {
+    
+    font-size: $fontH5; 
+    font-weight: 800;
+}
+@mixin h6 {
+    
+    font-size: $fontH6; 
+    font-weight: 600;
+}
+
+@mixin Shadow1
+{
+-webkit-box-shadow: -11px 16px 34px -7px rgba(0,202,241,0.10);
+-moz-box-shadow: -11px 16px 34px -7px rgba(0,202,241,0.10);
+box-shadow: -11px 16px 34px -7px rgba(0,202,241,0.10);
+
+}
+
+
+
+@mixin Shadow2
+{
+    -webkit-box-shadow: 27px 13px 43px -31px rgba(0,2,106,0.30);
+    -moz-box-shadow: 27px 13px 43px -31px rgba(0,2,106,0.30);
+    box-shadow: 27px 13px 43px -31px rgba(0,2,106,0.30); 
+
+}
+
+
+
+@mixin Shadow3
+{
+    -webkit-box-shadow: 0px 8px 24px 0px rgba(0,2,106,0.30);
+    -moz-box-shadow: 0px 8px 24px 0px rgba(0,2,106,0.30);
+    box-shadow: 0px 8px 24px 0px rgba(0,2,106,0.30); 
+
+}

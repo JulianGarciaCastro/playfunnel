@@ -1,0 +1,241 @@
+@import "mixins/mixins";
+
+.results{
+    span{
+        font-size: 60px;
+        font-weight: 900;
+    }
+    p{
+        padding:0;
+        margin:0 !important;
+        font-weight: 900;
+        color: $cMain;
+    }
+    .interactions {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            span{
+                color: $cMain;
+            }
+    }
+    .completed {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        span{
+            color: $c01;
+        }
+    }
+}
+
+.devices, .dates
+{
+    list-style: none;
+    li{
+        color:$c05;
+        border-radius: 0.5rem;
+        font-size: 12px;
+    }
+    .active{
+
+        background: $cMain;
+    }
+}
+
+.emailTable{
+    overflow-x: auto;
+}
+
+.tabla-correos{
+
+    border:none !important;
+    .Tth{
+        border:none !important;
+        font-size: 14px !important;
+        border:none !important;
+        border-bottom: solid $c03 0.5px !important;
+        padding: 1rem 0.5rem !important;
+        @include md{
+            &{
+                font-size: 16px !important;
+            }
+        }
+    }
+    .Ttd{
+        padding: 1rem 0.5rem;
+        font-size: 12px !important;
+        border:none !important;
+        border-bottom: solid  $c03 0.5px !important;
+    }
+    @include md{
+        &{
+            font-size: 14px !important;
+        }
+    }
+
+}
+
+//------------------------------Calendary*/@at-root
+input[type=date], input[type=datetime-local], input[type=month], input[type=time] {
+    -webkit-appearance: listbox;
+    border: none;
+    background: none;
+    display: block;
+    position: relative;
+    font-size: 1rem;
+    font-family: monospace;
+    border: none;
+    cursor: pointer;
+}
+::-webkit-calendar-picker-indicator {
+    position:absolute;
+    width:2.5rem;
+    height:100%;
+    top:0;
+    right:0;
+    bottom:0;
+    opacity:0;
+    cursor:pointer;
+  }
+
+.dashboard{
+    height:calc(100% - 60px);
+    top:60px;
+    .sideNav{
+        background-color: $cWhite;
+        max-width: 280px;
+        height: 100%;
+        position: relative;
+        z-index: 10;
+        left:0px;
+        @include Shadow2 ;
+
+        &.show{
+            left:-280px;
+
+        }
+        @media screen and (max-width: 768px) {
+            &.show{
+                left:0px;
+                @include Shadow2
+
+            }
+            position: fixed;
+            left: -280px;
+            transition: left 0.3s;
+            box-shadow: none;
+        }
+
+        .nav-item
+        {
+            padding-top: 0.5rem;
+
+            span{
+                margin-left: 1rem;
+            }
+            a:hover{
+                color:$c02;
+            }
+        }
+
+    }
+    .mainContainer
+    {
+        background-color: $c05;
+        .main{
+            .content{
+                height: 96%;
+                width: 100%;
+                @include Shadow2;
+            }
+
+
+
+        }
+
+    }
+
+
+}
+.dashboard-Content, .dashboard-Nav {
+    padding-left: 0 !important;
+    justify-content: center !important;
+    @include md{
+        justify-content: center !important;
+        padding-left: 280px !important;
+    }
+}
+
+.btn-float{
+    position: fixed;
+    top: 70px;
+    right: 0px;
+    z-index: 10;
+
+    button{
+
+        max-width: 40px;
+        background: $c03;
+        border: none;
+        color:$cWhite;
+        border-radius: 100px;
+        padding: 8px;
+        outline: none !important;
+        transition: background 1.5s;
+        align-items: center;
+        &:hover{
+            color:$c01;
+            background: $cMain;
+            transition: background 1.5s;
+        }
+        i{
+            font-size: 22px !important;
+        }
+        &.btn-save{
+            background: $cSucess;
+            max-width: 80px;
+           &:hover{
+            background: $cMain;
+            transition: background 1.5s;
+           }
+        }
+    }
+    }
+
+.filter
+{
+    height: 24px;
+    width: 24px;
+    max-width: 24px;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+}
+
+
+
+
+//CRM
+#viewCustomer i{
+    font-size:80px
+}
+
+#viewCustomer h6{
+    background:aliceblue
+}
+
+#viewCustomer ul{
+   padding:0 10px ;
+}
+
+#interactionsFilterByCustomer{
+    .close-modal{
+        position: absolute;
+        top: 10px;
+        z-index: 10;
+        right: 20px;
+    }
+}
