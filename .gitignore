@@ -39,3 +39,9 @@ __MACOSX/
 *.sql
 /public/storage/users/
 
+
+.env
+.env.*
+.env_*
+public/lib/ffmpeg-git-20211013-amd64-static/
+public/lib/geoip/*.mmdb
