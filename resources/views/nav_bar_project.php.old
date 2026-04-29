@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="NavUp fixed-top m-0 p-0 d-flex px-2 align-items-center">
     <nav class="navbar navbar-expand-lg  navbar-dark p-0 d-flex justify-content-between w-100">         
                 
@@ -71,3 +72,78 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 
 
+=======
+<div class="NavUp fixed-top m-0 p-0 d-flex px-2 align-items-center">
+    <nav class="navbar navbar-expand-lg  navbar-dark p-0 d-flex justify-content-between w-100">         
+                
+        <button class="navbar-toggler d-md-none d-inline mr-2" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-home" onclick="window.location='/projects'"></i>
+          <!--<a class="home" href="/dashboard"><i class="d-lg-none fas fa-home c03"></i></a>-->
+        </button>
+
+        <a href="/"><img src="images/SVG/Logo-Horizontal-BgDark.svg" class="logoImg col-6 col-md-2" alt="Descripción de la imagen"></a>        
+       
+        <div class="dropdown d-flex align-items-center">
+          <button type="submit" class="btn-WhiteText mr-4 d-lg-flex d-none align-items-center" onclick="goBack()"><i class="fas fa-arrow-left mr-2"></i><?= __('nav_bar.back') ?></button>
+          <button id="descartarHeader" type="submit" class="btn-WhiteText mr-4 d-mlg-inline d-none"   onclick="goBack()"><?= __('nav_bar.dismiss') ?></button>
+          <button id="guardarHeader"   type="submit" class="btn-WhiteBorder mr-4 d-lg-inline d-none" ><?= __('nav_bar.save') ?></button>
+           <div class="ml-4">          
+              <div id="langs-2" class="d-flex justify-content-center flex-column">
+                  <a href="/locale/es" class="<?= (app()->getLocale()=='es')?'active':'d-none' ?>"><img src="https://flagicons.lipis.dev/flags/4x3/es.svg" class="  " alt="Descripción de la imagen" style="width:20px"></a>              
+                  <a href="/locale/en" class="<?= (app()->getLocale()=='en')?'active':'d-none' ?>"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" class="  " alt="Descripción de la imagen" style="width:20px"></a>               
+              </div>
+              <i id="langs-down" class="ml-2 mr-4 fa fa-caret-down cWhite" aria-hidden="true"></i>
+
+
+
+           </div>
+          <a class="navbar-brand d-flex align-items-center" href="#" data-toggle="dropdown"><i class="far fa-user-circle"></i></a>
+          
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+           <a class="dropdown-item" href="profile"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
+            <a class="dropdown-item" href="billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
+            </div>
+        </div>
+      
+        <!--
+        <div class="collapse navbar-collapse" id="navbarNav">               
+        </div>-->
+    </nav>
+</div>
+<div class="btn-float  d-flex" aria-labelledby="navbarDropdown">
+    <button type="submit" class="d-lg-none d-flex align-items-center justify-content-center mr-2">
+        <span class="material-icons d-flex justify-content-center">clear</span>
+    </button>
+    <button id="guardarHeaderMobile" type="submit" class="d-lg-none d-flex align-items-center justify-content-center btn-save"><?= __('nav_bar.save') ?></button>
+</div>
+
+<script>
+function goBack() {
+  //window.history.back();
+  window.location = document.referrer;
+}
+
+
+document.addEventListener('DOMContentLoaded', (e) => {
+    $("#langs-down").click(function() {     
+      $("#langs-down").toggleClass("rotate"); 
+      $("#langs-2 a").each(function(){
+          if(!$(this).hasClass("active")){
+           
+              $(this).toggleClass("d-none");       
+          }else{
+          
+            $(this).parent().prepend($(this));
+          }   
+      });
+    });
+});
+
+
+</script>
+
+
+
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f

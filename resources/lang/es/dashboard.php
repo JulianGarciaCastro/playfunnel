@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
  
 // resources/lang/en/messages.php
@@ -43,4 +44,51 @@ return [
     'cancel' => 'Cancelar',
     'welcome_title' => 'Bienvendo a PlayFunnel',
     'welcome_message' => 'El primer paso para trabajar con PlayFunnel es crear un proyecto y posteriormente generar interacciones con él. Hasta que no genere interacciones, no se puede acceder al módulo de Dashboard.',
+=======
+<?php
+ 
+// resources/lang/en/messages.php
+ 
+return [
+    'title' => 'PlayFunnel - El funnel de video interactivo',
+    'dashboard' => 'Cuadro de mando',
+    'projects' => 'Proyectos',
+    'library' => 'Biblioteca',
+    'demo' => 'Demos',
+    'help' => 'Ayuda',
+    'config' => 'Ajustes',
+    'all_projects' => 'Todos los proyectos',
+    'all' => 'Todos',
+    'interactions' => 'Interacciones',
+    'completed' => 'Completado',
+    'tags_option' => 'Opción de etiquetas',
+    'answers' => 'Respuestas',
+    'answer' => 'Respuesta',
+    'activity' => 'Actividad',
+    'date' => 'Fecha',
+    'country' => 'País',
+    'city' => 'Ciudad',
+    'interactions_hist' => 'Filtro de interacciones por fecha',
+    'no_date_filter' => 'Sin filtro por fecha',
+    'select_months_to_keep' => 'Seleccione cuantos meses quiere que se guarden los registros de interacciones',
+    'select' => 'Seleccionar',
+    'accept' => 'Aceptar',
+    'cancel' => 'Cancelar',
+    'data_since' => 'Datos disponibles desde: ',
+    'all_data' => 'Ver todas las interacciones',
+    'intections_for_n_days' => 'Ver interacciones de los últimos',
+    'last' => 'Últimos',
+    'last1' => 'Último',
+    'ndays' => 'días',
+    'nday' => 'día',
+    'start_end_date' => 'Ver interacciones por fecha-inicio y/o fecha-fin',
+    'days' => 'Días',
+    'weeks' => 'Semanas',
+    'months' => 'Meses',
+    'years' => 'Años',
+    'go_projects' => 'Ir al módulo de gestión de proyectos',
+    'cancel' => 'Cancelar',
+    'welcome_title' => 'Bienvendo a PlayFunnel',
+    'welcome_message' => 'El primer paso para trabajar con PlayFunnel es crear un proyecto y posteriormente generar interacciones con él. Hasta que no genere interacciones, no se puede acceder al módulo de Dashboard.',
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 ];

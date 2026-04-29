@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*_____________________________________________________________MIXINS*/
 @import "mixins/base";
 @import "mixins/nav";
@@ -10,4 +11,18 @@
 @import "mixins/projects";
 @import "mixins/perfil";
 @import "mixins/library";
+=======
+/*_____________________________________________________________MIXINS*/
+@import "mixins/base";
+@import "mixins/nav";
+@import "mixins/logIn";
+@import "mixins/dashboard";
+@import "mixins/step1";
+@import "mixins/step2";
+@import "mixins/step3";
+@import "mixins/step4";
+@import "mixins/projects";
+@import "mixins/perfil";
+@import "mixins/library";
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 @import "mixins/mixins";

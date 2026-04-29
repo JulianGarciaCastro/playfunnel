@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
  
 // resources/lang/en/messages.php
@@ -38,3 +39,45 @@ return [
 ];
 
 
+=======
+<?php
+ 
+// resources/lang/en/messages.php
+ //inglés
+return [
+     'title' => 'PlayFunnel - The Interactive Video Funnel',
+     'dashboard' => 'Dashboard',
+     'projects' => 'Projects',
+     'library' => 'Library',
+     'demo' => 'Demo',
+     'help' => 'Help',
+     'config' => 'Config',
+     'identification' => 'IDENTIFICATION',
+     'account' => 'ACCOUNT',
+     'not_share_email' => 'We\'ll never share your email with anyone else',
+     'your_account' => 'Your account',
+     'email' => 'Email',
+     'user' => 'User', 
+     'chamge_password' => 'Change password', 
+     'new_password' => 'New password', 
+     'confirm_password' => 'Confirm password', 
+     'change' => 'Change',
+     'contracted_space' => 'Contracted space',
+     'used' => 'Used',
+     'available' => 'Available',
+     'term' => 'Starting',
+     'buy_more_space' => 'Buy more space',
+     'select_plan' => 'Select the best plan for your needs',
+     'suscription' => 'Suscription',
+     'discard' => 'Discard',
+     'cancel_subscription' => 'Cancel Subscription',
+     'cancel' => 'Cancel',
+     'next_billing' => 'Next Billing',
+     'latest_invoice' => 'Latest Invoice',
+     'download_invoice' => 'Download Invoice',
+     'subs_canceled' => 'Subscription Canceled',
+     'change_password' => 'Change password',
+];
+
+
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f

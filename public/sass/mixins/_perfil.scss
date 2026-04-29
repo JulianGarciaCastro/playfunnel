@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import "mixins/mixins";
 
 
@@ -164,4 +165,172 @@
         }
     }
       
+=======
+@import "mixins/mixins";
+
+
+.dashboard-perfil{
+    margin-top:60px;
+    background-color: $cWhite;  
+    .dashboard-Nav
+    {
+    min-height:190px;    
+    
+    width: 100%;
+    background-color: $c05;  
+
+        .panelUp{
+            max-width: 765px;
+
+            .perfil-data{
+            color:$cMain;
+                height: 56px;
+                margin-top: 70px;
+                @media screen and (min-width: 768px) {
+                    margin-top: 38px;
+                }  
+            
+                .circle{
+                    width: 56px;
+                    height: 56px;
+                    -moz-border-radius: 50%;
+                    -webkit-border-radius: 50%;
+                    border-radius: 50%;
+                    background: $c03;
+                    font-size: 1.2rem;
+                    font-weight: 800;
+                    margin-right: 20px;
+                }
+                h5{
+                    font-weight: 600;
+                    text-overflow:ellipsis;
+                    white-space:nowrap; 
+                    overflow:hidden; 
+                    width: 230px;
+                }
+               
+            }
+            .nav-options{
+                .btn-nav
+                {
+                  
+                    background: $c03-30;                    
+                    border-radius: 15px 15px 0 0;
+                    
+                    @include cMain;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 42px;
+                    font-size: 14px;
+                    margin: 0;
+                    @media screen and (min-width: 768px) {
+                        margin: 0 30px ;
+                    }   
+                }
+
+                .active
+                {
+                  
+                    background: $cWhite;
+                    width: 180px;
+                    border-radius: 15px 15px 0 0;
+                    margin: 0;
+                    color:$cMain;
+                    @media screen and (min-width: 768px) {
+                        margin: 0 30px ;
+                    }  
+                   
+                }
+
+            }
+        }       
+    }
+    .dashboard-Content
+    {
+        
+        .content{
+            max-width: 765px;            
+          
+            .left{
+               
+                form{               
+                    padding: 4.5rem 1rem 1rem;   
+                    .text-muted {
+                        color: $c01 !important;
+                    }
+                   
+                   
+                   
+                    @media screen and (max-width: 768px) {
+                  
+                    }                  
+                   
+                }
+                .form2{
+                    padding: 1rem 1rem 1rem;   
+                    .text-muted {
+                        color: $c01 !important;
+                    }
+                    input{
+                        max-width: 320px;
+                    }
+                  
+                    span{
+                        cursor: pointer;  
+                        color: $c01 !important;             
+                    }
+                   
+                   
+                    @media screen and (max-width: 768px) {
+                  
+                    }           
+                }
+            }
+          
+            .right
+            {
+             overflow: hidden;
+                .circle{
+                    width: 120px;
+                    height: 120px;
+                    -moz-border-radius: 50%;
+                    -webkit-border-radius: 50%;
+                    border-radius: 50%;
+                    background: $c05;
+                    font-size: 1.6rem;
+                    font-weight: 800;
+                    margin-right: 20px;
+                    overflow: hidden;
+
+                  
+                    .imgProfile{
+                        width: 35%;
+                    }
+                    .picProfile
+                    {
+                        width: 100%;
+                    }
+                }
+                label:hover{
+                    cursor: pointer !important;                   
+                    color: $c01 !important;
+                }
+              
+                p{
+                    padding-top: 10px;
+                }
+                .boxTitu{
+                    margin-top: 2rem;
+                    background-color: $c03;
+                    h5{
+                        padding-top: 0.5px;
+                        color: $cWhite;
+                    }
+                }
+            }
+        }
+    }
+      
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
  }

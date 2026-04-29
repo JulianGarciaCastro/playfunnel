@@ -1,0 +1,552 @@
+<?php
+
+use App\Models\Project;
+use App\Models\Interaction;
+use App\Models\User;
+use App\Models\Library;
+use App\Models\PlanSubscription;
+use App\Models\PlanType;
+use App\Models\UserConfig;
+
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MailController;
+use App\Http\Middleware\LocaleMiddleware;
+use App\Http\Middleware\LocaleCookieMiddleware;
+use App\Http\Controllers\StripePaymentController;
+
+
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\Verified;
+use Carbon\Carbon;
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', function () {
+    if(Auth::check()){
+        $user = User::find(Auth::id());
+
+        if (!$user->hasVerifiedEmail()){
+            return Redirect::to('/email/verify');
+        }
+        else{
+            return Redirect::to('dashboard');
+        }
+    }
+    return Redirect::to('login');
+});
+
+//---------------------------------------------------------------------------------------//
+
+/*
+Route::prefix('{locale}')->middleware(LocaleMiddleware::class)->group(function (){
+    Route::get('login2', function ($locale) {
+        return __('dashboard.projects');
+    });
+});
+*/
+
+Route::get('locale/{locale}',function($locale){
+    return redirect()->back()->withCookie('locale',$locale);
+});
+
+Route::middleware(LocaleCookieMiddleware::class)->group(function (){
+    //---------------------------------------------------------------------------------------//
+    Route::get('/login', function () {
+        if(Auth::check()){
+            $user = User::find(Auth::id());
+
+            if (!$user->hasVerifiedEmail()){
+                return Redirect::to('/email/verify');
+            }
+            else{
+                return Redirect::to('dashboard');
+            }
+        }
+        return view('login');
+    });
+    Route::post('/login', [App\Http\Controllers\Login::class, 'doLogin'])->name('login');
+    Route::get('/logout', [App\Http\Controllers\Login::class, 'doLogout'])->name('logout');
+    //---------------------------------------------------------------------------------------//
+    //require __DIR__ . '/auth.php';
+
+
+
+    //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+    //TODO Eliminar antes de salir a Pro.
+    Route::get('/clearCache', function() {
+        Artisan::call('cache:clear');
+        return "Cache is cleared";
+    });
+
+
+    Route::get('/register', function () {
+        if(Auth::check()){
+            $user = User::find(Auth::id());
+
+            if (!$user->hasVerifiedEmail()){
+                return Redirect::to('/email/verify');
+            }
+        }
+
+        return view('register');
+    });
+
+
+    Route::post('/register', [App\Http\Controllers\Login::class, 'register'])->name('register');
+
+    Route::get('/profile', function (){
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+            //return Redirect::intended('login');
+        }
+
+        $user = Auth::user();
+        return View::make('profile', compact('user'));
+
+    })->middleware(['auth','verified'])->name('profile'); //->middleware(['verified'])
+
+    Route::post('/profile',  [App\Http\Controllers\Login::class, 'profile'])->name('profile.save');
+
+
+    Route::get('/account', function (){
+        if(!Auth::check())
+            return redirect()->guest(route('login'));
+
+        $user = Auth::user();
+        $plans= PlanType::where('active', '1')->where('default','0')->get();
+
+        return View::make('account', compact('user','plans'));
+
+    })->middleware(['auth','verified'])->name('account'); //->middleware(['verified'])
+
+    Route::post('/account', [App\Http\Controllers\Login::class, 'account'])->name('account.save');
+
+
+    Route::get('/billing', function (Request $request){
+        if(!Auth::check())
+            return redirect()->guest(route('login'));
+
+        $user = Auth::user();
+        $plans= $user->getPlanSusbcription;
+
+        $object = new StripePaymentController();
+
+        $subscriptions = $object->stripeUserSubscriptions($request);
+
+        return View::make('billing', compact('user','plans'));
+
+    })->middleware(['auth','verified'])->name('account'); //->middleware(['verified'])
+
+    Route::get('/email/verify', function () {
+        //return view('auth.verify');
+        return view('emailVerify',['email' => Auth::user()->email]);
+    })->middleware(['auth'])->name('verification.notice');
+
+    Route::get('/email/verify/{id}/{hash}', function (Request $request) {  //EmailVerificationRequest
+
+        $user = User::find($request->route('id')); //findOrFail
+
+        if ($user == NULL){
+            Log::debug('USUARIO ES NULL');
+            return redirect()->back()->withErrors('Account doesnt exists');
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            Log::debug('USUARIO YA VALIDADO');
+            return redirect()->back()->withErrors('Account already verified');
+        }
+
+        if (! hash_equals((string) $request->route('id'), (string) $user->getKey())) {
+            Log::debug('USUARIO NO ENCONTRADO');
+            return redirect()->back()->withErrors('Account doesnt exists');
+        }
+
+        if (! hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+            Log::debug('HASH NO COINCIDEN');
+            return redirect()->back()->withErrors('Account verification error, plaease try again');
+        }
+
+        //$request->fulfill();
+        $user->markEmailAsVerified();
+        $user->status = 'ACTIVE';
+        $user->save();
+        event(new Verified($user));
+        $user->subscribeDefaultPlan();
+        Session::forget('url.intended');
+        return redirect('/login')->with(['status' => __('User verify correctly, please singin.')]);
+
+    })->name('verification.verify');
+    //->middleware(['auth', 'signed'])
+
+    /*Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('status', 'verification-link-sent');
+    })->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+*/
+    Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationNotificationController::class, 'store'])->middleware(['auth', 'throttle:6,1'])->name('verification.resend');
+
+    Route::get('/forgot_pass', function () {
+        return view('forgot_pass');
+    })->middleware(['guest'])->name('password.request');
+
+
+
+    Route::post('/forgot_pass', function (Request $request) {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink( $request->only('email') );
+
+        return $status === Password::RESET_LINK_SENT
+                            ? back()->with(['status' => __($status)])
+                            : back()->withErrors(['email' => __($status)]);
+
+    })->middleware(['guest'])->name('password.email');
+
+
+
+
+
+    Route::get('/password/reset/{token}', function ($token) {
+        return view('reset_pass', ['token' => $token]);
+    })->middleware(['guest'])->name('password.reset');
+
+
+
+    Route::post('/password/reset', function (Request $request) {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+
+            function ($user, $password) use ($request) {
+                $user->forceFill(['password' => Hash::make($password)])->save();
+                $user->setRememberToken(Str::random(60));
+
+                event(new PasswordReset($user));
+            });
+
+        return $status == Password::PASSWORD_RESET
+                        ? redirect()->route('login')->with('status', __($status))
+                        : back()->withErrors(['email' => __($status)]);
+    })->middleware(['guest'])->name('password.update');
+
+    Route::post('ajax-profile-img', [App\Http\Controllers\Login::class, 'profileImg'])->middleware(['auth'])->name('profile.save');
+
+
+    Route::post('ajax-addMedia', [App\Http\Controllers\LibraryController::class, 'addMedia'])->middleware(['auth'])->name('project.addMedia');
+
+    Route::post('ajax-delMedia', [App\Http\Controllers\LibraryController::class, 'delMedia'])->middleware(['auth'])->name('project.delMedia');
+
+    Route::post('ajax-loadMedia', [App\Http\Controllers\LibraryController::class, 'loadMedia'])->middleware(['auth'])->name('project.loadMedia');
+
+    Route::get('projects', function () {
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        $projects = Project::where('user_id', Auth::id())->get();
+        $user = Auth::user();
+        
+        return View::make('projects', compact('projects','user'));
+        
+    })->middleware(['auth','verified'])->name('projects');
+
+
+    Route::post('/addProject', [App\Http\Controllers\ProjectController::class, 'addProject'])->middleware(['auth'])->name('addProject');
+
+    Route::post('/ajax-delProject', [App\Http\Controllers\ProjectController::class, 'delProject'])->middleware(['auth'])->name('delProject');
+
+
+    Route::post('ajax-addProjectLib', [App\Http\Controllers\ProjectController::class, 'addProjectLib'])->middleware(['auth'])->name('project.addProjectLib');
+
+    //Route::post('ajax-getProjectLib', [App\Http\Controllers\ProjectController::class, 'getProjectLibrary'])->middleware(['auth'])->name('project.getProjectLib');
+
+    Route::post('ajax-updateProjectLib', [App\Http\Controllers\ProjectController::class, 'updateProjectLib'])->middleware(['auth'])->name('project.updateProjectLib');
+
+    Route::post('ajax-delProjectLib', [App\Http\Controllers\ProjectController::class, 'delProjectLib'])->middleware(['auth'])->name('project.delProjectLib');
+
+    //Route::post('ajax-setProjectLibPositions', [App\Http\Controllers\ProjectController::class, 'setProjectLibPositions'])->middleware(['auth'])->name('project.setProjectLibPositions');
+
+    //Route::post('ajax-getProjectLibInfo', [App\Http\Controllers\ProjectController::class, 'getProjectLibInfo'])->middleware(['auth'])->name('project.getProjectLibInfo');
+
+    //Route::post('ajax-setProjectLibInfo', [App\Http\Controllers\ProjectController::class, 'setProjectLibInfo'])->middleware(['auth'])->name('project.setProjectLibInfo');
+
+
+
+
+    Route::get('library', function () {
+
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        $library = Library::where('createdby', Auth::id())->get();
+
+        return View::make('library', compact('library'));
+
+    })->middleware(['auth','verified'])->name('library');
+
+
+
+
+    Route::get('addVideo', function (Request $request) {
+
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $projectLibs = $project->projectLibrary;
+
+        $library = Library::where('createdby', Auth::id())->get();
+
+        return View::make('add-video', compact('project', 'projectLibs', 'library'));
+
+    })->middleware(['auth','verified'])->name('addVideo');
+
+
+
+
+
+    Route::get('cuePoints', function (Request $request) {
+
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $projectLibs = $project->projectLibrary;
+
+        return View::make('step2', compact('project', 'projectLibs'));
+
+    })->middleware(['auth','verified'])->name('cuePoints');
+
+
+    Route::post('ajax-addCuepoint', [App\Http\Controllers\ProjectController::class, 'addCuepoint'])->middleware(['auth'])->name('project.addCuepoint');
+
+    Route::post('ajax-delCuepoint', [App\Http\Controllers\ProjectController::class, 'delCuepoint'])->middleware(['auth'])->name('project.delCuepoint');
+
+    Route::post('ajax-getCuepointList', [App\Http\Controllers\ProjectController::class, 'getCuepointList'])->middleware(['auth'])->name('project.getCuepointList');
+
+
+    //Route::post('ajax-getCuepointData', [App\Http\Controllers\ProjectController::class, 'getCuepointData'])->middleware(['auth'])->name('project.getCuepointData');
+
+    Route::post('ajax-setCuepointData', [App\Http\Controllers\ProjectController::class, 'setCuepointData'])->middleware(['auth'])->name('project.setCuepointData');
+
+    Route::post('ajax-setPublishData', [App\Http\Controllers\ProjectController::class, 'setPublishData'])->middleware(['auth'])->name('project.setPublishData');
+
+
+    //Route::post('ajax-getProjectCuepointData', [App\Http\Controllers\ProjectController::class, 'getProjectCuepointData'])->middleware(['auth'])->name('project.getProjectCuepointData');
+
+
+
+
+
+    Route::get('actions', function (Request $request) {
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $projectLibs = $project->projectLibrary;
+        $cuePoints   = $project->cuePoints;
+        $library = Library::where('createdby', Auth::id())->get();
+
+        return View::make('step3', compact('project', 'projectLibs', 'cuePoints', 'library'));
+
+    })->middleware(['auth','verified'])->name('cuePoints');
+
+
+    Route::get('stream/{video}', function (Request $request) {
+        /*
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }*/
+        $video_id =  $request->route('video');
+
+        //$library = Library::where('createdby', Auth::id())
+        $library = Library::where('id', $video_id)->first();
+
+        $tmp = new App\Http\Controllers\VideoStream($library->url);
+        $tmp->start();
+    })->name('stream');
+
+    /*STEP 4 */
+    Route::get('publish', function (Request $request) {
+        if(!Auth::check()){
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $library = Library::where('createdby', Auth::id())->get();
+
+        $library_img = Library::where('id', $project->publish_library_img)->first();
+
+        $publish_library_img = 'images/SVG/imageEmpty.svg';
+        if($library_img){
+            if($library_img->url){
+                $publish_library_img = $library_img->url;
+            }
+        }
+
+        return View::make('step4', compact('project','library','publish_library_img'));
+
+    })->middleware(['auth','verified'])->name('publish');
+
+
+
+    /* Preview */
+    Route::get('preview', function (Request $request) {
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $projectLibs = $project->projectLibrary;
+        $cuePoints   = $project->cuePoints;
+
+        return View::make('preview', compact('project', 'projectLibs', 'cuePoints'));
+
+    })->middleware(['auth','verified'])->name('preview');
+
+
+    /* Embed */
+    Route::get('embed', function (Request $request) {
+
+        $request->project=openssl_decrypt ($request->project, $ciphering="AES-128-CTR",
+                                            $decryption_key="PlayFunnel", $options=0, $decryption_iv="1234567891011121");
+
+        if (! $request->project){
+            return redirect()->guest(route('projects'));
+        }
+
+        $project = Project::find($request->project);
+
+        if(!$project){
+            return redirect()->guest(route('projects'));
+        }
+        
+        $user = $project->getUser;
+        
+        //validar si tiene plan activo
+        $activePlan = $user->isPlanSusbcriptionActive();
+        
+        if(!$activePlan){
+            $html = '<html> <img src="https://content.app-sources.com/s/25931517362007711/uploads/PF/Logo-Horizontal-BgClear-7332418.svg?format=webp" alt="Girl in a jacket"> </html>';
+            
+            return response($html, 200);
+        }
+
+        $projectLibs = $project->projectLibrary;
+        $cuePoints   = $project->cuePoints;
+
+        return View::make('embed', compact('project', 'projectLibs', 'cuePoints'));
+
+    })->name('embed');
+
+    Route::post('ajax-register-interaction', [App\Http\Controllers\InteractionController::class, 'registerInteraction']);
+
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['verified'])->name('dashboard');
+
+    Route::get('/crm', [App\Http\Controllers\CrmController::class, 'index'])->middleware(['verified'])->name('crm');
+    Route::post('crm-CustomerByProjectId', [App\Http\Controllers\CrmController::class, 'getCustomersByProject'])->middleware(['verified'])->name('getCustomersByProject');
+    Route::post('crm-CustomerById', [App\Http\Controllers\CrmController::class, 'getCutomerById'])->middleware(['verified'])->name('getCutomerById');
+
+    Route::get('stripe', [App\Http\Controllers\StripePaymentController::class, 'stripe'])->middleware(['auth','verified'])->name('stripe');
+    Route::post('stripe', [App\Http\Controllers\StripePaymentController::class, 'stripePost'])->middleware(['auth','verified'])->name('stripe.post');
+    Route::post('ajax-stripeCancel', [App\Http\Controllers\StripePaymentController::class, 'stripeCancel'])->middleware(['auth','verified'])->name('stripe.cancel');
+
+    Route::get('generate-bill-pdf', [App\Http\Controllers\PDFController::class, 'generateBillPDF'])->middleware(['auth','verified'])->name('generate-bill-pdf');
+
+    Route::post('ajax-getChartData',            [App\Http\Controllers\DashboardController::class, 'getChartData'])->middleware(['auth'])->name('getChartData');
+    Route::post('ajax-getTagOptionData',        [App\Http\Controllers\DashboardController::class, 'getTagOptionData'])->middleware(['auth'])->name('getTagOptionData');
+    Route::post('ajax-getInteractionTableData', [App\Http\Controllers\DashboardController::class, 'getInteractionTableData'])->middleware(['auth'])->name('getInteractionTableData');
+    Route::post('ajax-saveDateFilter',     [App\Http\Controllers\DashboardController::class, 'saveDateFilter']);
+
+    Route::post('ajax-save-session-data', [App\Http\Controllers\DashboardController::class, 'saveSessionData'])->middleware(['auth'])->name('saveSessionData');
+
+
+    // Email related routes
+    Route::post('sendForm', [App\Http\Controllers\MailController::class, 'sendForm']);
+
+
+    //CRM
+    Route::post('crm-register', [App\Http\Controllers\CrmController::class, 'crmregister']);
+
+    //Route::get('mailTest', [App\Http\Controllers\MailController::class, 'send']);
+    // https://code.tutsplus.com/tutorials/how-to-send-emails-in-laravel--cms-30046
+    // https://app.playfunnel.net/mail/send
+
+});

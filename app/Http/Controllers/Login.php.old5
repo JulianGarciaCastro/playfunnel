@@ -1,0 +1,301 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Rules\ReCaptcha;
+use App\Models\User;
+use App\Models\UserConfig;
+use App\Http\Controllers\DashboardController;
+use App\Models\PlanType;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use App\Notifications\NewSubscription;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
+use Illuminate\Auth\Events\Registered;
+
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
+
+
+class Login extends Controller
+{
+    /**
+     * Handle the incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function __invoke(Request $request)
+    {
+        //
+    }
+    
+    
+    function doLogin(Request $request){
+        $rules = array(
+            'email'   => 'required|email',
+            'password'=> 'required|min:8');
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        if ($validator->fails()){
+            return Redirect::to('login')->withErrors($validator)->withInput($request->except('password'));
+        }
+        else{//, 'status' => 'ACTIVE'
+            $this->ensureIsNotRateLimited($request->input('email'), $request);
+            
+            if (Auth::attempt(['email' =>  $request->input('email')  , 'password' => $request->input('password')], false)) {
+                $user = User::find(Auth::id());
+                
+                if($user->status == 'ACTIVE'){
+                    $intended_url = Session::get('url.intended', url('/'));
+                    
+                    Log::debug('Usuario ACTIVO URL: ' . Session::get('url.intended', 'Sin Definir. Previa: ' . url()->previous()));
+                    Log::debug('Usuario ACTIVO URL: ' . $intended_url);
+                    Session::forget('url.intended');
+                    
+                    DashboardController::resetFilters();
+
+                    RateLimiter::clear($this->throttleKey( $request->input('email')));
+                    return Redirect::intended($intended_url);
+                }
+                
+                Log::debug('Usuario NO ACTIVO');
+                return Redirect::to('/email/verify');
+            }
+            else{
+                if (!Auth::attempt(['email' =>  $request->input('email')  , 'password' => $request->input('password')], false)) {   //, $this->filled('remember')
+                    RateLimiter::hit($this->throttleKey($request->input('email')));
+                    
+                    throw ValidationException::withMessages(['email' => __('auth.failed'),]);
+                }
+                
+                //return Redirect::to('login')->withInput($request->except('password'))->withErrors(["Account not exists or Validation error"]);
+            }
+        }
+    }
+    
+   
+    public function ensureIsNotRateLimited($email, $request)
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($email), 5)) {
+            return;
+        }
+        
+        event(new Lockout($request));
+        
+        $seconds = RateLimiter::availableIn($this->throttleKey($email));
+        
+        throw ValidationException::withMessages(['email' => trans('auth.throttle', [
+                                                        'seconds' => $seconds,
+                                                        'minutes' => ceil($seconds / 60),
+                                                    ]),
+                                                ]);
+    }
+    
+    /**
+     * Get the rate limiting throttle key for the request.
+     *
+     * @return string
+     */
+    public function throttleKey($email)
+    {
+        //return Str::lower($this->input('email')).'|'.$this->ip();
+        
+        Log::debug('throttleKey(): ' . Str::lower($email).'|'.$this->ip());
+        return Str::lower($email).'|'.$this->ip();
+    }
+    
+    
+    public function ip(){
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
+            if (array_key_exists($key, $_SERVER) === true){
+                foreach (explode(',', $_SERVER[$key]) as $ip){
+                    $ip = trim($ip); // just to be safe
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false){
+                        return $ip;
+                    }
+                }
+            }
+        }
+        return request()->ip(); // it will return server ip when no client ip found
+    }
+    
+     
+    function doLogout(){
+        Auth::logout();
+        return Redirect::to('login');
+        //return redirect(URL::previous());
+    }  
+    
+    
+    public function register(Request $request){
+        $name  =  $request->input('name');
+        $email =  $request->input('email');
+        $pwd   =  Hash::make($request->input('password'));
+        
+        $rules = array(
+            'name'                   => 'required',
+            'email'                  => 'required|email|unique:users',
+            'password'               => 'required|min:8|alphaNum',
+            'password_confirmation'  => 'required|same:password',
+            'g-recaptcha-response'   => ['required', new ReCaptcha],
+        );
+        
+        $messages = [
+            'name.required'              => __('Name is required'),
+            'email.required'             => __('Email is required'),
+            'email.email'                => __('Email format not valid'),
+            'email.unique'               => __('Account already exists'),
+            'password.min'               => __('Password must have at least 8 characters'),
+            'password.alphaNum'          => __('Password must have Alpha numeric characters'),
+            'password_confirmation.same' => __('Password Confirmation should match the Password'),
+        ];
+        
+        $validator = Validator::make($request->all(), $rules, $messages);
+        
+        if ($validator->fails()) {
+            return back()->withInput($request->except('password'))->withErrors($validator->messages());
+        }
+        
+        $user           = new User;
+        $user->name     =  $name;
+        $user->email    =  $email;
+        $user->password =  $pwd;
+        $user->save();
+        
+        event(new Registered($user));
+
+    
+       // Envía la notificación
+        Notification::route('mail', 'info@playfunnel.net')
+        ->notify(new NewSubscription($user));
+        
+        //return Redirect::to('login')->with('status', __('Check your email and confirm your account'));
+        return Redirect::to('login')->with('status', __('Account created successfully'));
+
+        
+    }
+    
+    
+    function profile(Request $request){
+        $user = User::find(Auth::id());
+        
+        $user->name      =   $request->input('name');
+        $user->lastname  =   $request->input('lastname');
+        $user->country   =   $request->input('country');
+        $user->city      =   $request->input('city');
+        $user->address   =   $request->input('address');
+        $user->postalcode=   $request->input('postal');
+        $user->phone     =   $request->input('phone');
+        $user->birthdate =   $request->input('birthdate');
+        $user->save();
+        
+        Auth::setUser($user);
+        return View::make('profile', compact('user'));
+    }
+    
+    public function account(Request $request){
+        
+        if (!(Hash::check($request->get('old_password'), Auth::user()->password))) {
+            // The passwords not matches
+            //return redirect()->back()->with("error","Your current password does not matches with the password you provided. Please try again.");
+            return back()->withInput()->withErrors([__('Current password does not match')]);
+        }
+        
+        if(strcmp($request->get('old_password'), $request->get('password')) == 0){
+            //Current password and new password are same
+            //return redirect()->back()->with("error","New Password cannot be same as your current password. Please choose a different password.");
+            return back()->withInput()->withErrors([__('New Password cannot be same as your current password')]);
+        }
+        
+        $input = $request->all();
+        
+        $rules = [
+            'password' => 'required|min:8',
+            'password_confirmation' => 'required|min:8|same:password',
+        ];
+        
+        $messages = [
+            'password_confirmation.same' => __('Password Confirmation should match the Password'),
+        ];
+        
+        $validator = Validator::make($input, $rules, $messages);
+        
+        if ($validator->fails()) {
+            return back()->withInput()->withErrors($validator->messages());
+        }
+        
+        $user = User::find(Auth::id());
+        $user->password = Hash::make($request->get('password'));
+        $user->save();
+        
+        Auth::setUser($user);
+        $plans= PlanType::where('active', '1')->where('default','0')->get();
+        
+        Session::flash('status', __('Password update successfully'));
+        return view('account', compact('user','plans'))->with('status', __('Password update successfully'));
+    }
+    
+
+    public function profileImg(Request $request){
+        $validator = Validator::make($request->all(), [
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:8192',
+        ]);
+        
+        
+        if ($validator->passes()) {
+            $user = User::find(Auth::id());
+            
+            $old_img = $user->profile_img;
+            if( Str::startsWith($old_img, 'avatars') ){
+                Storage::delete($old_img);           
+            }
+            
+            $path = $request->file('image')->store('avatars');
+            $user->profile_img = $path;
+            $user->save();
+            
+            return response()->json(['success'=>'Ajax request submitted successfully']);
+        }
+        
+        return response()->json(['error'=>$validator->errors()->all()]);
+    }
+    
+    
+    public function login(Request $request){
+        
+        if (Auth::attempt(['email' =>  $request->input('email'), 'password' => $request->input('password')], false)) {
+            $user = Auth::user();
+            
+            if($user->status == 'ACTIVE'){
+                $token = $user->createToken('authToken.' . $user->id);         
+                return response()->json(['data' => ['email'=>$user->email, 'token' =>  $token->plainTextToken]]);
+            }
+        }
+        
+        return response()->json(['error' => 'Unauthenticated'], 401);
+    }
+    
+    public function logout(Request $request){
+        $user = $request->user();
+        
+        if($user) {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json(['data' => 'User logged out.'], 200);
+        }
+        
+        return response()->json(['data' => 'User already logged out.'], 200);
+    }
+}

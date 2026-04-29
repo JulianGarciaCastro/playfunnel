@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
  
 // resources/lang/en/messages.php
@@ -42,3 +43,49 @@ return [
 ];
 
 
+=======
+<?php
+ 
+// resources/lang/en/messages.php
+ //español
+return [
+     'title' => 'PlayFunnel - El funnel de video interactivo',
+     'dashboard' => 'Cuadro de mando',
+     'projects' => 'Proyectos',
+     'library' => 'Biblioteca',
+     'demo' => 'Demos',
+     'help' => 'Ayuda',
+     'config' => 'Ajustes',
+     'identification' => 'IDENTIFICACIÓN',
+     'account' => 'CUENTA',
+     'not_share_email' => 'No compartiremos su correo electrónico con terceros',
+     'your_account' => 'Su cuenta',
+     'email' => 'Correo',
+     'user' => 'Usuario', 
+     'chamge_password' => 'Cambiar contraseña', 
+     'new_password' => 'Nueva contraseña', 
+     'confirm_password' => 'Confirmar contraseña', 
+     'change' => 'Cambiar',
+     'contracted_space' => 'Espacio en cuenta',
+     'used' => 'Utilizado',     
+     'available' => 'Disponible',
+     'term' => 'Fecha Alta',
+     'buy_more_space' => 'Contratar más espacio',
+     'select_plan' => 'Seleccione el plan que más se adecue a sus necesidades',
+     'suscription' => 'Suscripción',
+     'discard' => 'Descartar',
+     'cancel_subscription' => 'Cancelar Suscripcion',
+     'cancel' => 'Cancelar',
+     'next_billing' => 'Proxima Factura',
+     'latest_invoice' => 'Ultimo Recibo',
+     'download_invoice' => 'Descargar Recibo',
+     'subs_canceled' => 'Suscrupcion Cancelada',
+     'change_password' => 'Modificar contraseña',
+     'enddate' => 'Fecha Fin',
+      
+ 
+    
+];
+
+
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f

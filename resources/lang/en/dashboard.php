@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
  
 // resources/lang/en/messages.php
@@ -45,4 +46,53 @@ return [
     'welcome_title' => 'Welcom to PlayFunnel',
     'welcome_message' => 'The first step working with PlayFunnel is create a new project and generate interactions with it. Until you don\'t generate interactions yo can\'t access to the Dashboard module',
     
+=======
+<?php
+ 
+// resources/lang/en/messages.php
+// {{__('dashboard.interactions')}}
+ 
+return [
+    'title' => 'PlayFunnel - The interactive video funnel',
+    'dashboard' => 'Dashboard',
+    'projects' => 'Projects',
+    'library' => 'Library',
+    'demo' => 'Demo',
+    'help' => 'Help',
+    'config' => 'Config',
+    'all_projects' => 'All projects',
+    'all' => 'All',
+    'interactions' => 'Interactions',
+    'completed' => 'Completed',
+    'tags_option' => 'Tags-Option',
+    'answers' => 'Answers',
+    'answer' => 'Answer',
+    'activity' => 'Activity',
+    'date' => 'Date',
+    'country' => 'Country',
+    'city' => 'City',
+    'interactions_hist' => 'Interactions filter by date',
+    'no_date_filter' => 'No date filter selected',
+    'select_months_to_keep' => 'Select the number of months to keep interactinos',
+    'select' => 'Select',
+    'accept' => 'Accept',
+    'cancel' => 'Cancel',
+    'data_since' => 'Available data from: ',
+    'all_data' => 'All interactions',
+    'intections_for_n_days' => 'Interaction for last',
+    'last' => 'Last ',
+    'last1' => 'Last',
+    'ndays' => 'days',
+    'nday' => 'day',
+    'start_end_date' => 'Interactions by start-date and/or end-date',
+    'days' => 'Days',    
+    'weeks' => 'Weeks',
+    'months' => 'Months',
+    'years' => 'Years',
+    'go_projects' => 'Go to Projects module',
+    'cancel' => 'Cancel',
+    'welcome_title' => 'Welcom to PlayFunnel',
+    'welcome_message' => 'The first step working with PlayFunnel is create a new project and generate interactions with it. Until you don\'t generate interactions yo can\'t access to the Dashboard module',
+    
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 ];

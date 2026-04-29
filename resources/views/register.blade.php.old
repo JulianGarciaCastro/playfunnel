@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -154,4 +155,162 @@
 </script>
 
 
+=======
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/Style.css">
+    <title> {{__('register.title')}}</title>   
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">  
+	<!-- <script type="text/javascript" src="http://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=REdXuqN-gjojmXdUq01VRo32pPYP4T0Ow4et-3cMFKoNIMZGg3Yff7pHWW0rcMG1S3aBDhwU9C_jRZP0P76MD_E5gnIKLSLAp5t3CgThKqBQV8HE68NLlQ6OqM3GOib3" charset="UTF-8"></script> -->
+</head>
+<body class="bg-light logIn">
+    <div class="container-fluid">
+        <section class="row col-12 justify-content-center align-items-center m-0">
+            
+        <div class="logo_playF col-12 d-flex justify-content-center justify-content-md-end mt-3 ">
+                <a href="/locale/es"><img src="https://flagicons.lipis.dev/flags/4x3/es.svg" class="  " alt="Descripción de la imagen" style="width:30px"></a>
+                &nbsp;
+                <a href="/locale/en"><img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" class="  " alt="Descripción de la imagen" style="width:30px"></a>
+            </div>
+
+            <div class="logo_playF col-12 d-flex justify-content-center justify-content-md-start mt-3 mt-md-5">
+                <a href="/"><img src="images/SVG/logo-playFunnel.svg" class="logoImg col-6 col-md-2" alt="Descripción de la imagen"></a>
+            </div>
+            
+            <div class="col-12 col-md-8 col-lg-6 col-xl-4 formy p-0 px-md-1 px-0 d-flex justify-content-center">                
+                <form class="row justify-content-center bg-white px-3 px-md-4 "  action="register" method="POST" onsubmit="return validateRegister(event)">
+                {{ csrf_field() }}
+                    <div class="col-11">
+                        <p class="text-h2 cMain text-center ">{{__('register.register')}}</p>
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="exampleInputEmail1" class="text-c02 mb-0">{{__('register.name')}}</label>
+                        <input type="text" class="inputForm" id="name" name="name" aria-describedby="emailHelp"   value="{{ old('name')}}">
+                        <small id="emailHelp" class="d-none form-text text-muted">{{__('register.type_your_name')}}</small>
+                      </div>
+                    <div class="form-group col-12">
+                      <label for="exampleInputEmail1" class="text-c02 mb-0">{{__('register.email')}}</label>
+                      <input type="email" class="inputForm" id="email" name="email" aria-describedby="emailHelp"  value="{{ old('email')}}">
+                      <small id="emailHelp" class="d-none form-text text-muted">{{__('register.no_mail_detected')}}</small>
+                    </div>
+                    <div class="form-group col-12 ">
+                      <label for="exampleInputPassword1" class="text-c02 mb-0">{{__('register.password')}}</label>
+                      <input type="password" class="inputForm" id="password" name="password">     
+                      <small id="emailHelp" class="d-none form-text text-muted">{{__('register.no_password_detected')}}</small>                
+                    </div>
+                    <div class="form-group col-12 ">
+                        <label for="exampleInputPassword1" class="text-c02 mb-0">{{__('register.confirm_password')}}</label>
+                        <input type="password" class="inputForm" id="password_confirmation" name="password_confirmation">     
+                        <small id="emailHelp" class="d-none form-text text-muted">{{__('register.passwords_doesnt_mach')}}</small>                
+                      </div>
+                    <div class="form-group col-12 d-flex align-items-center justify-content-center">
+                            <input type="radio" aria-label="Radio button for following text input" id="termsConditions" name="termsConditions">
+                            <p class="pl-4 pt-3 text-c02"><label for="termsConditions" style="cursor: pointer;">{{__('register.accept_terms')}}</label></p>
+                    </div>
+                    <div>
+                    <button type="submit" class="btn btn-cMain my-1">{{__('register.register')}}</button>
+                    <br/>
+                    <a class="text-center pb-2 text-c02 col-12"><span class="text-c01"><a href="/">{{__('register.back_to_login')}}</a></span></a>
+                    </div>
+                    @if(isset($errors))
+                         @foreach ($errors->all() as $error)
+                          <div class="alert alert-danger" role="alert">{{ $error }}</div>
+                        @endforeach
+              		@endif
+                  </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Alert mesage modal -->
+    <div class="modal fade bd-example-modal-sm" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+            <div class="col-12">
+              <button type="button" class="btn-WhiteText cMain justify-self-end" data-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+              <p class="text-h3 cMain text-center mt-3">{{__('projects.new_project')}}</p>
+          <form class="row justify-content-center bg-white px-3 px-md-4 "  action="addProject" method="POST" >
+            {{ csrf_field() }}
+              <div class="col-12 p-0 m-0 mb-4 row justify-content-center">
+              <label for="project-name" class="text-left cMain mb-0" > {{__('projects.project_name')}} </label>
+              <input  type="text" class="col-8 inputForm p-0 c02" name="name" >
+              </div>
+                  <div class="row justify-content-center w-100 p-0 col-12 row m-0 mb-5">
+                    <button type="submit" class="btn-square px-3 bg-Main cWhite">{{__('projects.ok')}}</button>
+                    <button type="button" class="btn-square px-3 bg-05 cMain ml-5" data-dismiss="modal" >{{__('projects.cancel')}}</button>
+                  </div>
+          </form>
+            </div>
+          </div>
+        </div>
+    </div>
+
+</body>
+<script src="js/jquery-3.5.1.min.js"></script>
+<script>
+  //$(document).ready(function(){
+
+      function modalPopupAlert(message){
+        console.log("modalPopupAlert()")
+        console.log(message)
+        //$('#alert-modal').modal('show');    
+      }
+
+      function validateRegister(e){
+
+        if(!$("#name").val()){
+          alert("{{__('register.type_your_name')}}");
+          modalPopupAlert("{{__('register.type_your_name')}}");
+          $('#name').focus()
+          e.preventDefault();
+          return false;
+        }
+
+        if(!$("#email").val()){
+          alert("{{__('register.type_your_email')}}");
+          $('#email').focus()
+          e.preventDefault();
+          return false;
+        }
+
+        if(!$("#password").val()){
+          alert("{{__('register.type_your_password')}}");
+          $('#password').focus()
+          e.preventDefault();
+          return false;
+        }
+        
+        if(!$("#password_confirmation").val()){
+          alert("{{__('register.confirm_your_password')}}");
+          $('#password_confirmation').focus()
+          e.preventDefault();
+          return false;
+        }
+        
+        if($("#password").val() != $("#password_confirmation").val()){
+          alert("{{__('register.confirmation_doesnt_match')}}");
+          $('#password_confirmation').focus()
+          e.preventDefault();
+          return false;
+        }
+        
+        if(!$("#termsConditions").is(':checked')){
+          e.preventDefault();
+          alert("{{__('register.accept_terms')}}");
+          return false;
+        }
+        
+        return true;
+      }
+  //}
+</script>
+
+
+>>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 </html>
