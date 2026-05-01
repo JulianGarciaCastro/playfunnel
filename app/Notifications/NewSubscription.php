@@ -34,7 +34,7 @@ class NewSubscription extends Notification implements ShouldQueue{
                     ->line(' - Email: '  . $this->user->email)
                     ->line(' - Nombre: ' . $this->user->name)
                     ->line(' - SSO: '    . $this->user->google_id)
-                    ->line('ï¿½Vamos equipo!');
+                    ->line('¡Vamos equipo!');
     }
 
     public function toWebhook($notifiable){

@@ -268,7 +268,7 @@ class LibraryController extends Controller{
         
         foreach($filteredDirectories as $dir){
             $myLib = array("name" => basename($dir), "type"=>"FOLDER");
-            Log::debug('loadMedia() Aï¿½adiendo Folder: ' . $myLib);
+            Log::debug('loadMedia() Añadiendo Folder: ' . $myLib);
             array_push($libMedia, $myLib);
         }
 
@@ -412,7 +412,7 @@ class LibraryController extends Controller{
             $filedir = dirname($item->url);
             Log::debug('LibraryController.openFolder() Lib: ID: ' . $item->id . ' - Type: ' . $item->type . ' - URL: ' . $item->url . ' - filedir: ' . $filedir);
             
-            return $filedir != $mainFolder || $item->id == $folderID; // Define la condiciï¿½n para eliminar
+            return $filedir != $mainFolder || $item->id == $folderID; // Define la condición para eliminar
         });
         
         return response()->json(['success'=>'Y', 'folders' => $filteredCollection]);

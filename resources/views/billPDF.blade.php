@@ -11,7 +11,7 @@
 <body>
 	<img src="images/SVG/Logo-Horizontal-BgDark.svg" class="logoImg col-6 col-md-2" alt="Logo PlayFunnel"   width="200" height="100">
     <h1><b>Plan:  </b>{{ $title }}</h1>
-    <p><b>Tamaï¿½o: </b>{{ $size }}</p>
+    <p><b>Tamaño: </b>{{ $size }}</p>
     <p><b>Precio: </b>{{ $price }}</p>
     <p><b>Fecha:  </b>{{ $dateSubs }}</p>
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

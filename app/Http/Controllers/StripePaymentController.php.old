@@ -89,7 +89,7 @@ class StripePaymentController extends Controller
             "amount"         => $plan->price * 100,
             "currency"       => "eur",
             //"source" => $request->stripeToken,
-            "description"    => "Payment PlayFunnel plan " . $plan->price . "ï¿½/" . $plan->name ." - " . $plan->size ."GB",
+            "description"    => "Payment PlayFunnel plan " . $plan->price . "€/" . $plan->name ." - " . $plan->size ."GB",
             "receipt_email"  => $user->email,
             "customer"       => $user->customernum,
         ]);
