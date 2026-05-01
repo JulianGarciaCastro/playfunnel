@@ -83,3 +83,6 @@ __MACOSX/
 public/lib/ffmpeg-git-20211013-amd64-static/
 public/lib/geoip/*.mmdb
 >>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
+
+/public/lib/ffmpeg-4.4-full_build_win/
+/public/lib/ffmpeg-git-20211013-amd64-static/
