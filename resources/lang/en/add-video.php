@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
  
 return [
@@ -60,67 +59,4 @@ return [
      'folderCreatedOK' => 'Folder :name created successfully.',
     
     'reviewCuepoint' => 'Review project, Interaccion time exceeds video duration.',
-=======
-<?php
- 
-return [
-     'title' => 'PlayFunnel - The Interactive Video Funnel',
-     'uploading' => 'Uploading',
-     'file_library' => 'MEDIA LIBRARY',
-     'add_folder' => 'New Folder',
-     'videos' => 'Videos',
-     'images' => 'Images',
-     'upload_file' => 'Upload File',
-     'close' => 'Close',
-     'select' => 'Select',
-     'clear' => 'Clear',
-     'error_playing_video' => 'Video is not visible, most likely your browser does not support HTML5 video',
-     'uploadgin' => 'Uploadgin',
-     'delete_multimedia' => 'Delete multimedia',
-     'are_you_sure_del_multimedia' => 'Are you sure you want to delete the multimedia file?',
-     'confirm' => 'Confirm',
-     'discard' => 'Discard',
-     'delete_media' => 'Delete media',
-     'are_you_sure_unlink_media_from_project' => 'Are you sure you want to unlink the media from the project?',
-     'horizontal' => 'Horizontal',
-     'square' => 'Square',
-     'vertical' => 'Vertical',
-
-     'add_video'      => 'ADD VIDEO',
-     'create_cuepoints'  => 'CREATE CUEPOINTS',
-     'cuepoint_actions'  => 'CUEPOINT ACTIONS',
-     'publish'           => 'PUBLISHING',
-     
-     'video_info'        => 'Information about the video',
-     'name'        => 'NAME',
-     'description' => 'DESCRIPTION',
-     'continue' => 'Continue',
-     
-     'video_name' => 'Video name...',
-     'video_description' => 'Video description...',
-     
-     'new_folder' => 'New Folder',
-     'folder_name' => 'Folder Name',
-     'image' => 'Image',
-     'video' => 'Play Video',
-     'noSubscription' => 'There is no active subscription.',
-     'subscriptionExpired' => 'Subscription expired.',
-     'folderNotFound' => 'No folder found.',
-     'storageFull' => 'Your current plan no longer supports files. Storage limit reached.',
-     'folderDeleteOK' => 'Folder successfully deleted.',
-     'folderNotEmpty' => 'The folder must be empty to delete it.',
-     'cantDeleteFile' => 'Cannot Delete, File used in Project: :name',
-     'cantDeleteFilePublish' => 'Cannot Delete, File used in Publisg Page of the :name project.',
-     'cantDeleteFileLanding' => 'Cannot Delete, File used in Landing Page of the :name project.',
-     'cantDeleteFileOption'  => 'Cannot Delete, File used in Option of the :name project.',
-     'fileDeleteOK' => 'File successfully deleted.',
-     'noPermissionDelete' => 'You do not have permission to delete file.',
-     'notFileFound' => 'File not found.',
-     'wrongFolderName' => 'Check Folder name, only alphanumeric characters are allowed.',
-     'noParentFolder' => 'Parent folder not exists.',
-     'folderAreadyExists' => 'A folder with name :name already exists.',
-     'folderCreatedOK' => 'Folder :name created successfully.',
-    
-    'reviewCuepoint' => 'Review project, Interaccion time exceeds video duration.',
->>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 ];

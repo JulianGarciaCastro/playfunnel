@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 namespace Tests\Feature;
@@ -43,49 +42,3 @@ class PasswordConfirmationTest extends TestCase
         $response->assertSessionHasErrors();
     }
 }
-=======
-<?php
-
-namespace Tests\Feature;
-
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-
-class PasswordConfirmationTest extends TestCase
-{
-    use RefreshDatabase;
-
-    public function test_confirm_password_screen_can_be_rendered()
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->get('/confirm-password');
-
-        $response->assertStatus(200);
-    }
-
-    public function test_password_can_be_confirmed()
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post('/confirm-password', [
-            'password' => 'password',
-        ]);
-
-        $response->assertRedirect();
-        $response->assertSessionHasNoErrors();
-    }
-
-    public function test_password_is_not_confirmed_with_invalid_password()
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post('/confirm-password', [
-            'password' => 'wrong-password',
-        ]);
-
-        $response->assertSessionHasErrors();
-    }
-}
->>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f

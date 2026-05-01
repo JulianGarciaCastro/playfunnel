@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 return [
@@ -60,67 +59,4 @@ return [
      'folderCreatedOK' => 'Carpeta :name creada correctamente.',
     
     'reviewCuepoint' => 'Revise proyecto, tiempo Interaccion excede duracion del video.',
-=======
-<?php
-
-return [
-     'title' => 'PlayFunnel - El funnel de video interactivo',
-     'uploading' => 'Cargando',
-     'file_library' => 'BIBLIOTECA DE ARCHIVOS',
-     'add_folder' => 'Nueva Carpeta',
-     'videos' => 'Videos',
-     'images' => 'Imágenes',
-     'upload_file' => 'Subir Archivo',
-     'close' => 'Cerrar',
-     'select' => 'Seleccionar',
-     'clear' => 'Limpiar',
-     'error_playing_video' => 'No se puede visualizar el video, lo más probable es que su navegador no soporte videos en HTML5',
-     'uploadgin' => 'Cargando',
-     'delete_multimedia' => 'Eliminar Multimedia',
-     'are_you_sure_del_multimedia' => '¿Estas seguro que deseas eliminar el fichero multimedia?',
-     'confirm' => 'Confirmar',
-     'discard' => 'Descartar',
-     'delete_media' => 'Eliminar medio',
-     'are_you_sure_unlink_media_from_project' => '¿Estas seguro que deseas desvincular el medio del proyecto?',
-     'horizontal' => 'Horizontal',
-     'square' => 'Cuadrado',
-     'vertical' => 'Vertical',
-
-     'add_video'      => 'AÑADIR VIDEO',
-     'create_cuepoints'  => 'CREAR CUEPOINTS',
-     'cuepoint_actions'  => 'ACCIONES DE CUEPOINT',
-     'publish'           => 'PUBLICAR',
-
-     'video_info'        => 'Información sobre el video',
-     'name'        => 'NOMBRE',
-     'description' => 'DESCRIPCIÓN',
-     'continue' => 'Continuar',
-
-     'video_name' => 'Nombre del Video...',
-     'video_description' => 'Descripción del video...',
-     
-     'new_folder' => 'Nueva Carpeta',
-     'folder_name' => 'Nombre Carpeta',
-     'image' => 'Imagen',
-     'video' => 'Reproducir',
-     'noSubscription' => 'No hay subscripcion activa.',
-     'subscriptionExpired' => 'Suscripcion caducada.',
-     'folderNotFound' => 'No se encuentra directorio.',
-     'storageFull' => 'Su plan actual no admite mas ficheros, Limite almacenamiento alcanzado.',
-     'folderDeleteOK' => 'Carpeta eliminada correctamente.',
-     'folderNotEmpty' => 'La carpeta debe estar vacia para eliminarla.',
-     'cantDeleteFile' => 'No se puede Eliminar, Fichero usado en Projecto:  :name',
-     'cantDeleteFilePublish' => 'No se puede Eliminar, Fichero usado en Pagina Final del Projecto: :name',
-     'cantDeleteFileLanding' => 'No se puede Eliminar, Fichero usado en Pagina de Entrada del Projecto: :name',
-     'cantDeleteFileOption'  => 'No se puede Eliminar, Fichero usado en Opciones del Projecto: :name',
-     'fileDeleteOK' => 'Fichero borrado correctamente.',
-     'noPermissionDelete' => 'No tiene permisos para borrar fichero.',
-     'notFileFound' => 'No se ha encontrado fichero.',
-     'wrongFolderName' => 'Revise nombre de la Carpeta, solo caracteres alfanumericos son permitidos.',
-     'noParentFolder' => 'Folder Padre no existe',
-     'folderAreadyExists' => 'Ya existe una Carpeta con nombre :name',
-     'folderCreatedOK' => 'Carpeta :name creada correctamente.',
-    
-    'reviewCuepoint' => 'Revise proyecto, tiempo Interaccion excede duracion del video.',
->>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 ];

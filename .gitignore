@@ -1,12 +1,26 @@
-<<<<<<< HEAD
 /node_modules
 /public/hot
 /public/storage
+/public/storage/users/
+/public/uploads
+/public/css/filament
+/public/js/filament
+/storage
 /storage/*.key
+/bootstrap/cache
+/var/cache
+/var/cache_images
+/var/tmp
+/AppIOsSource
+/AppSource
+/pwapp
 .env
 .env*
+.env.*
+.env_*
 .env.backup
 .phpunit.result.cache
+.phpunit.cache/
 docker-compose.override.yml
 Homestead.json
 Homestead.yaml
@@ -15,44 +29,9 @@ yarn-error.log
 /public/avatars
 /public/media
 /public/testIframe.html
+/vendor
 /vendor/
-/vendor
 /public/images/
-
-# Logs / temp
-*.log
-.phpunit.result.cache
-.phpunit.cache/
-
-# Backups / archives
-/backup*.zip
-/new-version*.zip
-*.zip
-*.tar
-*.tar.gz
-*.tgz
-*.7z
-*.rar
-*.sql
-=======
-.env
-/vendor
-/node_modules
-/public/uploads
-/public/css/filament
-/public/js/filament
-
-/storage
-/bootstrap/cache
-/var/cache
-/var/cache_images
-/var/tmp
-/AppIOsSource
-/AppSource
-/pwapp
-/var/apps
-
-
 
 .DS_Store
 __MACOSX/
@@ -61,8 +40,6 @@ __MACOSX/
 
 # Logs / temp
 *.log
-.phpunit.result.cache
-.phpunit.cache/
 
 # Backups / archives
 /backup*.zip
@@ -74,18 +51,8 @@ __MACOSX/
 *.7z
 *.rar
 *.sql
-/public/storage/users/
 
-
-.env
-.env.*
-.env_*
 public/lib/ffmpeg-git-20211013-amd64-static/
 public/lib/geoip/*.mmdb
->>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
-
-/public/lib/ffmpeg-4.4-full_build_win/
-/public/lib/ffmpeg-git-20211013-amd64-static/
-
 /public/lib/ffmpeg-4.4-full_build_win/
 /public/lib/ffmpeg-git-20211013-amd64-static/

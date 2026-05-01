@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 
 namespace App\Http\Resources;
@@ -23,30 +22,4 @@ class ProjectResource extends JsonResource
             'status'     => $this->project_status_id,
         ];
     }
-=======
-<?php
-
-namespace App\Http\Resources;
-
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class ProjectResource extends JsonResource
-{
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
-    public function toArray($request){
-        
-        return [
-            'id'         => $this->id,
-            'name'       => $this->name,
-            'aspect'     => $this->aspect,
-            'created_at' => $this->creation_date,
-            'status'     => $this->project_status_id,
-        ];
-    }
->>>>>>> 0d6f5c2c18f02c9c7d0a3cb40a1c8218e42ba08f
 }
