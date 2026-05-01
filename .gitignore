@@ -86,3 +86,6 @@ public/lib/geoip/*.mmdb
 
 /public/lib/ffmpeg-4.4-full_build_win/
 /public/lib/ffmpeg-git-20211013-amd64-static/
+
+/public/lib/ffmpeg-4.4-full_build_win/
+/public/lib/ffmpeg-git-20211013-amd64-static/
