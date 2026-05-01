@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\CustomerProjects;
 use App\Models\Interaction;
-use App\Models\Project;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Support\Arr;
 
@@ -77,7 +79,12 @@ class InteractionController extends Controller
                 'interactiontype'    =>$request->interactiontype
                 ];
 
+        if (Schema::hasColumn('interaction', 'cuepointtag')) {
+            $info['cuepointtag'] = $request->cuepointtag;
+        }
+
         Interaction::create($info);
+        $this->syncInteractionTagToCustomer($request);
 
         if($request->interactiontype==1){// Interacción final
             Log::debug("InteractionController / Destruyendo la sesión...");
@@ -90,6 +97,44 @@ class InteractionController extends Controller
         $mensaje   = 'Interacción registrada correctamente';
         return response()->json(['success'=>'Y', 'message'=>$mensaje]);
 
+    }
+
+    protected function syncInteractionTagToCustomer(Request $request)
+    {
+        $tagName = trim((string) $request->cuepointtag);
+        if ($tagName === '' || !Schema::hasColumn('crm', 'tags')) {
+            return;
+        }
+
+        $customerId = CustomerProjects::where('projectId', intval($request->project))
+            ->where('sessionId', $request->_token)
+            ->orderBy('id', 'desc')
+            ->value('customerId');
+
+        if (!$customerId) {
+            return;
+        }
+
+        $customer = Customer::find($customerId);
+        if (!$customer) {
+            return;
+        }
+
+        $currentTags = collect(explode(',', (string) ($customer->tags ?? '')))
+            ->map(function ($tag) {
+                return trim((string) $tag);
+            })
+            ->filter(function ($tag) {
+                return $tag !== '';
+            })
+            ->values();
+
+        if (!$currentTags->contains($tagName)) {
+            $currentTags->push($tagName);
+        }
+
+        $customer->tags = $currentTags->implode(', ');
+        $customer->save();
     }
 
 }

@@ -46,7 +46,160 @@
 }
 
 .emailTable{
-    overflow-x: auto;
+    overflow: visible;
+
+    .crm-table-scroll{
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .dropdown{
+        position: relative;
+    }
+
+    .crm-column-dropdown-menu{
+        min-width: 18rem;
+        width: min(24rem, calc(100vw - 2rem));
+        max-height: min(65vh, 32rem);
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        white-space: normal;
+        z-index: 1200;
+        border-radius: 1rem;
+
+        label{
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"]{
+            flex: 0 0 auto;
+        }
+    }
+}
+
+.crm-settings-trigger{
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 28px rgba($cMain, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    i{
+        font-size: 22px !important;
+    }
+
+    &:hover,
+    &:focus{
+        color: $cWhite;
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba($cMain, 0.22);
+        outline: none;
+    }
+}
+
+.crm-custom-fields-dialog{
+    max-width: min(1100px, calc(100vw - 1.5rem));
+    margin: 1rem auto;
+}
+
+.crm-custom-fields-modal{
+    border: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    @include Shadow2;
+
+    .modal-header{
+        padding: 1.5rem 1.75rem 0.75rem;
+
+        .close{
+            margin: -0.25rem -0.25rem 0 auto;
+            opacity: 1;
+            color: $cMain;
+            text-shadow: none;
+            font-size: 2rem;
+
+            &:focus{
+                outline: none;
+            }
+        }
+    }
+
+    .modal-body{
+        padding: 0 1.75rem 1.75rem;
+        max-height: min(80vh, 46rem);
+        overflow-y: auto;
+    }
+}
+
+.crm-custom-fields-panel{
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0;
+}
+
+.crm-custom-fields-block,
+.crm-custom-fields-list{
+    padding: 0.25rem 0;
+}
+
+.crm-custom-fields-list{
+    border-top: solid $c03 0.5px;
+}
+
+.crm-custom-field-form,
+.crm-custom-field-delete-form{
+    margin: 0;
+}
+
+.crm-custom-field-item{
+    padding: 1.5rem 0;
+    border-top: solid $c03 0.5px;
+}
+
+.crm-custom-field-item-body{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @media screen and (min-width: 992px) {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+}
+
+.crm-custom-field-edit-form{
+    flex: 1 1 auto;
+}
+
+.crm-custom-field-actions{
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    @media screen and (min-width: 992px) {
+        justify-content: flex-end;
+        flex: 0 0 auto;
+        min-width: 132px;
+        padding-left: 1.25rem;
+    }
+}
+
+.crm-custom-field-action-btn{
+    border: none;
+    flex: 0 0 auto;
+}
+
+.crm-custom-fields-empty{
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
 }
 
 .tabla-correos{

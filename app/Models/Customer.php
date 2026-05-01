@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\CrmCustomFieldValue;
 
 class Customer extends Model
 {
@@ -35,6 +36,7 @@ class Customer extends Model
             'state',
             'cp',
             'country',
+            'tags',
             'projects',
             'interactions',
         ];
@@ -49,5 +51,9 @@ class Customer extends Model
         'updated_at' => 'datetime',
     ];
 
+    public function customFieldValues()
+    {
+        return $this->hasMany(CrmCustomFieldValue::class, 'customer_id');
+    }
 
 }

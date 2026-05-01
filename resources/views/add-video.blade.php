@@ -92,17 +92,17 @@
 							<li data-id="d-square"><div class="device2 <?php if($project->aspect=="d-square")echo "active" ?>"></div>{{__('add-video.square')}}</li>
 							<li data-id="d-mobile"><div class="device3 <?php if($project->aspect=="d-mobile")echo "active" ?>"></div>{{__('add-video.vertical')}}</li>
 						</ul>
-						<input id="aspect" type="hidden" name="aspect" value="d-main" >
+						<input id="aspect" type="hidden" name="aspect" value="{{ $project->aspect ?: 'd-main' }}" >
 						<input type="hidden" name="projectId" 	 id="projectId" value="{{$project->id}}">
-					</div>
+                    </div>
                     <div class="row justify-content-center blockAdd">
-                      <a class="playVideoEmbed" ><img src="images/SVG/Play.svg"></a>
-                      <a class="addVideoMain {{ $project->aspect }} p-0 m-0">
+                      <div class="addVideoMain {{ $project->aspect }} p-0 m-0">
+                        <a class="playVideoEmbed" ><img src="images/SVG/Play.svg"></a>
                         <div id="play" name="play" class="play w-100">
                           <i class="fas fa-play-circle"></i>
                           {{__('add-video.add_video')}}
                         </div>
-                      </a>
+                      </div>
                     </div>
 
                 </div>
@@ -148,6 +148,8 @@
         
         .playVideoEmbed{
             top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 

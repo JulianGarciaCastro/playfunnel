@@ -1,139 +1,83 @@
 <div id="fields-form-edit" class="d-none">
     <div class="form-edit-close"></div>
-    <div class="form-option-edit">
+    <div class="form-option-edit form-builder-edit form-builder-shell setup4">
         <a class="closeM cWhite" href="#">
             <i class="fas fa-times"></i>
         </a>
-        <ul class="p-0 m-0">
-            <li class="activePanel d-flex m-0 align-items-center justify-content-between">
-                <p class="m-0 p-0 mr-3 title">TITULO</p>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="title-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <hr class="my-2">
-            <li id="field-name" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-user m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0 " contenteditable>Name</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="name-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-name-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-name-required" name="form-name-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-email" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-envelope m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Email</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="email-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-email-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-email-required" name="form-email-required" checked>
-            </div>
-            <hr class="my-2">
-            <li id="field-tel" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-phone m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Teléfono</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="tel-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-tel-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-tel-required" name="form-tel-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-text" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-font m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Texto</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="text-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-text-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-text-required" name="form-text-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-textArea" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-commenting m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Comentario</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="textArea-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-textArea-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-textArea-required" name="form-textArea-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-birthday" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-birthday-cake m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Cumpleaños</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="birthday-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-birthday-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-birthday-required" name="form-birthday-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-cp" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-map-marker m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Código Postal</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="cp-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-cp-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-cp-required" name="form-cp-required">
-            </div>
-            <hr class="my-2">
-            <li id="field-terms" class="activePanel d-flex m-0 align-items-center justify-content-between mt-3">
-                <div class="d-flex justify-content-between aling-items-center">
-                    <i class="fa fa-check-square m-0 p-0 mr-3 mt-1" aria-hidden="true"></i>
-                    <p class="m-0 p-0" contenteditable>Aceptar Terminos y Condiciones</p>
-                </div>
-                <label class="switch m-0 p-0">
-                    <input type="checkbox" id="terms-form-edit" checked>
-                    <span class="slider round"></span>
-                </label>
-            </li>
-            <div class="required d-flex justify-content-between aling-items-center w-100 py-0">
-                <label for="form-terms-required" class="p-0 m-0">Requerido:</label>
-                <input type="checkbox" id="form-terms-required" name="form-terms-required">
+
+        <div class="form-builder-head cMain">
+            <p class="m-0 p-0 title cMain">Constructor del formulario</p>
+            <p class="m-0 p-0 subtitle cMain">Anade, reordena y configura cada campo.</p>
+        </div>
+
+        <div class="form-builder-general form-builder-section">
+            <div class="builder-setting fieldDes">
+                <label class="builder-setting-label cMain" for="form-title-text">Titulo</label>
+                <input type="text" id="form-title-text" class="text-left builder-general-input cMain" placeholder="Titulo del formulario">
             </div>
 
-        <ul>
+            <div class="builder-setting fieldDes">
+                <label class="builder-setting-label cMain" for="form-cta-text">Texto del boton</label>
+                <input type="text" id="form-cta-text" class="text-left builder-general-input cMain" placeholder="Enviar">
+            </div>
+
+            <div class="builder-setting builder-setting-inline activePanel">
+                <label class="builder-setting-label cMain" for="form-title-visible">Mostrar titulo</label>
+                <label class="switch m-0 p-0">
+                    <input type="checkbox" id="form-title-visible" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-builder-toolbar form-builder-section" id="form-builder-toolbar">
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="name">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+                <span class="form-builder-toolbar-text">Nombre</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="email">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+                <span class="form-builder-toolbar-text">Email</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="phone">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-phone-alt"></i></span>
+                <span class="form-builder-toolbar-text">Telefono</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="text">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-font"></i></span>
+                <span class="form-builder-toolbar-text">Texto</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="textarea">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-comment-alt"></i></span>
+                <span class="form-builder-toolbar-text">Comentario</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="date">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-calendar-alt"></i></span>
+                <span class="form-builder-toolbar-text">Fecha</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="postalcode">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-map-marker-alt"></i></span>
+                <span class="form-builder-toolbar-text">Codigo postal</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="radio">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="far fa-dot-circle"></i></span>
+                <span class="form-builder-toolbar-text">Radio</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="checkbox">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="far fa-check-square"></i></span>
+                <span class="form-builder-toolbar-text">Checkbox</span>
+            </button>
+            <button type="button" class="builder-add-btn form-builder-toolbar-btn bg-05 cMain" data-add-field="terms">
+                <span class="form-builder-toolbar-icon" aria-hidden="true"><i class="fas fa-file-signature"></i></span>
+                <span class="form-builder-toolbar-text">Terminos</span>
+            </button>
+        </div>
+
+        <div class="form-builder-body form-builder-section widgets">
+            <p id="form-builder-empty" class="builder-empty m-0 d-none">
+                No hay campos todavia. Usa los botones de arriba para empezar.
+            </p>
+            <div id="form-field-list" class="form-builder-list"></div>
+        </div>
     </div>
 </div>
-

@@ -200,8 +200,17 @@ class ProjectController extends Controller
         $project = Project::where('user_id', Auth::id())
         ->where('id', $projectid)
         ->first();
-        $project->aspect = $request->input('aspect');
-        $project->save();
+
+        if(!$project){
+            return response()->json(['success'=>'N', 'message'=> 'No tiene permisos para actualizar el proyecto']);
+        }
+
+        $aspect = $request->input('aspect');
+        $validAspects = ['d-main', 'd-square', 'd-mobile'];
+        if(in_array($aspect, $validAspects, true)){
+            $project->aspect = $aspect;
+            $project->save();
+        }
 
         foreach($projectlibs as $projectlib) {
             Log::debug('updateProjectLib() tiene el update: ' . $projectlib->action);
@@ -372,6 +381,7 @@ class ProjectController extends Controller
                         $cpBrowse->type    = $dataCuepoint->type_browse->type;
                         $cpBrowse->goto    = isset($dataCuepoint->type_browse->goto) ? $dataCuepoint->type_browse->goto : null;
                         $cpBrowse->options = isset($dataCuepoint->type_browse->options) ? $dataCuepoint->type_browse->options : null;
+                        $cpBrowse->tag     = isset($dataCuepoint->type_browse->tag) ? $dataCuepoint->type_browse->tag : $cpBrowse->tag;
                         $cpBrowse->save();
 
                         $mensaje = 'Actualizado correctamente';
@@ -411,6 +421,9 @@ class ProjectController extends Controller
                                 $cpOptionData->goto     = $dataOpcion->goto;
                                 $cpOptionData->options  = $dataOpcion->options;
                                 $cpOptionData->content  = $dataOpcion->content;
+                                if(property_exists($dataOpcion, 'tag')){
+                                    $cpOptionData->tag = $dataOpcion->tag;
+                                }
                                 //$cpOptionData->library_img = $dataOpcion->library_img;
                                 
                                 if(isset($dataOpcion->library_img)){
@@ -433,6 +446,7 @@ class ProjectController extends Controller
                                 $cpNewOptionData->goto              = $dataOpcion->goto;
                                 $cpNewOptionData->options           = $dataOpcion->options;
                                 $cpNewOptionData->content           = $dataOpcion->content;
+                                $cpNewOptionData->tag               = property_exists($dataOpcion, 'tag') ? $dataOpcion->tag : null;
                                 //$cpNewOptionData->library_img       = $dataOpcion->library_img;
 
                                 if(isset($dataOpcion->library_img)){

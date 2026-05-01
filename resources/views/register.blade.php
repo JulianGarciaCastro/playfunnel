@@ -1,3 +1,7 @@
+@php
+    $recaptchaSiteKey = config('services.recaptcha_v3.siteKey');
+    $recaptchaEnabled = !app()->environment(['local', 'development', 'testing']) && filled($recaptchaSiteKey);
+@endphp
 <!DOCTYPE html>
 <html lang="es">
 
@@ -12,7 +16,9 @@
     <link rel="stylesheet" href="css/Style.css">
     <title>{{ __('register.title') }}</title>
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <script src="https://www.google.com/recaptcha/api.js"></script>    
+    @if ($recaptchaEnabled)
+        <script src="https://www.google.com/recaptcha/api.js"></script>
+    @endif
 </head>
 
 <body class="bg-light logIn">
@@ -50,10 +56,14 @@
                                 placeholder="{{ __('register.confirm_password') }}"> </div> <small id="passwordConfirmationHelp"
                                 class="d-none form-text text-muted">{{ __('register.passwords_doesnt_mach') }}</small>
                     </div> 
-                    <button type="submit" class="g-recaptcha btn btn-cMain my-1 col-12"
-                        data-sitekey={{ config('services.recaptcha_v3.siteKey') }} data-callback='onSubmit'
-                        data-action='submit'>{{ __('register.register') }} 
-                    </button>  
+                    @if ($recaptchaEnabled)
+                        <button type="submit" class="g-recaptcha btn btn-cMain my-1 col-12"
+                            data-sitekey="{{ $recaptchaSiteKey }}" data-callback="onSubmit"
+                            data-action="submit">{{ __('register.register') }}
+                        </button>
+                    @else
+                        <button type="submit" class="btn btn-cMain my-1 col-12">{{ __('register.register') }}</button>
+                    @endif
                     <div class="text-center pb-2 col-12 mt-4">
                       <span class="text-c01">
                         {{ __('register.back_to_login') }} <a class="c01" href="/">{{ __('register.back_to_login_link') }}</a>
@@ -134,7 +144,8 @@
             return false;
         }
 
-        if (!$("#termsConditions").is(':checked')) {
+        var termsConditions = $("#termsConditions");
+        if (termsConditions.length && !termsConditions.is(':checked')) {
             e.preventDefault();
             alert("{{ __('register.accept_terms') }}");
             return false;

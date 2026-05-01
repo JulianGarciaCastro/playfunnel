@@ -41,4 +41,8 @@ return [
     'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'maxmind' => [
+        'geoip_db_path' => env('GEOIP_DB_PATH', storage_path('app/geoip/GeoLite2-City.mmdb')),
+    ],
+
 ];

@@ -25,7 +25,13 @@ return [
     'zip' => 'Código postal',
 
     'country' => 'País',
+    'tags' => 'Etiquetas',
     'interactions_hist' => 'Histórico de interacciones',
+    'view_interactions' => 'Ver interacciones',
+    'edit' => 'Editar',
+    'delete' => 'Eliminar',
+    'confirm_delete' => '¿Deseas eliminar este registro del CRM?',
+    'delete_error' => 'No se pudo eliminar el registro.',
     'select_months_to_keep' => 'Seleccione cuantos meses quiere que se guarden los registros de interacciones',
     'select' => 'Seleccionar',
     'cancel' => 'Cancelar',

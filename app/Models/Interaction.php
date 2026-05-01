@@ -41,7 +41,8 @@ class Interaction extends Model
         'cuepointid',
         'cuepointname',
         'cuepointoptionid',
-        'cuepointoptionname'
+        'cuepointoptionname',
+        'cuepointtag'
     ];
 
 

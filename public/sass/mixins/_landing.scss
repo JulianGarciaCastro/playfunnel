@@ -227,6 +227,8 @@ a {
     min-width: 100vw;
     h1{
         justify-content: center;
+        display: flex;
+        flex-direction: column;
     }
     #titulo_dos{
         justify-content: center;
@@ -270,11 +272,21 @@ a {
 .logoImg {
     background: none;
     width: 100%;
-    max-width: 100%;
-    min-height: fit-content;
+    max-width: 100%;    
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 0px;
 }
+/* Estilos alternativos para todos los demás (no iOS) */
+/* Hack para excluir iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  @media not all and (min-resolution: 0.001dpcm) {
+     .logoImg {    
+        min-height: fit-content;   
+    }
+  }
+}
+   
+
 
 .On {
     display: flex !important;
@@ -367,7 +379,7 @@ a {
             width: 40% !important;
         }
         @include portrait_all(){
-            width: 80% !important;      
+            width: 90% !important;      
         } 
     }
 }

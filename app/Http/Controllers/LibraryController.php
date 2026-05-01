@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Library;
+use App\Models\Project;
 use Carbon\Carbon;
 
 class LibraryController extends Controller{
@@ -138,15 +141,28 @@ class LibraryController extends Controller{
                     return response()->json(['success'=>'N', 'error'=>$arrErrors]);
                 }
             }
+            else if (Str::startsWith($mediaType, 'image')) {
+                $folderThumbNail = $folderPath . '/thumbnails';
+                $thumbNailName   = pathinfo($mediaName, PATHINFO_FILENAME) . '.jpg';
+                $thumbnailURL    = $folderThumbNail . '/' . $thumbNailName;
+
+                if(!Storage::exists($folderThumbNail)){
+                    Storage::makeDirectory($folderThumbNail);
+                }
+
+                if ($this->canBuildImageThumbnail($mediaType)) {
+                    if ($this->generateImageThumbnail($fileURL, $thumbnailURL)) {
+                        $library->thumbnail = $thumbnailURL;
+                    } else {
+                        Log::warning('LibraryController.addMedia() Unable to generate image thumbnail for: ' . $fileURL);
+                    }
+                }
+            }
 
             $library->save();
 
-            if (Str::startsWith($mediaType, 'video')){
-                return response()->json(['success'=>'Y', 'file'=>$thumbnailURL, 'id'=> $library->id, "type"=>$mediaType, "media"=>$fileURL ]);
-            }
-            else{
-                return response()->json(['success'=>'Y', 'file'=>$fileURL, 'id'=> $library->id, "type"=>$mediaType, "media"=>"$fileURL" ]);
-            }
+            $previewFile = !empty($library->thumbnail) ? $library->thumbnail : $fileURL;
+            return response()->json(['success'=>'Y', 'file'=>$previewFile, 'id'=> $library->id, "type"=>$mediaType, "media"=>$fileURL ]);
         }
 
         $arrErrors = array();
@@ -208,7 +224,7 @@ class LibraryController extends Controller{
                 return response()->json(['success'=>'N', 'message'=> __('add-video.cantDeleteFileLanding', ['name' => $project[0]->name])]);
             }
             
-            $project = $library->projectOption;
+            $project = $this->findProjectsUsingLibraryInOptions($library);
             Log::debug('LibraryController.delMedia() Count of projects where library is in Option: ' . count($project));
             
             if(count($project) > 0){
@@ -251,14 +267,21 @@ class LibraryController extends Controller{
             $thumbnail = $lib->thumbnail;
             $originalFile = $lib->url;
 
-            if(!empty($thumbnail)){
-                $myLib = array("url" => $thumbnail, "id"=>$lib->id, "type"=>"VIDEO", "media"=>$originalFile);
-            }
-            else{
-                $myLib = array("url" => $lib->url,  "id"=>$lib->id, "type"=>"IMAGE", "media"=>$lib->url);
+            if ($lib->type === 'FOLDER') {
+                continue;
             }
 
-            array_push($libMedia, $myLib);
+            $previewFile = !empty($thumbnail) ? $thumbnail : $originalFile;
+            if (Str::startsWith($lib->type, 'video') || strtoupper($lib->type) === 'VIDEO') {
+                $myLib = array("url" => $previewFile, "id"=>$lib->id, "type"=>"VIDEO", "media"=>$originalFile);
+                array_push($libMedia, $myLib);
+                continue;
+            }
+
+            if (Str::startsWith($lib->type, 'image') || strtoupper($lib->type) === 'IMAGE') {
+                $myLib = array("url" => $previewFile,  "id"=>$lib->id, "type"=>"IMAGE", "media"=>$originalFile);
+                array_push($libMedia, $myLib);
+            }
         }
         
         $directories = Storage::directories('media' . '/' . Auth::id() );
@@ -268,7 +291,7 @@ class LibraryController extends Controller{
         
         foreach($filteredDirectories as $dir){
             $myLib = array("name" => basename($dir), "type"=>"FOLDER");
-            Log::debug('loadMedia() Añadiendo Folder: ' . $myLib);
+            Log::debug('loadMedia() AÃ±adiendo Folder: ' . $myLib);
             array_push($libMedia, $myLib);
         }
 
@@ -412,9 +435,145 @@ class LibraryController extends Controller{
             $filedir = dirname($item->url);
             Log::debug('LibraryController.openFolder() Lib: ID: ' . $item->id . ' - Type: ' . $item->type . ' - URL: ' . $item->url . ' - filedir: ' . $filedir);
             
-            return $filedir != $mainFolder || $item->id == $folderID; // Define la condición para eliminar
+            return $filedir != $mainFolder || $item->id == $folderID; // Define la condiciÃ³n para eliminar
         });
         
         return response()->json(['success'=>'Y', 'folders' => $filteredCollection]);
+    }
+
+    private function canBuildImageThumbnail(string $mediaType): bool
+    {
+        $normalizedType = strtolower($mediaType);
+        return strpos($normalizedType, 'svg') === false;
+    }
+
+    private function findProjectsUsingLibraryInOptions(Library $library)
+    {
+        if (!Schema::hasTable('type_option_data')) {
+            return collect();
+        }
+
+        $projectIds = collect();
+
+        if (Schema::hasColumn('type_option_data', 'library_img')) {
+            $idsByLibraryImg = DB::table('type_option_data')
+                ->where('library_img', $library->id)
+                ->pluck('projectid');
+            $projectIds = $projectIds->merge($idsByLibraryImg);
+        }
+
+        if (Schema::hasColumn('type_option_data', 'image_url')) {
+            $idsByImageUrl = DB::table('type_option_data')
+                ->where('image_url', $library->url)
+                ->pluck('projectid');
+            $projectIds = $projectIds->merge($idsByImageUrl);
+        }
+
+        if (Schema::hasColumn('type_option_data', 'content')) {
+            $idsByContent = DB::table('type_option_data')
+                ->where('content', 'like', '%' . $library->url . '%')
+                ->pluck('projectid');
+            $projectIds = $projectIds->merge($idsByContent);
+        }
+
+        $projectIds = $projectIds
+            ->filter(function ($id) {
+                return !empty($id);
+            })
+            ->unique()
+            ->values();
+
+        if ($projectIds->isEmpty()) {
+            return collect();
+        }
+
+        return Project::whereIn('id', $projectIds)->get();
+    }
+
+    private function generateImageThumbnail(string $sourcePath, string $thumbnailPath, int $maxWidth = 1600, int $jpegQuality = 82): bool
+    {
+        if (!function_exists('gd_info')) {
+            return false;
+        }
+
+        $sourceAbsolutePath = Storage::path($sourcePath);
+        if (!file_exists($sourceAbsolutePath)) {
+            return false;
+        }
+
+        $imageInfo = @getimagesize($sourceAbsolutePath);
+        if (!$imageInfo || empty($imageInfo[2])) {
+            return false;
+        }
+
+        $sourceWidth = (int) $imageInfo[0];
+        $sourceHeight = (int) $imageInfo[1];
+        $sourceType = (int) $imageInfo[2];
+        if ($sourceWidth <= 0 || $sourceHeight <= 0) {
+            return false;
+        }
+
+        switch ($sourceType) {
+            case IMAGETYPE_JPEG:
+                $sourceImage = @imagecreatefromjpeg($sourceAbsolutePath);
+                break;
+            case IMAGETYPE_PNG:
+                $sourceImage = @imagecreatefrompng($sourceAbsolutePath);
+                break;
+            case IMAGETYPE_GIF:
+                $sourceImage = @imagecreatefromgif($sourceAbsolutePath);
+                break;
+            case IMAGETYPE_WEBP:
+                if (!function_exists('imagecreatefromwebp')) {
+                    return false;
+                }
+                $sourceImage = @imagecreatefromwebp($sourceAbsolutePath);
+                break;
+            default:
+                return false;
+        }
+
+        if (!$sourceImage) {
+            return false;
+        }
+
+        $scale = min(1, $maxWidth / $sourceWidth);
+        $targetWidth = max(1, (int) round($sourceWidth * $scale));
+        $targetHeight = max(1, (int) round($sourceHeight * $scale));
+
+        $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
+        if (!$targetImage) {
+            imagedestroy($sourceImage);
+            return false;
+        }
+
+        $backgroundColor = imagecolorallocate($targetImage, 255, 255, 255);
+        imagefill($targetImage, 0, 0, $backgroundColor);
+
+        imagecopyresampled(
+            $targetImage,
+            $sourceImage,
+            0,
+            0,
+            0,
+            0,
+            $targetWidth,
+            $targetHeight,
+            $sourceWidth,
+            $sourceHeight
+        );
+
+        $thumbnailDirectory = dirname($thumbnailPath);
+        if(!Storage::exists($thumbnailDirectory)){
+            Storage::makeDirectory($thumbnailDirectory);
+        }
+
+        $thumbnailAbsolutePath = Storage::path($thumbnailPath);
+        $isSaved = imagejpeg($targetImage, $thumbnailAbsolutePath, $jpegQuality);
+
+        imagedestroy($targetImage);
+        imagedestroy($sourceImage);
+
+        return (bool) $isSaved;
     }
 }

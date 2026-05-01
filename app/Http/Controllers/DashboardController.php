@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 
-use Illuminate\Support\Arr;
+use MaxMind\Db\Reader;
 
 use App\Http\Controllers\Mobile_Detect;
 use App\Models\CuePoint;
@@ -70,11 +70,10 @@ class DashboardController extends Controller
             $projects = Project::where('user_id', Auth::id())->get();
 
             $prject_ids = array();
-            if( !$selectedProjectID && $selectedProjectID == "--" ){
-                //Log::debug("Paso 1: selectedProjectID vacío");
+            if ($selectedProjectID && $selectedProjectID != "--") {
                 $prject_ids[] = $selectedProjectID;
-            }else{
-                foreach($projects as $project){
+            } else {
+                foreach ($projects as $project) {
                     $prject_ids[] = $project->id;
                 }
             }
@@ -135,6 +134,7 @@ class DashboardController extends Controller
                 DB::raw('case when MAX(interactiontype)=0 then \'Interacción\' when  MAX(interactiontype)=1 then \'Completa\' else \'Otra\' end as actividad'),
                 DB::raw('MIN(created_at) AS created_at'),
                 DB::raw('MAX(loc_country_code) AS loc_country_code'),
+                DB::raw('MAX(loc_city) AS loc_city')
                 )
             ->whereIn('projectid', $prject_ids )
             ->groupBy('sessionid')
@@ -552,6 +552,12 @@ class DashboardController extends Controller
             foreach($data  as $key =>  $row){
                 Log::debug('-------------------  ROW  --------------------------------------');
                 Log::debug($row);
+                $countryCode = strtolower(trim((string) $row->loc_country_code));
+                $countryCode = preg_replace('/[^a-z]/', '', $countryCode);
+                $flagHtml = $countryCode !== ''
+                    ? '<img src="https://flagicons.lipis.dev/flags/4x3/'.$countryCode.'.svg" width="20px" alt="'.strtoupper($countryCode).'" loading="lazy">'
+                    : '<span class="text-muted">--</span>';
+
                 $table_html_content .= '
                 <tr>
                     <td class="Ttd">'.($key+1).'</td>                   
@@ -559,7 +565,7 @@ class DashboardController extends Controller
                     <td class="Ttd">'.$row->actividad.'</td>
                     <td class="Ttd">'.$row->created_at.'</td>
                     <td class="Ttd">'.$row->loc_city.'</td>
-                    <td class="Ttd"><img src="https://flagicons.lipis.dev/flags/4x3/'.strtolower($row->loc_country_code).'.svg" width="20px"></td>                    
+                    <td class="Ttd" data-flag="'.$countryCode.'">'.$flagHtml.'</td>                    
                     <td class="Ttd">...</td>
                 </tr>
                 ';
@@ -591,14 +597,56 @@ class DashboardController extends Controller
         return $ip;
     }
 
+    public static function normalizeFlagCode($rawCode)
+    {
+        if ($rawCode === null) {
+            return '';
+        }
+
+        $code = strtolower(trim((string) $rawCode));
+        if ($code === '' || $code === 'nulo') {
+            return '';
+        }
+
+        if (strpos($code, '-') !== false) {
+            $code = explode('-', $code)[0];
+        }
+
+        if ($code === 'uk') {
+            $code = 'gb';
+        }
+
+        if (strlen($code) === 3) {
+            $code = substr($code, 0, 2);
+        }
+
+        return preg_match('/^[a-z]{2}$/', $code) ? $code : '';
+    }
+
+    public static function countryCodeToEmoji($countryCode)
+    {
+        $normalized = self::normalizeFlagCode($countryCode);
+        if ($normalized === '' || strlen($normalized) !== 2) {
+            return '';
+        }
+
+        $upper = strtoupper($normalized);
+        $codePointA = 127397 + ord($upper[0]);
+        $codePointB = 127397 + ord($upper[1]);
+        $entities = '&#' . $codePointA . ';&#' . $codePointB . ';';
+
+        return html_entity_decode($entities, ENT_NOQUOTES, 'UTF-8');
+    }
+
     public static function get_ip_info($ip = NULL, $purpose = "location", $deep_detect = TRUE) {
-        $output = NULL;
-        $output['city']           = "";
-        $output['state']          = "";
-        $output['country']        = "";
-        $output['country_code']   = "";
-        $output['continent']      = "";
-        $output['continent_code'] = "";
+        $emptyLocation = array(
+            "city"           => "",
+            "state"          => "",
+            "country"        => "",
+            "country_code"   => "",
+            "continent"      => "",
+            "continent_code" => ""
+        );
 
         if (filter_var($ip, FILTER_VALIDATE_IP) === FALSE) {
             $ip = $_SERVER["REMOTE_ADDR"];
@@ -611,56 +659,71 @@ class DashboardController extends Controller
         }
         $purpose    = str_replace(array("name", "\n", "\t", " ", "-", "_"), NULL, strtolower(trim($purpose)));
         $support    = array("country", "countrycode", "state", "region", "city", "location", "address");
-        $continents = array(
-            "AF" => "Africa",
-            "AN" => "Antarctica",
-            "AS" => "Asia",
-            "EU" => "Europe",
-            "OC" => "Australia (Oceania)",
-            "NA" => "North America",
-            "SA" => "South America"
-        );
-        if (filter_var($ip, FILTER_VALIDATE_IP) && in_array($purpose, $support)) {
-            $ipdat = @json_decode(file_get_contents("http://www.geoplugin.net/json.gp?ip=" . $ip));
-            if (@strlen(trim($ipdat->geoplugin_countryCode)) == 2) {
-                switch ($purpose) {
-                    case "location":
-                        $output = array(
-                            "city"           => @$ipdat->geoplugin_city,
-                            "state"          => @$ipdat->geoplugin_regionName,
-                            "country"        => @$ipdat->geoplugin_countryName,
-                            "country_code"   => @$ipdat->geoplugin_countryCode,
-                            "continent"      => @$continents[strtoupper($ipdat->geoplugin_continentCode)],
-                            "continent_code" => @$ipdat->geoplugin_continentCode
-                        );
-                        break;
-                    case "address":
-                        $address = array($ipdat->geoplugin_countryName);
-                        if (@strlen($ipdat->geoplugin_regionName) >= 1)
-                            $address[] = $ipdat->geoplugin_regionName;
-                        if (@strlen($ipdat->geoplugin_city) >= 1)
-                            $address[] = $ipdat->geoplugin_city;
-                        $output = implode(", ", array_reverse($address));
-                        break;
-                    case "city":
-                        $output = @$ipdat->geoplugin_city;
-                        break;
-                    case "state":
-                        $output = @$ipdat->geoplugin_regionName;
-                        break;
-                    case "region":
-                        $output = @$ipdat->geoplugin_regionName;
-                        break;
-                    case "country":
-                        $output = @$ipdat->geoplugin_countryName;
-                        break;
-                    case "countrycode":
-                        $output = @$ipdat->geoplugin_countryCode;
-                        break;
-                }
+
+        if (!(filter_var($ip, FILTER_VALIDATE_IP) && in_array($purpose, $support))) {
+            return ($purpose === "location") ? $emptyLocation : "";
+        }
+
+        $dbPath = trim((string) config('services.maxmind.geoip_db_path'));
+        if ($dbPath === "" || !is_file($dbPath)) {
+            Log::warning('Base de datos GeoLite2-City.mmdb no encontrada', ['path' => $dbPath]);
+            return ($purpose === "location") ? $emptyLocation : "";
+        }
+
+        $location = $emptyLocation;
+        $reader = null;
+
+        try {
+            $reader = new Reader($dbPath);
+            $record = $reader->get($ip);
+            if (!is_array($record)) {
+                return ($purpose === "location") ? $emptyLocation : "";
+            }
+
+            $state = "";
+            if (isset($record['subdivisions'][0]['names']['en'])) {
+                $state = trim((string) $record['subdivisions'][0]['names']['en']);
+            }
+
+            $location = array(
+                "city"           => trim((string) ($record['city']['names']['en'] ?? "")),
+                "state"          => $state,
+                "country"        => trim((string) ($record['country']['names']['en'] ?? "")),
+                "country_code"   => strtoupper(trim((string) ($record['country']['iso_code'] ?? ""))),
+                "continent"      => trim((string) ($record['continent']['names']['en'] ?? "")),
+                "continent_code" => strtoupper(trim((string) ($record['continent']['code'] ?? "")))
+            );
+        } catch (\Throwable $e) {
+            Log::warning('MaxMind excepción', ['message' => $e->getMessage(), 'ip' => $ip, 'path' => $dbPath]);
+            return ($purpose === "location") ? $emptyLocation : "";
+        } finally {
+            if ($reader instanceof Reader) {
+                $reader->close();
             }
         }
-        return $output;
+
+        switch ($purpose) {
+            case "location":
+                return $location;
+            case "address":
+                $address = array($location["country"]);
+                if (strlen($location["state"]) >= 1)
+                    $address[] = $location["state"];
+                if (strlen($location["city"]) >= 1)
+                    $address[] = $location["city"];
+                return implode(", ", array_reverse(array_filter($address)));
+            case "city":
+                return $location["city"];
+            case "state":
+            case "region":
+                return $location["state"];
+            case "country":
+                return $location["country"];
+            case "countrycode":
+                return $location["country_code"];
+        }
+
+        return $location;
     }
 
     public static function saveSessionData(Request $request){

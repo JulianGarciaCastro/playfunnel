@@ -25,6 +25,12 @@ return [
     'zip' => 'Zip',
 
     'country' => 'Country',
+    'tags' => 'Tags',
+    'view_interactions' => 'View interactions',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'confirm_delete' => 'Do you want to delete this CRM record?',
+    'delete_error' => 'The record could not be deleted.',
 
     'select' => 'Select',
     'cancel' => 'Cancel',
@@ -36,3 +42,4 @@ return [
 
 
 ];
+

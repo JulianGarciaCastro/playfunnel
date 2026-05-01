@@ -54,6 +54,13 @@ return [
             'days' => 14,
         ],
 
+        'impersonation' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/impersonation.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'days' => 30,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

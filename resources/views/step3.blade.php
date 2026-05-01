@@ -11,9 +11,18 @@
         <title>{{__('step3.title')}}</title>
         <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
         <script src="https://kit.fontawesome.com/0190c3506a.js" crossorigin="anonymous"></script>
+        <style>
+            .step3-page .modal {
+                z-index: 2500;
+            }
+
+            .step3-page .modal-backdrop {
+                z-index: 2400;
+            }
+        </style>
     </head>
-	<body class="bg-white">
-	
+	<body class="bg-white step3-page">
+
     	@include('nav_bar_project')
 
         <!-------------------------------------MAIN------------------------------------------>
@@ -37,7 +46,7 @@
                         @endforeach
                 	</ul>
             	</div>
-                
+
                 <!---------------------------------------------------------Main-->
                 <div class="mainContainer col row p-0 m-0">
                     <div class="main col m-4 p-0">
@@ -55,6 +64,9 @@
                    <div class="row justify-content-center m-0 blockAdd desktop">
                      <div class="addVideoMain {{ $project->aspect }} p-0 m-0">
                        <div class="widgetContainer d-none" id="widgetContainer">
+                        <div class="option-widget-title d-none" id="optionWidgetTitleBox">
+                          <p id="optionWidgetTitlePreview" contenteditable="true" onblur="onOptionWidgetTitlePreviewBlur()"></p>
+                        </div>
                         <ul id="AB" class="ui-sortable d-none ActionBox optionsRows rows-3">
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="1"  draggable="true" uuid="{{uniqid()}}">
 
@@ -68,6 +80,9 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="2"  draggable="true" uuid="{{uniqid()}}">
 
@@ -81,6 +96,9 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="3"  draggable="true" uuid="{{uniqid()}}">
 
@@ -94,6 +112,9 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="4"  draggable="true" uuid="{{uniqid()}}">
 
@@ -107,6 +128,9 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="5"  draggable="true" uuid="{{uniqid()}}">
 
@@ -120,6 +144,9 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                           <li class="enable Option s-50 aCenter ui-state-default ui-sortable-handle" data-id="6"  draggable="true" uuid="{{uniqid()}}">
 
@@ -133,13 +160,16 @@
                                 </p>
                               </div>
                             </div>
+                            <span class="option-item-icon d-none" data-icon-class="">
+                              <i class="far fa-circle"></i>
+                            </span>
                           </li>
                         </ul>
                        </div>
 					   <div class="widgetContainer d-none" id="widgetContainerForm">
 						<button class="fileds-form" id="fields-form"><i class="fa fa-server"></i></button>
 						<button class="colors-form" id="colors-form"><i class="fas fa-pencil-alt"></i></button>
-						<form id="AF" class="ActionBox ui-sortable d-none">
+						<form id="AF" class="ActionBox ui-sortable d-none" style="padding:0;">
 							<div class="itemForm" id="form-title">
 								<h3 contenteditable >Title</h3>
 							</div>
@@ -195,7 +225,7 @@
                       <!--<li class="m-0 mx-3 p-2 table" data-id="table"><i class="fas fa-tablet-alt c05"></i></li>-->
                       <li class="m-0 ml-3 p-2 mobile" data-id="mobile"><i class="fas fa-mobile-alt c05"></i></li>
                     </ul>
-                    <button onclick="window.location.href='preview?project={{ $project->id }}';" class="btn-square bg-01 cWhite px-3 ml-3">{{__('step3.preview')}} <i class="far fa-eye ml-2 py-0"></i></button>
+                    <button onclick="window.location.href='preview?project={{ $project->id }}&from=actions';" class="btn-square bg-01 cWhite px-3 ml-3">{{__('step3.preview')}} <i class="far fa-eye ml-2 py-0"></i></button>
                </div>
             </div>
                 <!---------------------------------------------------Right Menu-->
@@ -255,6 +285,14 @@
                         <div class="Optwidget tab-content col-12 p-0 m-0" id="pills-tabContent">
                           <div class="W-Nav tab-pane fade show active" id="pills-nav" role="tabpanel" aria-labelledby="pills-nav-tab">
                             <h6 class="h6 mt-4">{{__('step3.widget_options')}}</h6>
+                            <div class="form-group row col-12 px-0 m-0 my-2">
+                              <label for="browseTag" class="col col-form-label p-0">Etiqueta CRM:</label>
+                              <div class="col-sm-8 p-0">
+                                <select class="form-control" id="browseTag" onchange="setBrowseTag()">
+                                  <option value="">Sin etiqueta</option>
+                                </select>
+                              </div>
+                            </div>
                             <ul class="col-12 justify-content-between p-0 m-0 nav nav-pills bg-Main px-3 py-2" id="pills-tab-1" role="tablist">
                               <li class="nav-item py-2" role="presentation">
                                 <a class="nav-link p-0 py-2 px-2 bg-06 active" id="subtypeNone" name="cpBrowseSubType" value="NONE" data-toggle="pill" href="#nav-none" role="tab" aria-selected="true" onclick="selectBrowseNone()">
@@ -366,6 +404,101 @@
                                   </select>
                               </li>
                             </ul>
+                             <hr class="my-2">
+                            <div class="form-group row col-12 px-0 m-0 my-2">
+                              <label for="widgetOptionTitle" class="col col-form-label p-0">Título:</label>
+                              <div class="col-sm-8 p-0">
+                                <input type="text" class="form-control" id="widgetOptionTitle" maxlength="120" placeholder="Título del bloque" oninput="setOptionWidgetTitle()">
+                              </div>
+                            </div>
+                            <div class="d-flex color align-items-center justify-content-between">
+                              <div class="d-flex align-items-center justify-content-between">
+                                <p class="m-0 p-0">Tamaño título</p>
+                              </div>
+                              <div class="d-flex align-items-center justify-content-end">
+                                <i class="fas fa-text-height"></i>
+                                <input class="ml-1" id="widgetOptionTitleSize" type="number" min="14" max="120" step="1" value="42" oninput="setOptionWidgetTitleSize()">
+                              </div>
+                            </div>
+                            <div class="d-flex color align-items-center justify-content-between mt-2" id="widgetOptionTitleWeightRow">
+                              <div class="d-flex align-items-center justify-content-between">
+                                <p class="m-0 p-0">Peso título</p>
+                              </div>
+                              <div class="d-flex align-items-center justify-content-end" id="widgetOptionTitleWeightButtons">
+                                <button type="button" class="title-weight-btn" data-weight="700" onclick="setOptionWidgetTitleWeight('700')">B</button>
+                                <button type="button" class="title-weight-btn" data-weight="400" onclick="setOptionWidgetTitleWeight('400')">N</button>
+                                <button type="button" class="title-weight-btn" data-weight="300" onclick="setOptionWidgetTitleWeight('300')">L</button>
+                              </div>
+                            </div>
+                            <div class="form-group row col-12 px-0 m-0 my-2">
+                              <label for="widgetOptionFontFamily" class="col col-form-label p-0">Fuente:</label>
+                              <div class="col-sm-8 p-0">
+                                <select class="custom-select py-0 c02" id="widgetOptionFontFamily" onchange="setOptionWidgetFontFamily()"></select>
+                              </div>
+                            </div>
+
+                            <div class="mt-2" id="globalOptionStyleInline">
+                              <p class="m-0 p-0">Estilo general de opciones</p>
+                              <div class="activePanel d-flex p-0 m-0 mt-2 align-items-center justify-content-between">
+                                <p class="m-0 p-0 mr-3">Imagen</p>
+                                <label class="switch m-0 p-0">
+                                  <input type="checkbox" id="globalOptionImageEnabled" checked>
+                                  <span class="slider round"></span>
+                                </label>
+                              </div>
+                              <hr class="my-2">
+                              <div class="aline d-flex aling m-0 p-0 justify-content-between align-items-center">
+                                <p class="m-0 p-0">Alineación</p>
+                                <ul class="d-flex justify-content-between m-0 p-0" id="globalOptionAlign">
+                                  <li class="mx-2" data-id="aStart"><img src="images/SVG/aStart.svg"></li>
+                                  <li class="mx-2 active" data-id="aCenter"><img src="images/SVG/aCenter.svg"></li>
+                                  <li class="mx-2" data-id="aEnd"><img src="images/SVG/aEnd.svg"></li>
+                                </ul>
+                              </div>
+                              <hr class="my-2">
+                              <div class="d-flex sizes m-0 p-0 justify-content-between align-items-center">
+                                <p class="m-0 p-0">Tamaño</p>
+                                <input class="slider-alpha" id="globalOptionSizeRange" type="range" min="10" max="100" step="5" value="50">
+                              </div>
+                              <hr class="my-2">
+                              <div class="d-flex color align-items-center justify-content-between">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <p class="m-0 p-0">Fondo</p>
+                                  <input class="mx-2" type="color" id="globalOptionBgColor" name="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#e8eff7">
+                                  <input type="text" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#e8eff7" id="globalOptionBgHex">
+                                </div>
+                              </div>
+                              <hr class="my-2">
+                              <div class="d-flex color align-items-center justify-content-between">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <p class="m-0 p-0">Borde</p>
+                                  <input class="mx-2" type="color" id="globalOptionBorderColor" name="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#212529">
+                                  <input type="text" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#212529" id="globalOptionBorderHex">
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <img class="ml-3" src="images/SVG/border.svg">
+                                  <input class="ml-2" id="globalOptionBorderWidth" type="number" min="0" max="30" value="0">
+                                </div>
+                              </div>
+                              <hr class="my-2">
+                              <div class="d-flex color align-items-center justify-content-between">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <p class="m-0 p-0">Texto</p>
+                                  <input class="mx-2" type="color" id="globalOptionTextColor" name="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#1192ee">
+                                  <input type="text" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" value="#1192ee" id="globalOptionTextHex">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-2">
+                              <p class="m-0 p-0">Imagen fondo</p>
+                              <div class="d-flex align-items-center">
+                                <button type="button" class="btn-square bg-02 cWhite mr-2 py-1 px-2" id="widgetBgPickBtn" onclick="openWidgetBgPicker()">Elegir</button>
+                                <button type="button" class="btn-square bg-Close cWhite py-1 px-2" id="widgetBgClearBtn" onclick="clearOptionWidgetBackground()">Quitar</button>
+                              </div>
+                              <img class="m-0 mt-1" id="widgetOptionFontPreview" width="50" height="50" alt="Miniatura" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23e8eff7'/%3E%3Cpath d='M6 34l10-10 8 8 7-7 13 13H6z' fill='%239db4cc'/%3E%3Ccircle cx='17' cy='16' r='4' fill='%239db4cc'/%3E%3C/svg%3E">
+                            </div>
+                            <p class="m-0 mt-1 c02" id="widgetBgImageLabel">Sin imagen</p>
+                            <hr/>
                             <div class="d-flex align-items-center justify-content-between mt-4" id="color-AB">
                               <div class="d-flex align-items-center justify-content-between">
                                <p class="m-0 p-0">{{__('step3.background')}}</p>
@@ -522,19 +655,1198 @@
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" 		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" 	crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" 	integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 	<script src="js/Sortable.js"></script>
 
     <script type="text/javascript">
         var defaultOption;
         var defaultForm;
+        window.crmCustomFields = @json($crmCustomFields ?? []);
+        window.crmTags = @json($crmTags ?? []);
+        var OPTION_WIDGET_TITLE_SIZE_DEFAULT = 42;
+        var OPTION_WIDGET_TITLE_WEIGHT_DEFAULT = "700";
+        var OPTION_WIDGET_FONT_DEFAULT = "Open Sans";
+        var OPTION_WIDGET_GOOGLE_FONTS = [
+            "Open Sans",
+            "Montserrat",
+            "Poppins",
+            "Lato",
+            "Roboto",
+            "Nunito",
+            "Merriweather",
+            "Playfair Display",
+            "Bebas Neue",
+            "Oswald",
+            "Raleway",
+            "Inter",
+            "Work Sans",
+            "Quicksand",
+            "Manrope",
+            "DM Sans",
+            "Archivo",
+            "Anton",
+            "Barlow",
+            "Karla",
+            "Rubik"
+        ];
+
+        function getCrmTagChoices() {
+            var tags = Array.isArray(window.crmTags) ? window.crmTags : [];
+            return tags
+                .map(function(tag) {
+                    return tag && tag.name ? String(tag.name).trim() : '';
+                })
+                .filter(function(name, index, arr) {
+                    return !!name && arr.indexOf(name) === index;
+                });
+        }
+
+        function populateTagSelect(selectId, selectedValue, placeholderText) {
+            var select = document.getElementById(selectId);
+            if (!select) {
+                return;
+            }
+
+            var currentValue = (selectedValue !== undefined && selectedValue !== null) ? String(selectedValue) : '';
+            var tagChoices = getCrmTagChoices();
+
+            select.innerHTML = '';
+
+            var emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = placeholderText || 'Sin etiqueta';
+            select.appendChild(emptyOption);
+
+            tagChoices.forEach(function(tagName) {
+                var option = document.createElement('option');
+                option.value = tagName;
+                option.textContent = tagName;
+                select.appendChild(option);
+            });
+
+            if (currentValue && tagChoices.indexOf(currentValue) === -1) {
+                var legacyOption = document.createElement('option');
+                legacyOption.value = currentValue;
+                legacyOption.textContent = currentValue + ' (no disponible en CRM)';
+                select.appendChild(legacyOption);
+            }
+
+            select.value = currentValue;
+        }
+
+        function populateBrowseTagSelect(selectedValue) {
+            populateTagSelect('browseTag', selectedValue, 'Sin etiqueta');
+        }
+
+        function setBrowseTag() {
+            var selectedTag = $('#browseTag').val() || null;
+
+            $.each(cuePoints, function(i, item) {
+                if (item.id == $("#cuepointId").val()) {
+                    if (item.type_browse == null) {
+                        item.type_browse = {};
+                    }
+
+                    if (item.type_browse.type == null) {
+                        item.type_browse.type = 'NONE';
+                    }
+
+                    item.type = 'BROWSE';
+                    item.type_browse.tag = selectedTag;
+                    item.action = 'UPDATE';
+                    return false;
+                }
+            });
+        }
+
+        var optionMediaTarget = "option-image";
+        var optionEditorMode = "single";
+
+        function makeOptionRuntimeUuid(index) {
+            return "opt-" + Date.now().toString(36) + "-" + index + "-" + Math.random().toString(36).slice(2, 8);
+        }
+
+        function normalizeOptionWidgetFontFamily(fontFamily) {
+            var candidate = String(fontFamily || "")
+                .replace(/["']/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            if (!candidate.length) {
+                return OPTION_WIDGET_FONT_DEFAULT;
+            }
+
+            var lowerCandidate = candidate.toLowerCase();
+            for (var i = 0; i < OPTION_WIDGET_GOOGLE_FONTS.length; i++) {
+                if (OPTION_WIDGET_GOOGLE_FONTS[i].toLowerCase() === lowerCandidate) {
+                    return OPTION_WIDGET_GOOGLE_FONTS[i];
+                }
+            }
+
+            return candidate;
+        }
+
+        function getOptionWidgetGoogleFontUrl(fontFamily) {
+            var normalized = normalizeOptionWidgetFontFamily(fontFamily);
+            var familyQuery = normalized.split(/\s+/).join("+");
+            return "https://fonts.googleapis.com/css2?family=" + familyQuery + ":wght@400;500;700&display=swap";
+        }
+
+        function getOptionWidgetFontCssValue(fontFamily) {
+            var normalized = normalizeOptionWidgetFontFamily(fontFamily);
+            return '"' + normalized.replace(/"/g, '\\"') + '", sans-serif';
+        }
+
+        function ensureOptionWidgetGoogleFontLoaded(fontFamily) {
+            var normalized = normalizeOptionWidgetFontFamily(fontFamily);
+            if (!normalized.length) {
+                return;
+            }
+
+            var fontKey = normalized.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+            var linkId = "option-widget-google-font-" + fontKey;
+            if (document.getElementById(linkId)) {
+                return;
+            }
+
+            var link = document.createElement("link");
+            link.id = linkId;
+            link.rel = "stylesheet";
+            link.href = getOptionWidgetGoogleFontUrl(normalized);
+            document.head.appendChild(link);
+        }
+
+        function populateOptionWidgetFontSelect(selectedFont) {
+            var select = document.getElementById("widgetOptionFontFamily");
+            if (!select) {
+                return;
+            }
+
+            var normalized = normalizeOptionWidgetFontFamily(selectedFont);
+            select.innerHTML = "";
+
+            OPTION_WIDGET_GOOGLE_FONTS.forEach(function(fontName) {
+                var option = document.createElement("option");
+                option.value = fontName;
+                option.textContent = fontName;
+                option.style.fontFamily = getOptionWidgetFontCssValue(fontName);
+                select.appendChild(option);
+            });
+
+            var exists = OPTION_WIDGET_GOOGLE_FONTS.some(function(fontName) {
+                return fontName.toLowerCase() === normalized.toLowerCase();
+            });
+
+            if (!exists) {
+                var legacy = document.createElement("option");
+                legacy.value = normalized;
+                legacy.textContent = normalized + " (custom)";
+                legacy.style.fontFamily = getOptionWidgetFontCssValue(normalized);
+                select.appendChild(legacy);
+            }
+
+            select.value = normalized;
+        }
+
+        function updateOptionWidgetFontPreview(fontFamily) {
+            var normalized = normalizeOptionWidgetFontFamily(fontFamily);
+            $("#widgetOptionFontPreview").attr("data-font-family", normalized);
+        }
+
+        function sanitizeOptionWidgetTitleSize(sizeValue) {
+            var parsed = parseInt(sizeValue, 10);
+            if (isNaN(parsed)) {
+                parsed = OPTION_WIDGET_TITLE_SIZE_DEFAULT;
+            }
+
+            if (parsed < 14) {
+                parsed = 14;
+            }
+            if (parsed > 120) {
+                parsed = 120;
+            }
+
+            return parsed;
+        }
+
+        function readOptionWidgetTitleSizeFromDom() {
+            var preview = $("#optionWidgetTitlePreview");
+            if (!preview.length) {
+                return OPTION_WIDGET_TITLE_SIZE_DEFAULT;
+            }
+
+            var stored = preview.attr("data-title-font-size");
+            if (stored !== undefined && stored !== null && String(stored).trim().length) {
+                return sanitizeOptionWidgetTitleSize(stored);
+            }
+
+            var inline = preview.css("font-size");
+            if (inline && String(inline).trim().length) {
+                return sanitizeOptionWidgetTitleSize(inline);
+            }
+
+            return OPTION_WIDGET_TITLE_SIZE_DEFAULT;
+        }
+
+        function applyOptionWidgetTitleSize(sizeValue) {
+            var preview = $("#optionWidgetTitlePreview");
+            if (!preview.length) {
+                return;
+            }
+
+            var normalized = sanitizeOptionWidgetTitleSize(sizeValue);
+            preview.attr("data-title-font-size", normalized);
+            preview.css("font-size", normalized + "px");
+            $("#widgetOptionTitleSize").val(normalized);
+        }
+
+        function setOptionWidgetTitleSize() {
+            applyOptionWidgetTitleSize($("#widgetOptionTitleSize").val());
+            setTypeOptionValues();
+        }
+
+        function normalizeOptionWidgetTitleWeight(weightValue) {
+            var raw = String(weightValue || "").trim().toLowerCase();
+            if (!raw.length) {
+                return OPTION_WIDGET_TITLE_WEIGHT_DEFAULT;
+            }
+
+            if (raw === "light" || raw === "300" || raw === "200" || raw === "100") {
+                return "300";
+            }
+            if (raw === "normal" || raw === "regular" || raw === "400" || raw === "500") {
+                return "400";
+            }
+            if (raw === "bold" || raw === "bolder" || raw === "700" || raw === "600" || raw === "800" || raw === "900") {
+                return "700";
+            }
+
+            var parsed = parseInt(raw, 10);
+            if (!isNaN(parsed)) {
+                if (parsed <= 350) {
+                    return "300";
+                }
+                if (parsed >= 600) {
+                    return "700";
+                }
+                return "400";
+            }
+
+            return OPTION_WIDGET_TITLE_WEIGHT_DEFAULT;
+        }
+
+        function readOptionWidgetTitleWeightFromDom() {
+            var preview = $("#optionWidgetTitlePreview");
+            if (!preview.length) {
+                return OPTION_WIDGET_TITLE_WEIGHT_DEFAULT;
+            }
+
+            var stored = preview.attr("data-title-font-weight");
+            if (stored !== undefined && stored !== null && String(stored).trim().length) {
+                return normalizeOptionWidgetTitleWeight(stored);
+            }
+
+            var inline = preview.css("font-weight");
+            if (inline && String(inline).trim().length) {
+                return normalizeOptionWidgetTitleWeight(inline);
+            }
+
+            return OPTION_WIDGET_TITLE_WEIGHT_DEFAULT;
+        }
+
+        function updateOptionWidgetTitleWeightButtons(weightValue) {
+            var normalized = normalizeOptionWidgetTitleWeight(weightValue);
+            $("#widgetOptionTitleWeightButtons .title-weight-btn").removeClass("is-selected");
+            $("#widgetOptionTitleWeightButtons .title-weight-btn[data-weight='" + normalized + "']").addClass("is-selected");
+        }
+
+        function applyOptionWidgetTitleWeight(weightValue) {
+            var preview = $("#optionWidgetTitlePreview");
+            var normalized = normalizeOptionWidgetTitleWeight(weightValue);
+
+            if (preview.length) {
+                preview.attr("data-title-font-weight", normalized);
+                preview.css("font-weight", normalized);
+            }
+
+            updateOptionWidgetTitleWeightButtons(normalized);
+        }
+
+        function setOptionWidgetTitleWeight(weightValue) {
+            applyOptionWidgetTitleWeight(weightValue);
+            setTypeOptionValues();
+        }
+
+        function readOptionWidgetFontFamilyFromDom() {
+            var ab = $("#AB");
+            var preview = $("#optionWidgetTitlePreview");
+
+            var stored = (ab.attr("data-widget-font-family") || preview.attr("data-widget-font-family") || "").trim();
+            if (stored.length) {
+                return normalizeOptionWidgetFontFamily(stored);
+            }
+
+            var computed = (ab.css("font-family") || preview.css("font-family") || "")
+                .split(",")[0]
+                .replace(/["']/g, "")
+                .trim();
+            if (computed.length) {
+                return normalizeOptionWidgetFontFamily(computed);
+            }
+
+            return OPTION_WIDGET_FONT_DEFAULT;
+        }
+
+        function applyOptionWidgetFontFamily(fontFamily) {
+            var normalized = normalizeOptionWidgetFontFamily(fontFamily);
+            var cssValue = getOptionWidgetFontCssValue(normalized);
+
+            ensureOptionWidgetGoogleFontLoaded(normalized);
+            populateOptionWidgetFontSelect(normalized);
+            updateOptionWidgetFontPreview(normalized);
+
+            var ab = $("#AB");
+            if (ab.length) {
+                ab.attr("data-widget-font-family", normalized);
+                ab.css("font-family", cssValue);
+                ab.find("li .context, li .context p, li .content p").css("font-family", cssValue);
+            }
+
+            var preview = $("#optionWidgetTitlePreview");
+            if (preview.length) {
+                preview.attr("data-widget-font-family", normalized);
+                preview.css("font-family", cssValue);
+            }
+        }
+
+        function setOptionWidgetFontFamily() {
+            applyOptionWidgetFontFamily($("#widgetOptionFontFamily").val());
+            setTypeOptionValues();
+        }
+
+        function sanitizeOptionBorderWidth(value) {
+            var parsed = parseInt(value, 10);
+            if (isNaN(parsed) || parsed < 0) {
+                parsed = 0;
+            }
+            if (parsed > 30) {
+                parsed = 30;
+            }
+            return parsed;
+        }
+
+        function rgbaToHexSafe(rgba, fallback) {
+            var safeFallback = fallback || "#000000";
+            if (!rgba) {
+                return safeFallback;
+            }
+
+            var match = String(rgba).match(/^rgba?\(\s*(\d+),\s*(\d+),\s*(\d+)/i);
+            if (!match) {
+                return safeFallback;
+            }
+
+            function toHex(x) {
+                return ("0" + parseInt(x, 10).toString(16)).slice(-2);
+            }
+
+            return "#" + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+        }
+
+        function ensureOptionUseGlobalFlag(optionLi) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return;
+            }
+
+            if (option.attr("data-use-global-style") !== "0" && option.attr("data-use-global-style") !== "1") {
+                option.attr("data-use-global-style", "1");
+            }
+        }
+
+        function getOptionUseGlobalStyle(optionLi) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return true;
+            }
+
+            ensureOptionUseGlobalFlag(option);
+            return option.attr("data-use-global-style") !== "0";
+        }
+
+        function setOptionUseGlobalStyleFlag(optionLi, useGlobal) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return;
+            }
+            option.attr("data-use-global-style", useGlobal ? "1" : "0");
+        }
+
+        function getOptionSizeClass(optionLi) {
+            var className = ($(optionLi).attr("class") || "");
+            var match = className.match(/\bs-(10|20|25|30|40|50|60|70|75|80|90|100)\b/);
+            return match ? ("s-" + match[1]) : "s-50";
+        }
+
+        function getOptionAlignClass(optionLi) {
+            var option = $(optionLi);
+            if (option.hasClass("aStart")) {
+                return "aStart";
+            }
+            if (option.hasClass("aEnd")) {
+                return "aEnd";
+            }
+            return "aCenter";
+        }
+
+        function getDefaultGlobalOptionStyle() {
+            return {
+                backgroundColor: "#e8eff7",
+                borderColor: "#212529",
+                borderWidth: 0,
+                fontColor: "#1192ee",
+                sizeClass: "s-50",
+                alignClass: "aCenter",
+                imageEnabled: true
+            };
+        }
+
+        function readGlobalStyleFromOption(optionLi) {
+            var option = $(optionLi);
+            var defaults = getDefaultGlobalOptionStyle();
+            if (!option.length) {
+                return defaults;
+            }
+
+            return {
+                backgroundColor: rgbaToHexSafe(option.css("background-color"), defaults.backgroundColor),
+                borderColor: rgbaToHexSafe(option.css("border-color"), defaults.borderColor),
+                borderWidth: sanitizeOptionBorderWidth(option.css("border-width")),
+                fontColor: rgbaToHexSafe(option.find(".context p").first().css("color"), defaults.fontColor),
+                sizeClass: getOptionSizeClass(option),
+                alignClass: getOptionAlignClass(option),
+                imageEnabled: !option.hasClass("imgOff")
+            };
+        }
+
+        function normalizeGlobalOptionStyle(style) {
+            var defaults = getDefaultGlobalOptionStyle();
+            var normalized = style || {};
+            var sizeClass = String(normalized.sizeClass || defaults.sizeClass);
+            if (!/^s-(10|20|25|30|40|50|60|70|75|80|90|100)$/.test(sizeClass)) {
+                sizeClass = defaults.sizeClass;
+            }
+
+            var alignClass = String(normalized.alignClass || defaults.alignClass);
+            if (["aStart", "aCenter", "aEnd"].indexOf(alignClass) === -1) {
+                alignClass = defaults.alignClass;
+            }
+
+            return {
+                backgroundColor: String(normalized.backgroundColor || defaults.backgroundColor),
+                borderColor: String(normalized.borderColor || defaults.borderColor),
+                borderWidth: sanitizeOptionBorderWidth(normalized.borderWidth),
+                fontColor: String(normalized.fontColor || defaults.fontColor),
+                sizeClass: sizeClass,
+                alignClass: alignClass,
+                imageEnabled: normalized.imageEnabled !== false
+            };
+        }
+
+        function getNearestAllowedOptionSize(rawValue) {
+            var allowedSizes = [10, 20, 25, 30, 40, 50, 60, 70, 75, 80, 90, 100];
+            var parsed = parseInt(rawValue, 10);
+            if (isNaN(parsed)) {
+                return 50;
+            }
+
+            var nearest = allowedSizes[0];
+            for (var i = 1; i < allowedSizes.length; i++) {
+                if (Math.abs(allowedSizes[i] - parsed) < Math.abs(nearest - parsed)) {
+                    nearest = allowedSizes[i];
+                }
+            }
+
+            return nearest;
+        }
+
+        function getWidgetOptionThumbPlaceholder() {
+            return "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' fill='%23e8eff7'/%3E%3Cpath d='M6 34l10-10 8 8 7-7 13 13H6z' fill='%239db4cc'/%3E%3Ccircle cx='17' cy='16' r='4' fill='%239db4cc'/%3E%3C/svg%3E";
+        }
+
+        function writeGlobalOptionStyle(style) {
+            var ab = $("#AB");
+            if (!ab.length) {
+                return;
+            }
+
+            var normalized = normalizeGlobalOptionStyle(style);
+            ab.attr("data-global-bg-color", normalized.backgroundColor);
+            ab.attr("data-global-border-color", normalized.borderColor);
+            ab.attr("data-global-border-width", normalized.borderWidth);
+            ab.attr("data-global-font-color", normalized.fontColor);
+            ab.attr("data-global-size-class", normalized.sizeClass);
+            ab.attr("data-global-align-class", normalized.alignClass);
+            ab.attr("data-global-image-enabled", normalized.imageEnabled ? "1" : "0");
+        }
+
+        function ensureGlobalOptionStyleState() {
+            var ab = $("#AB");
+            if (!ab.length) {
+                return;
+            }
+
+            if (ab.attr("data-global-size-class")) {
+                return;
+            }
+
+            var firstOption = ab.find("li").first();
+            var fromOption = readGlobalStyleFromOption(firstOption);
+            writeGlobalOptionStyle(fromOption);
+        }
+
+        function readGlobalOptionStyle() {
+            ensureGlobalOptionStyleState();
+
+            var ab = $("#AB");
+            if (!ab.length) {
+                return getDefaultGlobalOptionStyle();
+            }
+
+            return normalizeGlobalOptionStyle({
+                backgroundColor: ab.attr("data-global-bg-color"),
+                borderColor: ab.attr("data-global-border-color"),
+                borderWidth: ab.attr("data-global-border-width"),
+                fontColor: ab.attr("data-global-font-color"),
+                sizeClass: ab.attr("data-global-size-class"),
+                alignClass: ab.attr("data-global-align-class"),
+                imageEnabled: ab.attr("data-global-image-enabled") !== "0"
+            });
+        }
+
+        function applyOptionImageState(optionLi, imageEnabled) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return;
+            }
+
+            var imgContent = option.find("img").parent();
+            var textContent = option.find(".context").closest(".content");
+
+            if (imageEnabled) {
+                option.addClass("imgOn").removeClass("imgOff");
+
+                if ($("#AB").hasClass("optionsCols")) {
+                    imgContent.css({
+                        width: "100%",
+                        height: "50%"
+                    });
+                    textContent.css({
+                        width: "100%",
+                        height: "50%"
+                    });
+                } else {
+                    imgContent.css({
+                        width: "50%",
+                        height: "100%"
+                    });
+                    textContent.css({
+                        width: "50%",
+                        height: "100%"
+                    });
+                }
+            } else {
+                option.removeClass("imgOn").addClass("imgOff");
+                imgContent.css({
+                    width: "0",
+                    height: "0"
+                });
+                textContent.css({
+                    width: "100%",
+                    height: "100%"
+                });
+            }
+        }
+
+        function applyGlobalStyleToOption(optionLi) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return;
+            }
+
+            var style = readGlobalOptionStyle();
+            option.removeClass("s-10 s-20 s-25 s-30 s-40 s-50 s-60 s-70 s-75 s-80 s-90 s-100");
+            option.removeClass("aStart aCenter aEnd");
+            option.addClass(style.sizeClass);
+            option.addClass(style.alignClass);
+            option.css("background-color", style.backgroundColor);
+            option.css("border", style.borderColor + " solid " + style.borderWidth + "px");
+            option.find(".context p, .content p").css("color", style.fontColor);
+            applyOptionImageState(option, style.imageEnabled);
+        }
+
+        function applyGlobalStyleToInheritedOptions() {
+            $("#AB li").each(function() {
+                var option = $(this);
+                ensureOptionUseGlobalFlag(option);
+                if (getOptionUseGlobalStyle(option)) {
+                    applyGlobalStyleToOption(option);
+                }
+            });
+        }
+
+        function getCurrentOptionEditorTargets() {
+            if (optionEditorMode === "global") {
+                return $("#AB li").filter(function() {
+                    return getOptionUseGlobalStyle(this);
+                });
+            }
+
+            if (_option && _option.length) {
+                return _option;
+            }
+
+            return $();
+        }
+
+        function toggleOptionStyleControls(enabled) {
+            var locked = !enabled;
+            $("#toolOptionEdit .sizes .slider-alpha, #toolOptionEdit #colorpickerBG, #toolOptionEdit #hexcolorBG, #toolOptionEdit #colorpicker, #toolOptionEdit #hexcolor, #toolOptionEdit #borderNumber, #toolOptionEdit #colorpickerFont, #toolOptionEdit #hexcolorFont")
+                .prop("disabled", locked);
+            $("#toolOptionEdit #optionImageEnabled").prop("disabled", locked);
+            $("#toolOptionEdit .aline ul").css("pointer-events", locked ? "none" : "auto").css("opacity", locked ? "0.45" : "1");
+            $("#toolOptionEdit #optionImagePanel").css("opacity", locked ? "0.55" : "1");
+            $("#toolOptionEdit .sizes").css("opacity", locked ? "0.55" : "1");
+            $("#toolOptionEdit .color").css("opacity", locked ? "0.55" : "1");
+        }
+
+        function updateOptionEditorModeUI() {
+            var isGlobalMode = optionEditorMode === "global";
+            var usingGlobal = !isGlobalMode && $("#optionUseGlobalStyle").is(":checked");
+
+            $("#optionUseGlobalStyleRow").toggleClass("d-none", isGlobalMode);
+            $("#toolOptionEdit .accion").toggleClass("d-none", isGlobalMode);
+            $("#toolOptionEdit #optionName").prop("disabled", isGlobalMode);
+            $("#toolOptionEdit #optionTag").prop("disabled", isGlobalMode);
+            $("#toolOptionEdit #optionIconClass").prop("disabled", isGlobalMode);
+
+            if (isGlobalMode) {
+                $("#optionEditorModeHint").text("Modo general: cambios aplicados a todas las opciones que usan estilo general.");
+            } else if (usingGlobal) {
+                $("#optionEditorModeHint").text("Esta opción está heredando el estilo general.");
+            } else {
+                $("#optionEditorModeHint").text("Modo individual: esta opción usa estilo propio.");
+            }
+
+            toggleOptionStyleControls(isGlobalMode || !usingGlobal);
+        }
+
+        function syncGlobalStyleFromControls() {
+            var style = {
+                backgroundColor: $("#toolOptionEdit #hexcolorBG").val() || $("#toolOptionEdit #colorpickerBG").val() || "#e8eff7",
+                borderColor: $("#toolOptionEdit #hexcolor").val() || $("#toolOptionEdit #colorpicker").val() || "#212529",
+                borderWidth: sanitizeOptionBorderWidth($("#toolOptionEdit #borderNumber").val()),
+                fontColor: $("#toolOptionEdit #hexcolorFont").val() || $("#toolOptionEdit #colorpickerFont").val() || "#1192ee",
+                sizeClass: "s-" + ($("#toolOptionEdit .sizes .slider-alpha").val() || "50"),
+                alignClass: $("#toolOptionEdit .aline li.active").attr("data-id") || "aCenter",
+                imageEnabled: $("#toolOptionEdit #optionImageEnabled").is(":checked")
+            };
+
+            writeGlobalOptionStyle(style);
+        }
+
+        function loadGlobalOptionInlineControls() {
+            var panel = $("#globalOptionStyleInline");
+            if (!panel.length) {
+                return;
+            }
+
+            var style = readGlobalOptionStyle();
+            var sizeValue = getNearestAllowedOptionSize(String(style.sizeClass || "s-50").replace("s-", ""));
+
+            $("#globalOptionImageEnabled").prop("checked", style.imageEnabled !== false);
+            $("#globalOptionAlign li").removeClass("active");
+            var align = $("#globalOptionAlign li[data-id='" + (style.alignClass || "aCenter") + "']");
+            if (align.length) {
+                align.addClass("active");
+            } else {
+                $("#globalOptionAlign li[data-id='aCenter']").addClass("active");
+            }
+
+            $("#globalOptionSizeRange").val(sizeValue);
+            $("#globalOptionBgColor").val(style.backgroundColor);
+            $("#globalOptionBgHex").val(style.backgroundColor);
+            $("#globalOptionBorderColor").val(style.borderColor);
+            $("#globalOptionBorderHex").val(style.borderColor);
+            $("#globalOptionBorderWidth").val(sanitizeOptionBorderWidth(style.borderWidth));
+            $("#globalOptionTextColor").val(style.fontColor);
+            $("#globalOptionTextHex").val(style.fontColor);
+        }
+
+        function applyGlobalOptionInlineStyle() {
+            var panel = $("#globalOptionStyleInline");
+            if (!panel.length) {
+                return;
+            }
+
+            var sizeValue = getNearestAllowedOptionSize($("#globalOptionSizeRange").val());
+            $("#globalOptionSizeRange").val(sizeValue);
+
+            var style = normalizeGlobalOptionStyle({
+                backgroundColor: ($("#globalOptionBgHex").val() || $("#globalOptionBgColor").val() || "#e8eff7").trim(),
+                borderColor: ($("#globalOptionBorderHex").val() || $("#globalOptionBorderColor").val() || "#212529").trim(),
+                borderWidth: sanitizeOptionBorderWidth($("#globalOptionBorderWidth").val()),
+                fontColor: ($("#globalOptionTextHex").val() || $("#globalOptionTextColor").val() || "#1192ee").trim(),
+                sizeClass: "s-" + sizeValue,
+                alignClass: $("#globalOptionAlign li.active").attr("data-id") || "aCenter",
+                imageEnabled: $("#globalOptionImageEnabled").is(":checked")
+            });
+
+            writeGlobalOptionStyle(style);
+            applyGlobalStyleToInheritedOptions();
+
+            if (!$("#toolOptionEdit").hasClass("d-none") && optionEditorMode === "global") {
+                setOption($("#AB li").first());
+            }
+
+            setTypeOptionValues();
+        }
+
+        function bindGlobalOptionInlineControls() {
+            var panel = $("#globalOptionStyleInline");
+            if (!panel.length) {
+                return;
+            }
+
+            function isHex6(value) {
+                return /^#([0-9a-fA-F]{6})$/.test(String(value || "").trim());
+            }
+
+            $("#globalOptionImageEnabled")
+                .off("change.globalOptionInline")
+                .on("change.globalOptionInline", function() {
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionAlign li")
+                .off("click.globalOptionInline")
+                .on("click.globalOptionInline", function() {
+                    $("#globalOptionAlign li").removeClass("active");
+                    $(this).addClass("active");
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionSizeRange")
+                .off("input.globalOptionInline change.globalOptionInline")
+                .on("input.globalOptionInline change.globalOptionInline", function() {
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionBgColor")
+                .off("input.globalOptionInline change.globalOptionInline")
+                .on("input.globalOptionInline change.globalOptionInline", function() {
+                    $("#globalOptionBgHex").val($(this).val());
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionBorderColor")
+                .off("input.globalOptionInline change.globalOptionInline")
+                .on("input.globalOptionInline change.globalOptionInline", function() {
+                    $("#globalOptionBorderHex").val($(this).val());
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionTextColor")
+                .off("input.globalOptionInline change.globalOptionInline")
+                .on("input.globalOptionInline change.globalOptionInline", function() {
+                    $("#globalOptionTextHex").val($(this).val());
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionBgHex")
+                .off("change.globalOptionInline")
+                .on("change.globalOptionInline", function() {
+                    var value = ($(this).val() || "").trim();
+                    if (isHex6(value)) {
+                        $("#globalOptionBgColor").val(value);
+                    }
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionBorderHex")
+                .off("change.globalOptionInline")
+                .on("change.globalOptionInline", function() {
+                    var value = ($(this).val() || "").trim();
+                    if (isHex6(value)) {
+                        $("#globalOptionBorderColor").val(value);
+                    }
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionTextHex")
+                .off("change.globalOptionInline")
+                .on("change.globalOptionInline", function() {
+                    var value = ($(this).val() || "").trim();
+                    if (isHex6(value)) {
+                        $("#globalOptionTextColor").val(value);
+                    }
+                    applyGlobalOptionInlineStyle();
+                });
+
+            $("#globalOptionBorderWidth")
+                .off("input.globalOptionInline change.globalOptionInline")
+                .on("input.globalOptionInline change.globalOptionInline", function() {
+                    var width = sanitizeOptionBorderWidth($(this).val());
+                    $(this).val(width);
+                    applyGlobalOptionInlineStyle();
+                });
+        }
+
+        function openGeneralOptionEditor() {
+            ensureOptionWidgetStructure();
+            bindGlobalOptionInlineControls();
+            loadGlobalOptionInlineControls();
+
+            var panel = $("#globalOptionStyleInline");
+            if (panel.length && panel[0] && typeof panel[0].scrollIntoView === "function") {
+                panel[0].scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        }
+
+        function ensureOptionIconElement(optionLi) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return $();
+            }
+
+            var icon = option.children(".option-item-icon");
+            if (!icon.length) {
+                icon = $('<span class="option-item-icon d-none" data-icon-class=""><i class=""></i></span>');
+                option.append(icon);
+            } else if (!icon.find("i").length) {
+                icon.append('<i class=""></i>');
+            }
+
+            return icon;
+        }
+
+        function readOptionIconClass(optionLi) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return "";
+            }
+
+            var icon = ensureOptionIconElement(option);
+            var iconClass = (icon.attr("data-icon-class") || "").trim();
+            if (!iconClass.length) {
+                iconClass = (icon.find("i").attr("class") || "").trim();
+            }
+            return iconClass;
+        }
+
+        function applyOptionIconClass(optionLi, iconClass) {
+            var option = $(optionLi);
+            if (!option.length) {
+                return;
+            }
+
+            var normalized = (iconClass || "").trim();
+            var icon = ensureOptionIconElement(option);
+
+            if (!normalized.length) {
+                icon.addClass("d-none");
+                icon.attr("data-icon-class", "");
+                icon.find("i").attr("class", "");
+                option.removeClass("has-option-icon");
+                return;
+            }
+
+            icon.removeClass("d-none");
+            icon.attr("data-icon-class", normalized);
+            icon.find("i").attr("class", normalized);
+            option.addClass("has-option-icon");
+        }
+
+        function ensureOptionWidgetStructure() {
+            var container = $("#widgetContainer");
+            if (!container.length) {
+                return;
+            }
+
+            if (!container.find("#optionWidgetTitleBox").length) {
+                container.prepend('<div class="option-widget-title d-none" id="optionWidgetTitleBox"><p id="optionWidgetTitlePreview" contenteditable="true" onblur="onOptionWidgetTitlePreviewBlur()"></p></div>');
+            }
+
+            applyOptionWidgetTitleSize(readOptionWidgetTitleSizeFromDom());
+            applyOptionWidgetTitleWeight(readOptionWidgetTitleWeightFromDom());
+            applyOptionWidgetFontFamily(readOptionWidgetFontFamilyFromDom());
+
+            var ab = container.find("#AB");
+            if (!ab.length) {
+                return;
+            }
+
+            var titleText = (container.find("#optionWidgetTitlePreview").text() || "").trim();
+            if (titleText.length) {
+                container.find("#optionWidgetTitleBox").removeClass("d-none");
+                ab.addClass("with-widget-title");
+            } else {
+                ab.removeClass("with-widget-title");
+            }
+
+            ab.find("li").each(function() {
+                var option = $(this);
+                ensureOptionIconElement(option);
+                applyOptionIconClass(option, readOptionIconClass(option));
+                ensureOptionUseGlobalFlag(option);
+            });
+
+            ensureGlobalOptionStyleState();
+            applyGlobalStyleToInheritedOptions();
+            bindGlobalOptionInlineControls();
+            loadGlobalOptionInlineControls();
+        }
+
+        function buildFreshDefaultOptionHtml() {
+            var wrapper = $("<div>").html(defaultOption || "");
+
+            if (!wrapper.find("#optionWidgetTitleBox").length) {
+                wrapper.prepend('<div class="option-widget-title d-none" id="optionWidgetTitleBox"><p id="optionWidgetTitlePreview" contenteditable="true" onblur="onOptionWidgetTitlePreviewBlur()"></p></div>');
+            }
+
+            wrapper.find("#optionWidgetTitleBox").addClass("d-none");
+            var titlePreview = wrapper.find("#optionWidgetTitlePreview");
+            titlePreview.text("");
+            titlePreview.attr("data-title-font-size", OPTION_WIDGET_TITLE_SIZE_DEFAULT);
+            titlePreview.attr("data-title-font-weight", OPTION_WIDGET_TITLE_WEIGHT_DEFAULT);
+            titlePreview.attr("data-widget-font-family", OPTION_WIDGET_FONT_DEFAULT);
+            titlePreview.css("font-size", OPTION_WIDGET_TITLE_SIZE_DEFAULT + "px");
+            titlePreview.css("font-weight", OPTION_WIDGET_TITLE_WEIGHT_DEFAULT);
+            titlePreview.css("font-family", getOptionWidgetFontCssValue(OPTION_WIDGET_FONT_DEFAULT));
+
+            var ab = wrapper.find("#AB");
+            ab.removeClass("with-widget-title has-widget-bg");
+            ab.removeAttr("data-bg-image-id data-bg-image-url data-widget-font-family");
+            ab.css("background-image", "");
+            ab.attr("data-widget-font-family", OPTION_WIDGET_FONT_DEFAULT);
+            ab.css("font-family", getOptionWidgetFontCssValue(OPTION_WIDGET_FONT_DEFAULT));
+
+            var defaults = getDefaultGlobalOptionStyle();
+            ab.attr("data-global-bg-color", defaults.backgroundColor);
+            ab.attr("data-global-border-color", defaults.borderColor);
+            ab.attr("data-global-border-width", defaults.borderWidth);
+            ab.attr("data-global-font-color", defaults.fontColor);
+            ab.attr("data-global-size-class", defaults.sizeClass);
+            ab.attr("data-global-align-class", defaults.alignClass);
+            ab.attr("data-global-image-enabled", defaults.imageEnabled ? "1" : "0");
+
+            ab.find("li").each(function(index) {
+                var option = $(this);
+                option.attr("uuid", makeOptionRuntimeUuid(index + 1));
+                option.removeClass("selected has-option-icon");
+                option.attr("data-use-global-style", "1");
+                var icon = ensureOptionIconElement(option);
+                icon.addClass("d-none");
+                icon.attr("data-icon-class", "");
+                icon.find("i").attr("class", "");
+            });
+
+            return wrapper.html();
+        }
+
+        function resolveCurrentOptionSubtype(item) {
+            var cpSubType = $('a[name="cpOptSubType"][aria-selected="true"]').attr("value");
+            if (!cpSubType && item && item.type_option && item.type_option.type) {
+                cpSubType = item.type_option.type;
+            }
+            if (cpSubType !== "COL" && cpSubType !== "ROW") {
+                cpSubType = $("#AB").hasClass("optionsCols") ? "COL" : "ROW";
+            }
+            if (cpSubType !== "COL" && cpSubType !== "ROW") {
+                cpSubType = "ROW";
+            }
+
+            return cpSubType;
+        }
+
+        function extractBackgroundImageUrl(backgroundImage) {
+            if (!backgroundImage || backgroundImage === "none") {
+                return "";
+            }
+
+            var match = backgroundImage.match(/url\((['"]?)(.*?)\1\)/);
+            return match && match[2] ? match[2] : "";
+        }
+
+        function updateWidgetBgImageLabel(imageUrl) {
+            var cleanUrl = (imageUrl || "").trim();
+            var previewThumb = $("#widgetOptionFontPreview");
+            if (previewThumb.length) {
+                previewThumb.attr("src", cleanUrl.length ? cleanUrl : getWidgetOptionThumbPlaceholder());
+            }
+            $("#widgetBgImageLabel").text("");
+        }
+
+        function applyOptionWidgetBackground(imageUrl, imageId) {
+            var ab = $("#AB");
+            if (!ab.length) {
+                return;
+            }
+
+            var cleanUrl = (imageUrl || "").trim();
+            if (!cleanUrl.length) {
+                ab.removeClass("has-widget-bg");
+                ab.removeAttr("data-bg-image-url data-bg-image-id");
+                ab.css({
+                    "background-image": "",
+                    "background-size": "",
+                    "background-position": "",
+                    "background-repeat": ""
+                });
+                updateWidgetBgImageLabel("");
+                return;
+            }
+
+            var escapedUrl = cleanUrl.replace(/(["\\])/g, "\\$1");
+            ab.addClass("has-widget-bg");
+            ab.attr("data-bg-image-url", cleanUrl);
+            if (imageId) {
+                ab.attr("data-bg-image-id", imageId);
+            } else {
+                ab.removeAttr("data-bg-image-id");
+            }
+            ab.css({
+                "background-image": 'linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)), url("' + escapedUrl + '")',
+                "background-size": "cover",
+                "background-position": "center",
+                "background-repeat": "no-repeat"
+            });
+            updateWidgetBgImageLabel(cleanUrl);
+        }
+
+        function clearOptionWidgetBackground() {
+            applyOptionWidgetBackground("", null);
+            setTypeOptionValues();
+        }
+
+        function openWidgetBgPicker() {
+            optionMediaTarget = "widget-bg";
+            openDialogImg("widget-bg");
+        }
+
+        function applyOptionWidgetTitle(titleText) {
+            var container = $("#widgetContainer");
+            var titleBox = container.find("#optionWidgetTitleBox");
+            var preview = container.find("#optionWidgetTitlePreview");
+            var ab = container.find("#AB");
+            if (!titleBox.length || !preview.length || !ab.length) {
+                return;
+            }
+
+            var normalized = (titleText || "").trim();
+            if (normalized.length) {
+                titleBox.removeClass("d-none");
+                preview.text(normalized);
+                ab.addClass("with-widget-title");
+            } else {
+                preview.text("");
+                titleBox.addClass("d-none");
+                ab.removeClass("with-widget-title");
+            }
+        }
+
+        function setOptionWidgetTitle() {
+            applyOptionWidgetTitle($("#widgetOptionTitle").val());
+            setTypeOptionValues();
+        }
+
+        function onOptionWidgetTitlePreviewBlur() {
+            var normalized = ($("#optionWidgetTitlePreview").text() || "").trim();
+            $("#widgetOptionTitle").val(normalized);
+            applyOptionWidgetTitle(normalized);
+            setTypeOptionValues();
+        }
+
+        function loadOptionWidgetPanelValues() {
+            ensureOptionWidgetStructure();
+
+            var title = ($("#optionWidgetTitlePreview").text() || "").trim();
+            $("#widgetOptionTitle").val(title);
+            applyOptionWidgetTitle(title);
+            applyOptionWidgetTitleSize(readOptionWidgetTitleSizeFromDom());
+            applyOptionWidgetTitleWeight(readOptionWidgetTitleWeightFromDom());
+            applyOptionWidgetFontFamily(readOptionWidgetFontFamilyFromDom());
+
+            var ab = $("#AB");
+            if (!ab.length) {
+                updateWidgetBgImageLabel("");
+                return;
+            }
+
+            var bgUrl = (ab.attr("data-bg-image-url") || "").trim();
+            if (!bgUrl.length) {
+                bgUrl = extractBackgroundImageUrl(ab.css("background-image"));
+            }
+
+            if (bgUrl.length) {
+                ab.addClass("has-widget-bg");
+                ab.attr("data-bg-image-url", bgUrl);
+                ab.css({
+                    "background-size": "cover",
+                    "background-position": "center",
+                    "background-repeat": "no-repeat"
+                });
+            } else {
+                ab.removeClass("has-widget-bg");
+                ab.removeAttr("data-bg-image-url data-bg-image-id");
+                ab.css({
+                    "background-size": "",
+                    "background-position": "",
+                    "background-repeat": ""
+                });
+            }
+
+            updateWidgetBgImageLabel(bgUrl);
+        }
+
+        function bindRightMenuScrollContainment() {
+            var scrollContainer = $(".rightMenu.setup3 .CueList");
+            if (!scrollContainer.length) {
+                scrollContainer = $(".rightMenu.setup3");
+            }
+            if (!scrollContainer.length) {
+                return;
+            }
+
+            scrollContainer.off("wheel.scrollContain");
+            scrollContainer.on("wheel.scrollContain", function(event) {
+                if (window.matchMedia("(max-width: 991px)").matches) {
+                    return;
+                }
+
+                var nativeEvent = event.originalEvent || event;
+                var deltaY = nativeEvent.deltaY || 0;
+                var element = this;
+                var atTop = element.scrollTop <= 0;
+                var atBottom = Math.ceil(element.scrollTop + element.clientHeight) >= element.scrollHeight;
+
+                if ((deltaY < 0 && atTop) || (deltaY > 0 && atBottom)) {
+                    event.preventDefault();
+                }
+
+                event.stopPropagation();
+            });
+        }
 
 
         $(document).ready(function() {
             console.log("step3 document ready!");
 
             //console.log( "Los cuepoints before: %o", @json($cuePoints) );
-            
+
             //Funcion para resaltar el video seleccionado en edicion de proyecto pasos 1, 2, 3
         	$("#mediaList").on("click", "li", function (event) {
     			$(this).siblings().find("a").removeClass("active");
@@ -545,12 +1857,14 @@
                 $("#AF").addClass("d-none");
 
     		});
-            
+
 
             cuePoints = @json($cuePoints);
             $.each(cuePoints, function(i, item) {
                 item.action = "READY";
             });
+
+            populateBrowseTagSelect(null);
 
             //console.log("Los cuepoints after: %o", cuePoints);
             defaultOption = $("#widgetContainer").html();
@@ -563,12 +1877,12 @@
             // Veo si ya esta asignada la variable local de video-set sino asigno el valor 1
             if (localStorage.getItem('video-set') == null || localStorage.getItem('video-set') == 'undefined') {
                 console.log("No existe localStorage");
-                localStorage.setItem('video-set', '1'); 
+                localStorage.setItem('video-set', '1');
                 console.log("Asigno local"+localStorage.getItem('video-set'));
             }
 
             // Asigno el valor de la variable local a la variable pos
-            pos =  localStorage.getItem('video-set'); 
+            pos =  localStorage.getItem('video-set');
 
             // Busco el video seleccionado y lo marco como activo y lo llamo para que se ejecute
             $('#mediaList li a').removeClass('active');
@@ -576,13 +1890,13 @@
             if($('#mediaList li[position="' + pos + '"]')){
                 // console.log("Existe pos"+pos);
                 $('#mediaList li[position="' + pos + '"] a').addClass('active');
-                setMainMedia( $('#mediaList li[position="' + pos + '"] img')); 
+                setMainMedia( $('#mediaList li[position="' + pos + '"] img'));
             }else{
                 // console.log("No existe pos");
                 $('#mediaList li[position="' + 1 + '"] a').addClass('active');
-                setMainMedia( $('#mediaList li[position="' + 1 + '"] img')); 
-            }           
-            resizeAddmedia();          
+                setMainMedia( $('#mediaList li[position="' + 1 + '"] img'));
+            }
+            resizeAddmedia();
 
             // Click en la lista de videos y cambio la variable local video-set y lo marco como activo
             $("#mediaList").on("click", "li", function (event) {
@@ -591,7 +1905,7 @@
                 localStorage.setItem('video-set', $(this).attr("position"));
 		    });
 
-		
+
             //Cierro el edit si esta abierto
             $("#AB").addClass("d-none");
             $("#AF").addClass("d-none");
@@ -607,7 +1921,7 @@
 			console.log("step3 document ready!");
 
         });
-        
+
 
 		//devuelve CurrentTime  en valor .3
 		function matchRounded(number){
@@ -777,6 +2091,7 @@
                 if (item.id == cuepoint) {
                     //Close if is Open EditToolTip
                     if (!$("#toolOptionEdit").hasClass("d-none")) {
+                        optionEditorMode = "single";
                         $("#toolOptionEdit").addClass("d-none");
                     }
 
@@ -800,6 +2115,14 @@
 
                     if (item.type == 'BROWSE') {
                         console.log("selectCuePoint() Type BROWSE");
+                        if (item.type_browse == null) {
+                            item.type_browse = {};
+                            item.type_browse.type = 'NONE';
+                            item.type_browse.goto = null;
+                            item.type_browse.options = null;
+                            item.type_browse.tag = null;
+                        }
+
                         $("#widgetContainer").empty();
                         //$("#widgetContainerForm").empty();
                         $("#widgetContainer").addClass("d-none");
@@ -858,10 +2181,34 @@
                                 }
                             });
                         }
+
+                        populateBrowseTagSelect(item.type_browse.tag || null);
+                        $("#widgetOptionTitle").val("");
+                        applyOptionWidgetTitleSize(OPTION_WIDGET_TITLE_SIZE_DEFAULT);
+                        applyOptionWidgetTitleWeight(OPTION_WIDGET_TITLE_WEIGHT_DEFAULT);
+                        applyOptionWidgetFontFamily(OPTION_WIDGET_FONT_DEFAULT);
+                        updateWidgetBgImageLabel("");
                     } else if (item.type == 'OPTION') {
                         $("#widgetContainer").removeClass("d-none");
                         $("#widgetContainerForm").addClass("d-none");
                         console.log("selectCuePoint() Type OPTION");
+
+                        if (item.type_option == null) {
+                            item.type_option = {};
+                        }
+                        if (!item.type_option.type_option_data) {
+                            item.type_option.type_option_data = [];
+                        }
+                        if (!item.type_option.type || (item.type_option.type !== 'COL' && item.type_option.type !== 'ROW')) {
+                            item.type_option.type = 'ROW';
+                        }
+                        if (!item.type_option.options) {
+                            item.type_option.options = 3;
+                        }
+                        if (!item.type_option.content || !String(item.type_option.content).trim().length) {
+                            item.type_option.content = buildFreshDefaultOptionHtml();
+                            item.action = 'UPDATE';
+                        }
 
                         $("#pills-options-tab").prop("onclick", null).off("click");
                         $("#pills-options-tab").click();
@@ -882,7 +2229,7 @@
                         $('a[name="cpOptSubType"]').on('shown.bs.tab', setTypeOptionValues);
 
 
-                        $("#numberOfColRow").prop("onchange", null).off("click");
+                        $("#numberOfColRow").prop("onchange", null).off("change");
                         $('#numberOfColRow').val(item.type_option.options);
                         $("#numberOfColRow").attr('onchange', 'setTypeOptionValues()');
                         console.log("selectCuePoint() click on: numberOfColRow");
@@ -891,6 +2238,7 @@
                         $("#widgetContainer").empty();
                         $("#widgetContainer").append(item.type_option.content);
                         $("#AB li .content").find(".ui-resizable-handle").remove();
+                        ensureOptionWidgetStructure();
                         $("#AB").removeClass("d-none");
                         ifRowCol();
                         Start();
@@ -904,99 +2252,16 @@
                     } else if (item.type == 'FORM') {
                         console.log("selectCuePoint() Type FORM");
                         $("#widgetContainer").addClass("d-none");
+                        $("#widgetOptionTitle").val("");
+                        applyOptionWidgetTitleSize(OPTION_WIDGET_TITLE_SIZE_DEFAULT);
+                        applyOptionWidgetTitleWeight(OPTION_WIDGET_TITLE_WEIGHT_DEFAULT);
+                        applyOptionWidgetFontFamily(OPTION_WIDGET_FONT_DEFAULT);
+                        updateWidgetBgImageLabel("");
 
                         $("#pills-forms-tab").prop("onclick", null).off("click");
                         $("#pills-forms-tab").click();
                         $("#pills-forms-tab").attr('onclick', 'selectTypeForm()');
-
-                        if (!item.type_form) {
-                            item.type_form = {};
-                            item.type_form.content = defaultForm;
-                            item.type_form.name = '';
-                            item.type_form.sendto = '';
-                            item.type_form.type = 'URL';
-                            item.type_form.goto = '';
-                            item.type_form.options = '_blank';
-                        }
-
-
-                        $("#widgetContainerForm").empty();
-                        $("#widgetContainerForm").append(item.type_form.content);
-                        $("#widgetContainerForm").removeClass("d-none");
-                        $("#AF").removeClass("d-none");
-                        formtitleF();
-                        loadCrmField();
-
-                        $("#inputName").val(item.type_form.name);
-                        $("#inputSendTo").val(item.type_form.sendto);
-
-                        // -INICIO OPCIONES FORM
-
-                        if (item.type_form.type == 'URL') {
-                            $("#goto-url-form").click();
-                            $("#gotourlOption-form").val(item.type_form.goto);
-
-                            if (item.type_form.options == '_blank')
-                                $('#inlineRadioOpt1-form').prop('checked', true);
-
-                            if (item.type_form.options == '_self')
-                                $('#inlineRadioOpt2-form').prop('checked', true);
-                        } else if (item.type_form.type == 'CUEPOINT') {
-                            $("#goto-cue-form").click();
-
-                            $("#cuepointList-Nav22-form > button").each(function(index) {
-                                if ($(this).attr("cuepoint-id") == item.type_form.goto) {
-                                    //console.log( "ENCONTRADO CUEPOINT: " + item.type_browse.goto);
-
-                                    $(this).removeAttr("onclick");
-                                    $(this).click();
-
-                                    //Carga el valor cuando sea Browser y cue
-                                    console.log("POS" + $(this).attr("pos"));
-                                    $("#cuepointList-Nav22-form").attr("cuepoint-id", $(this).attr(
-                                        "cuepoint-id"));
-                                    $("#dropdownId-Nav11-form").html($(this).children('p').eq(0).html());
-                                    $("#dropdownName-Nav11-form").html("");
-                                    $("#dropdownTime-Nav11-form").html($(this).children('p').eq(1).html());
-                                    $(this).attr("onclick", 'selectBrowseCuepoint(this)');
-                                }
-                            });
-                        } else if (item.type_form.type == 'VIDEO') {
-                            $("#goto-video-form").click();
-
-                            $("#cuepointList-Nav33-form > button").each(function(index) {
-                                if ($(this).attr("projectlib-id") == item.type_form.goto) {
-                                    console.log("ENCONTRADO VIDEO: " + item.type_form.goto);
-
-                                    $(this).removeAttr("onclick");
-                                    $(this).click();
-                                    $("#dropdownMenu44-form").attr("projectlib-id", $(this).attr(
-                                        "projectlib-id"));
-                                    $("#dropdownName-Nav33-form").html($(this).attr("media-name"));
-                                    $(this).attr("onclick", 'selectBrowseVideo(this)');
-                                }
-                            });
-                        }
-
-                        // -FIN OPCIONES FORM
-
-                        //$("#pills-forms-tab").click();
-                        //Start();
-
-                        /////////////////
-                        deleteOldCode();
-                        $(".edit-tooltip").remove();
-                        Hoverli();
-                        ToolEditPanel();
-                        formEditTools();
-                        formColorsTools();
-                        RowColPress();
-                        changeDevice();
-                        NumberOnOff();
-                        limitAlpha();
-                        fontSize();
-                        resizeAddmedia();
-                        //////////////////////
+                        activateDynamicFormEditor(item);
 
                     }
                 }
@@ -1019,9 +2284,11 @@
                         item.type_browse.type = 'NONE';
                         item.type_browse.goto = null;
                         item.type_browse.options = null;
+                        item.type_browse.tag = null;
                     }
 
                     item.type = 'BROWSE';
+                    item.type_browse.tag = $('#browseTag').val() || null;
                     //item.type_option = null;
                     item.action = 'UPDATE'
                     console.log("Actualizando cuepoint : " + item.id + " con cuepoint: NONE");
@@ -1068,6 +2335,7 @@
                     item.type_browse.type = 'CUEPOINT';
                     item.type_browse.goto = $(button).attr("cuepoint-id");
                     item.type_browse.options = null;
+                    item.type_browse.tag = $('#browseTag').val() || null;
                     //item.type_option = null;
                     item.action = 'UPDATE'
                     console.log("Actualizando cuepoint : " + item.id + " con cuepoint: " + $(button).attr(
@@ -1104,7 +2372,7 @@
 
         function selectBrowseVideo(button) {
 			console.log("Ejecutando selectBrowseVideo() " + $(button).attr("cuepoint-id") );
-	
+
             $("#dropdownMenu4").attr("projectlib-id", $(button).attr("projectlib-id"));
             $("#dropdownName-Nav3").html($(button).attr("media-name"));
 
@@ -1120,6 +2388,7 @@
                     item.type_browse.type = 'VIDEO';
                     item.type_browse.goto = $(button).attr("projectlib-id");
                     item.type_browse.options = null;
+                    item.type_browse.tag = $('#browseTag').val() || null;
                     //item.type_option = null;
                     item.action = 'UPDATE'
                     console.log("Actualizando cuepoint : %o", item);
@@ -1130,7 +2399,7 @@
 
         function selectBrowseURL() {
 			console.log("Ejecutando selectBrowseURL()");
-			
+
             var newURL = $('#gotourl').val();
 
             if (newURL) {
@@ -1154,6 +2423,7 @@
                     item.type_browse.type = 'URL';
                     item.type_browse.goto = newURL;
                     item.type_browse.options = $('input:radio[name=goto_opt]:checked').val();
+                    item.type_browse.tag = $('#browseTag').val() || null;
                     //item.type_option = null;
                     item.action = 'UPDATE'
                     console.log("Actualizando cuepoint : " + item.id + " con cuepoint: " + $('#gotourl').val());
@@ -1165,7 +2435,7 @@
 
         function selectBrowseNone() {
 			console.log("Ejecutando selectBrowseNone()");
-			
+
             $.each(cuePoints, function(i, item) {
                 if (item.id == $("#cuepointId").val()) {
 
@@ -1178,6 +2448,7 @@
                     item.type_browse.type = 'NONE';
                     item.type_browse.goto = null;
                     item.type_browse.options = null;
+                    item.type_browse.tag = $('#browseTag').val() || null;
                     //item.type_option = null;
                     item.action = 'UPDATE'
                     console.log("Actualizando cuepoint : " + item.id + " con cuepoint: NONE");
@@ -1188,43 +2459,39 @@
 
 
         function selectTypeOption() {
-            var cpSubType;
             $("#widgetContainer").removeClass("d-none");
             $("#widgetContainerForm").addClass("d-none");
-            $("a[name=cpOptSubType]").each(function() {
-                if ($(this).attr("aria-selected") == "true") {
-                    cpSubType = $(this).attr("value");
-                    return;
-                }
-            });
-
-            console.log("selectTypeOption() cpSubType: " + cpSubType);
 
             $.each(cuePoints, function(i, item) {
                 if (item.id == $("#cuepointId").val()) {
+                    var cpSubType = resolveCurrentOptionSubtype(item);
+                    console.log("selectTypeOption() cpSubType: " + cpSubType);
 
                     if (item.type_option == null) {
-                        $("#widgetContainer").html(defaultOption);
-                        Start();
-
+                        $("#widgetContainer").html(buildFreshDefaultOptionHtml());
                         item.type_option = {};
-                        item.type_option.type = cpSubType;
-                        item.type_option.goto = null;
-                        item.type_option.options = $('#numberOfColRow').val();
-                        item.type_option.content = $("#widgetContainer").html();
-
+                        item.type_option.type_option_data = [];
+                    } else if (!item.type_option.type_option_data) {
                         item.type_option.type_option_data = [];
                     }
-                    /*
-                    					else{
-                    						$("#widgetContainer").append(item.type_option.content);
-                    					}*/
+
+                    if (!$("#AB").length) {
+                        $("#widgetContainer").html(buildFreshDefaultOptionHtml());
+                    }
+
+                    ensureOptionWidgetStructure();
+
+                    item.type_option.type = cpSubType;
+                    item.type_option.goto = null;
+                    item.type_option.options = $('#numberOfColRow').val() || item.type_option.options || 3;
+                    item.type_option.content = $("#widgetContainer").html();
+
                     $("#AB").removeClass("d-none");
                     item.type = 'OPTION';
                     item.action = 'UPDATE';
 
                     console.log("Actualizando OPTION cuepoint : %o", item);
-
+                    Start();
                     return;
                 }
             });
@@ -1236,24 +2503,36 @@
         function setTypeOptionValues() {
             console.log("setTypeOptionValues() cpSubType: " + $("#cuepointId").val());
 
-            var cpSubType;
-            $("a[name=cpOptSubType]").each(function() {
-                if ($(this).attr("aria-selected") == "true") {
-                    cpSubType = $(this).attr("value");
-                    return;
-                }
-            });
-
             $.each(cuePoints, function(i, item) {
                 if (item.id == $("#cuepointId").val()) {
+                    if (item.type_option == null) {
+                        item.type_option = {};
+                        item.type_option.type_option_data = [];
+                    } else if (!item.type_option.type_option_data) {
+                        item.type_option.type_option_data = [];
+                    }
+
+                    var cpSubType = resolveCurrentOptionSubtype(item);
                     $("#AB").removeClass("d-none");
                     console.log("Actualizando OPTION cuepoint : %o", item);
                     ifRowCol();
                     NumberOnOff();
+                    ensureOptionWidgetStructure();
 
                     item.type_option.type = cpSubType;
-                    item.type_option.options = $('#numberOfColRow').val();
+                    item.type_option.options = $('#numberOfColRow').val() || item.type_option.options || 3;
                     item.type_option.content = $("#widgetContainer").html();
+                    if (Array.isArray(item.type_option.type_option_data)) {
+                        item.type_option.type_option_data.forEach(function(optionData) {
+                            if (!optionData || !optionData.uuid) {
+                                return;
+                            }
+                            var optionLi = $('#AB li[uuid="' + optionData.uuid + '"]');
+                            if (optionLi.length) {
+                                optionData.content = optionLi.prop('outerHTML');
+                            }
+                        });
+                    }
                     item.action = 'UPDATE';
 
                     return;
@@ -1284,7 +2563,7 @@
 
         function setOptionDataValues(optionData, values, index) {
             //console.log("setOptionDataValues() cpSubType: " + index + " - Data: " + optionData);
-            start();
+            Start();
             var updated = false;
 
             $.each(optionData, function(i, item) {
@@ -1325,6 +2604,11 @@
 
 
         function selectTypeForm() {
+            if (typeof window.dynamicSelectTypeForm === 'function') {
+                window.dynamicSelectTypeForm();
+                return;
+            }
+
             $("#widgetContainerForm").removeClass("d-none");
             $("#widgetContainer").addClass("d-none");
 
@@ -1408,6 +2692,7 @@
                     console.log("1. Actualizando FORM cuepoint : %o", item);
                     formColorsTools();
                     formEditTools();
+                    loadCrmField();
 
 
                     return;
@@ -1416,6 +2701,10 @@
         }
 
         function updateTypeForm() {
+            if ($("#widgetContainerForm #AF[data-form-builder='dynamic']").length && typeof window.dynamicUpdateTypeForm === 'function') {
+                window.dynamicUpdateTypeForm();
+                return;
+            }
 
             $.each(cuePoints, function(i, item) {
                 if (item.id == $("#cuepointId").val()) {
@@ -1423,7 +2712,7 @@
                     item.type_form.content = $("#widgetContainerForm").html();
                     item.type_form.name = $('#inputName').val().trim();
                     item.type_form.sendto = $('#inputSendTo').val().trim();
-                    item.type_form.map_status = $('#map-crm').checked;
+                    item.type_form.map_status = $('#map-crm-form-edit').is(':checked');
                     item.action = 'UPDATE';
 
                     console.log("2. Actualizando FORM cuepoint : %o", item);
@@ -1432,10 +2721,6 @@
                 }
             });
         }
-// <<<<<<< HEAD
-
-		
-
         // -INICIO
         function copyCuepointListForm() {
             console.log("Ejecutando copyCuepointListForm() " + $("#libraryId").val());
@@ -1542,15 +2827,15 @@
     			//var regex = new RegExp(expression);
     			//newURL = newURL.trim();
     			//newURL = newURL.match(regex) ? newURL : 'https://' + newURL;
-    			
+
     			newURL = newURL.trim().replace(/\s/g,'');
-    			
+
     			const patron = /^(http:\/\/|https:\/\/|ftp:\/\/|www\.)/;
 
   				if(!patron.test(newURL)){
   					newURL = 'https://' + newURL;
   	  			}
-  	  			
+
     			$('#gotourlOption-form').val(newURL);
     		}
 
@@ -1569,10 +2854,16 @@
 		// -FINALIZA
 
 
-    	function openDialogImg(){
-    		console.log("openDialogImg()");
+    	function openDialogImg(target){
+    		optionMediaTarget = target || "option-image";
+    		console.log("openDialogImg() target=" + optionMediaTarget);
          	$('#libraryModal').modal('show');
-         	$("#optionUuid").val(tLi.attr("uuid"));
+
+            if(optionMediaTarget === "widget-bg"){
+                $("#optionUuid").val("");
+            } else if (tLi && tLi.length) {
+                $("#optionUuid").val(tLi.attr("uuid"));
+            }
         }
 
 
@@ -1617,23 +2908,30 @@
 						fldSelected = true;
         				return true;
         			}
-        				
+
             		var mediaId  = $(this).parent().next().attr("media-id");
             		var mediaSrc = $(this).parent().next().attr("media-src");
+            		var mediaPreview = $(this).parent().next().attr("media-preview");
             		var mediaImg = $(this).parent().next().attr("src");
 
                     blnSelected = true;
                     $(this).prop("checked", false);
                     $(this).parent().removeClass('selected');
 
-                    var imgS = tLi.find("img");
-                    imgS.attr("src", mediaSrc);
-                    imgS.attr("imgid", name);
-                    setTypeOptionDataImgId(name);
-                    setTypeOptionValues();
+                    if(optionMediaTarget === "widget-bg"){
+                        applyOptionWidgetBackground(mediaPreview || mediaSrc, name);
+                        setTypeOptionValues();
+                    } else if (tLi && tLi.length) {
+                        var imgS = tLi.find("img");
+                        imgS.attr("src", mediaSrc);
+                        imgS.attr("imgid", name);
+                        setTypeOptionDataImgId(name);
+                        setTypeOptionValues();
+                        console.log("Lo Actual img: %o", imgS.attr("src"));
+                    }
+
                     $("#deleteMediaFileBtn").hide();
                     console.log("Los cuepoints: %o", cuePoints);
-                    console.log("Lo Actual img: %o", imgS.attr("src"));
                     console.log(" Id: " + mediaId + ", Media:" + mediaSrc + ", Img:" + mediaImg);
                 }
             });
@@ -1649,16 +2947,17 @@
 			imgSelected = false;
 			fldSelected = false;
 			blnSelected = false;
+            optionMediaTarget = "option-image";
 		}
 
 		function setTypeOptionDataImgId( imgId ){
 			console.log("setTypeOptionDataImgId ID: " + imgId);
-			
+
 			$.each(cuePoints, function(i, item) {
     			if(item.id == $("#cuepointId").val()){
     				arrOpciones = item.type_option.type_option_data;
 					var updated = false;
-					
+
     				$.each(arrOpciones, function(j, data) {
 						if(data.uuid == $("#optionUuid").val()){
 							data.library_img = imgId;
@@ -1674,19 +2973,20 @@
     		    			type : 'URL',
     		    			goto : null,
     		    			options : '_blank',
+    		    			tag : ($('#optionTag').val() || null),
     		    			content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
-        				arrOpciones.push(data);				
+        				arrOpciones.push(data);
                 	}
-    				
+
     				item.action = 'UPDATE'
     				setTypeOptionValues();
     				console.log("Actualizando LIBRARY_IMG cuepoint : %o", item);
-    				 
+
     			}
-    			
-	        });	
+
+	        });
     	}
 
 
@@ -1711,6 +3011,7 @@
                 $("#widgetContainerForm").addClass("d-none");
                 //Close if is Open EditToolTip
                 if (!$("#toolOptionEdit").hasClass("d-none")) {
+                    optionEditorMode = "single";
                     $("#toolOptionEdit").addClass("d-none");
                 }
 
@@ -1759,19 +3060,24 @@
         //-----------------------------------------HOVER LI - EDIT TOOL TIP - POWER-----------------------------------------//
         function Hoverli() {
             console.log("Hoverli()");
-            $("#AB li").off("click");
+            $("#AB").off("click.optionSelect");
             $("#AB li p").off('blur');
 
-            $("#AB li").on("click", function() {
-                t = $(this);
-                tLi = $(this);
+            $("#AB").on("click.optionSelect", "li, li *", function(event) {
+                var selectedLi = $(event.target).closest("li");
+                if (!selectedLi.length || !selectedLi.closest("#AB").length) {
+                    return;
+                }
+
+                t = selectedLi;
+                tLi = selectedLi;
                 $("#AB li").removeClass("selected");
                 tLi.addClass("selected");
                 clearStyle();
                 $(".edit-tooltip").remove();
                 $(".edit-tooltipM").remove();
                 t.prepend(
-                    '<div class="edit-tooltip d-none d-lg-flex"><div class="power on mx-2"><i class="fas fa-power-off"></i></div><i class="fas fa-exchange-alt mx-2 changeP"></i><div class="editBtn  mr-2"><i class="fas fa-pencil-alt"></i></div><i class="fas fa-arrows-alt"></i></div>'
+                    '<div class="edit-tooltip"><div class="power on mx-2"><i class="fas fa-power-off"></i></div><i class="fas fa-exchange-alt mx-2 changeP"></i><div class="editBtn  mr-2"><i class="fas fa-pencil-alt"></i></div><i class="fas fa-arrows-alt"></i></div>'
                     );
                 $(".addVideoMain").after(
                     '<div class="edit-tooltipM d-lg-none"><div class="mx-2"><p class="numberLi p-0 m-0">0</p></div><div class="power on mx-2"><i class="fas fa-power-off"></i></div><input class="sliderWidth" type="range" min="1" max="100" value="50"><div class="mx-2 posMove"><i class="fas fa-arrow-up"></i><i class="fas fa-arrow-down ml-3"></i></div><i class="fas fa-exchange-alt mx-2 changeP"></i><div class="editBtn  mx-2"><i class="fas fa-pencil-alt"></i></div></div>'
@@ -1866,7 +3172,7 @@
 
                     //AQUI LLAMO LA BIBLIOTECA
                     $("#imgGetIn").on("click", function() {
-                        openDialogImg();
+                        openDialogImg("option-image");
 
                         //console.log("Los cuepoints: %o", cuePoints );
                     });
@@ -1903,116 +3209,134 @@
             _option = option;
 
             if (!$("#toolOptionEdit").hasClass("d-none")) {
-                // console.log("esta abierto");
+                function applyToStyleTargets(applyChange) {
+                    var targets = getCurrentOptionEditorTargets();
+
+                    if (optionEditorMode === "global") {
+                        if (targets && targets.length) {
+                            applyChange(targets);
+                        }
+                        syncGlobalStyleFromControls();
+                        applyGlobalStyleToInheritedOptions();
+                        setTypeOptionValues();
+                        return;
+                    }
+
+                    if (!_option || !_option.length || getOptionUseGlobalStyle(_option)) {
+                        return;
+                    }
+
+                    targets = _option;
+                    applyChange(targets);
+                    setTypeOptionValues();
+                }
 
                 //sizes
-                $("#toolOptionEdit .sizes .slider-alpha").on('input', function() {
-                    //console.log($("#toolOptionEdit .sizes .active").text());
-                    _option.removeClass("s-10 s-20 s-30 s-40 s-50 s-60 s-70 s-80 s-90 s-25 s-75 s-100");
+                $("#toolOptionEdit .sizes .slider-alpha").off('input.optionEdit').on('input.optionEdit', function() {
                     var size = $("#toolOptionEdit .sizes .slider-alpha").val();
-                    _option.addClass("s-" + size);
-                    console.log("slider-alpha" + $("#toolOptionEdit .sizes .slider-alpha").val());
-                    setTypeOptionValues();
+                    applyToStyleTargets(function(targets) {
+                        targets.removeClass("s-10 s-20 s-30 s-40 s-50 s-60 s-70 s-80 s-90 s-25 s-75 s-100");
+                        targets.addClass("s-" + size);
+                    });
                 });
 
                 //aling
-                $("#toolOptionEdit .aling li").click(function() {
-                    //console.log($("#toolOptionEdit .aling .active").attr( "data-id" ));
-                    _option.removeClass("aCenter aEnd aStart");
-                    _option.addClass($("#toolOptionEdit .aling .active").attr("data-id"));
-                    setTypeOptionValues();
+                $("#toolOptionEdit .aling li").off('click.optionEdit').on('click.optionEdit', function() {
+                    var alignClass = $(this).attr("data-id") || "aCenter";
+                    applyToStyleTargets(function(targets) {
+                        targets.removeClass("aCenter aEnd aStart");
+                        targets.addClass(alignClass);
+                    });
                 });
 
                 //image
-                $("#toolOptionEdit .activePanel input").change(function() {
+                $("#toolOptionEdit #optionImageEnabled").off('change.optionEdit').on('change.optionEdit', function() {
+                    var imageEnabled = $(this).is(':checked');
+                    applyToStyleTargets(function(targets) {
+                        targets.each(function() {
+                            applyOptionImageState(this, imageEnabled);
+                        });
+                    });
 
-                    if ($("#toolOptionEdit .switch input").is(':checked')) {
-                        //_option.find("img").show();
-                        _option.addClass("imgOn");
-                        _option.removeClass("imgOff");
-                        var imgContent = _option.find("img").parent();
-
-                        if ($("#AB").hasClass("optionsRows")) {
-                            _option.find(".content").css("width", "50%");
-                            _option.find(".content").css("height", "100%");
-                            //width
-                            sliderSet();
-                            //console.log("cargo imagen");
-                        } else if ($("#AB").hasClass("optionsCols")) {
-                            _option.find(".content").css("height", "50%");
-                            _option.find(".content").css("width", "100%");
-                            //height
-                            sliderSet();
-                        }
+                    sliderSet();
+                    if (tLi && typeof tLi.find === "function" && tLi.length) {
                         loadResizable(tLi);
-                        setTypeOptionValues();
-                    } else {
-                        console.log("imagen no esta");
-                        // _option.find("img").hide();
-                        _option.removeClass("imgOn");
-                        _option.addClass("imgOff");
-                        var imgContent = _option.find("img").parent();
-                        _option.find(".content").css("width", "100%");
-                        _option.find(".content").css("height", "100%");
-                        imgContent.css("width", "0");
-                        imgContent.css("height", "0");
-                        loadResizable(tLi);
-                        setTypeOptionValues();
                     }
                 });
 
                 //backgroud
-                $("#toolOptionEdit #hexcolorBG").change(function() {
-                    //console.log("The text has been changed.");
+                $("#toolOptionEdit #hexcolorBG").off('change.optionEdit').on('change.optionEdit', function() {
                     var hex = $("#toolOptionEdit #hexcolorBG").val();
-                    _option.css('background-color', hex);
-                    //_option.find(".content").css("background", "none");
-                    setTypeOptionValues();
+                    applyToStyleTargets(function(targets) {
+                        targets.css('background-color', hex);
+                    });
                 });
-                $("#toolOptionEdit #colorpickerBG").change(function() {
+                $("#toolOptionEdit #colorpickerBG").off('change.optionEdit').on('change.optionEdit', function() {
                     var color = $("#toolOptionEdit #colorpickerBG").val();
-                    _option.css('background-color', color);
-                    //_option.find(".content").css("background", "none");
-                    setTypeOptionValues();
-                    //console.log("The text has been changed.");
+                    applyToStyleTargets(function(targets) {
+                        targets.css('background-color', color);
+                    });
                 });
 
                 //Border
-                $("#toolOptionEdit #hexcolor").change(function() {
-                    //console.log("The text has been changed.");
+                $("#toolOptionEdit #hexcolor").off('change.optionEdit').on('change.optionEdit', function() {
                     var hex = $("#toolOptionEdit #hexcolor").val();
-                    var borN = $("#toolOptionEdit #borderNumber").val();
-                    _option.css('border', hex + " solid " + borN + "px");
-                    setTypeOptionValues();
+                    var borN = sanitizeOptionBorderWidth($("#toolOptionEdit #borderNumber").val());
+                    applyToStyleTargets(function(targets) {
+                        targets.css('border', hex + " solid " + borN + "px");
+                    });
                 });
-                $("#toolOptionEdit #colorpicker").change(function() {
+                $("#toolOptionEdit #colorpicker").off('change.optionEdit').on('change.optionEdit', function() {
                     var color = $("#toolOptionEdit #colorpicker").val();
-                    var borN = $("#toolOptionEdit #borderNumber").val();
-                    _option.css('border', color + " solid " + borN + "px");
-                    setTypeOptionValues();
-                    //console.log("The text has been changed.");
+                    var borN = sanitizeOptionBorderWidth($("#toolOptionEdit #borderNumber").val());
+                    applyToStyleTargets(function(targets) {
+                        targets.css('border', color + " solid " + borN + "px");
+                    });
                 });
-                $("#toolOptionEdit #borderNumber").change(function() {
-                    var color = $("#toolOptionEdit #hexcolor").val();
-                    var colorP = $("#toolOptionEdit #colorpicker").val();
-                    var borN = $("#toolOptionEdit #borderNumber").val();
-                    _option.css('border', colorP + " solid " + borN + "px");
-                    setTypeOptionValues();
-                    //console.log("The text has been changed.");
+                $("#toolOptionEdit #borderNumber").off('change.optionEdit').on('change.optionEdit', function() {
+                    var color = $("#toolOptionEdit #colorpicker").val() || $("#toolOptionEdit #hexcolor").val();
+                    var borN = sanitizeOptionBorderWidth($("#toolOptionEdit #borderNumber").val());
+                    $("#toolOptionEdit #borderNumber").val(borN);
+                    applyToStyleTargets(function(targets) {
+                        targets.css('border', color + " solid " + borN + "px");
+                    });
                 });
 
                 //FONT
-                $("#toolOptionEdit #hexcolorFont").change(function() {
-                    //console.log("The text has been changed.");
+                $("#toolOptionEdit #hexcolorFont").off('change.optionEdit').on('change.optionEdit', function() {
                     var hex = $("#toolOptionEdit #hexcolorFont").val();
-                    _option.find(".context p").css("color", hex);
+                    applyToStyleTargets(function(targets) {
+                        targets.find(".context p, .content p").css("color", hex);
+                    });
+                });
+                $("#toolOptionEdit #colorpickerFont").off('change.optionEdit').on('change.optionEdit', function() {
+                    var color = $("#toolOptionEdit #colorpickerFont").val();
+                    applyToStyleTargets(function(targets) {
+                        targets.find(".context p, .content p").css("color", color);
+                    });
+                });
+
+                $("#toolOptionEdit #optionIconClass").off('input.optionEdit').on('input.optionEdit', function() {
+                    if (optionEditorMode === "global" || !_option || !_option.length) {
+                        return;
+                    }
+                    applyOptionIconClass(_option, $(this).val());
                     setTypeOptionValues();
                 });
-                $("#toolOptionEdit #colorpickerFont").change(function() {
-                    var color = $("#toolOptionEdit #colorpickerFont").val();
-                    _option.find(".content p").css("color", color);
+
+                $("#toolOptionEdit #optionUseGlobalStyle").off('change.optionEdit').on('change.optionEdit', function() {
+                    if (optionEditorMode === "global" || !_option || !_option.length) {
+                        return;
+                    }
+
+                    var useGlobal = $(this).is(":checked");
+                    setOptionUseGlobalStyleFlag(_option, useGlobal);
+                    if (useGlobal) {
+                        applyGlobalStyleToOption(_option);
+                    }
+
+                    setOption(_option);
                     setTypeOptionValues();
-                    //console.log("The text has been changed.");
                 });
 
             } else {
@@ -2025,84 +3349,50 @@
         function setOption(option) {
             console.log("setOption()");
             _option = option;
+            ensureOptionWidgetStructure();
 
-            //align
-            $("#toolOptionEdit .aling li").each(function() {
-                var alignLoad = $(this).attr("data-id");
-                if (_option.hasClass(alignLoad)) {
-                    $("#toolOptionEdit .aling li").removeClass("active");
-                    $(this).addClass("active");
-                }
-            });
-
-            //sizes
-            for (var i = 10; i <= 100; i++) {
-                if (_option.hasClass("s-" + i)) {
-                    $("#toolOptionEdit .sizes .slider-alpha").val(i);
-                }
+            if (!_option || !_option.length) {
+                updateOptionEditorModeUI();
+                return;
             }
 
+            ensureOptionUseGlobalFlag(_option);
 
-            //image
-            if (_option.find("img").is(":visible")) {
-                //console.log("no esta oculta");
-                $("#toolOptionEdit .switch input").prop("checked", true);
+            var isGlobalMode = optionEditorMode === "global";
+            var usingGlobal = !isGlobalMode && getOptionUseGlobalStyle(_option);
+            var styleData = isGlobalMode ? readGlobalOptionStyle() : (usingGlobal ? readGlobalOptionStyle() : readGlobalStyleFromOption(_option));
+            var sizeValue = parseInt(String(styleData.sizeClass || "s-50").replace("s-", ""), 10);
+            if (isNaN(sizeValue) || sizeValue < 10 || sizeValue > 100) {
+                sizeValue = 50;
+            }
+
+            $("#toolOptionEdit .aling li").removeClass("active");
+            var alignTarget = $("#toolOptionEdit .aling li[data-id='" + (styleData.alignClass || "aCenter") + "']");
+            if (alignTarget.length) {
+                alignTarget.addClass("active");
             } else {
-                //console.log("si esta oculta");
-                $("#toolOptionEdit .switch input").prop("checked", false);
+                $("#toolOptionEdit .aling li[data-id='aCenter']").addClass("active");
             }
 
-            //background
-            $("#toolOptionEdit #colorpickerBG").val(getHexBackgroundColor(_option));
-            $("#toolOptionEdit #hexcolorBG").val(getHexBackgroundColor(_option));
+            $("#toolOptionEdit .sizes .slider-alpha").val(sizeValue);
+            $("#toolOptionEdit #optionImageEnabled").prop("checked", styleData.imageEnabled !== false);
+            $("#toolOptionEdit #colorpickerBG").val(styleData.backgroundColor);
+            $("#toolOptionEdit #hexcolorBG").val(styleData.backgroundColor);
+            $("#toolOptionEdit #colorpicker").val(styleData.borderColor);
+            $("#toolOptionEdit #hexcolor").val(styleData.borderColor);
+            $("#toolOptionEdit #borderNumber").val(sanitizeOptionBorderWidth(styleData.borderWidth));
+            $("#toolOptionEdit #colorpickerFont").val(styleData.fontColor);
+            $("#toolOptionEdit #hexcolorFont").val(styleData.fontColor);
 
-            function getHexBackgroundColor(_option) {
-                var rgb = _option.css('background-color');
-                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-                function hex(x) {
-                    return ("0" + parseInt(x).toString(16)).slice(-2);
-                }
-
-                //console.log("#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]));
-                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+            if (!isGlobalMode) {
+                $("#toolOptionEdit #optionUseGlobalStyle").prop("checked", usingGlobal);
+                ensureOptionIconElement(_option);
+                $("#toolOptionEdit #optionIconClass").val(readOptionIconClass(_option));
+            } else {
+                $("#toolOptionEdit #optionIconClass").val("");
             }
 
-            //border
-            $("#toolOptionEdit #colorpicker").val(getHexBorderColor(_option));
-            $("#toolOptionEdit #hexcolor").val(getHexBorderColor(_option));
-            var borderW = _option.css('border-width').slice(0, -2);
-            //console.log(borderW);
-            $("#toolOptionEdit #borderNumber").val(borderW)
-
-            function getHexBorderColor(_option) {
-                var rgb = _option.css('border-color');
-                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-                function hex(x) {
-                    return ("0" + parseInt(x).toString(16)).slice(-2);
-                }
-
-                //console.log("#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]));
-                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-            }
-
-            //Font
-            $("#toolOptionEdit #colorpickerFont").val(getHexFontColor(_option));
-            $("#toolOptionEdit #hexcolorFont").val(getHexFontColor(_option));
-
-            function getHexFontColor(_option) {
-                var rgb = _option.find(".context").find("p").css("color");
-                //console.log(rgb);
-                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-                function hex(x) {
-                    return ("0" + parseInt(x).toString(16)).slice(-2);
-                }
-
-                //console.log("#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]));
-                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
-            }
+            updateOptionEditorModeUI();
         }
 
 
@@ -2116,6 +3406,15 @@
             //ClickOptionsTool
             $(".editBtn").on("click", function() {
                 $("body").css("overflow", "hidden");
+                ensureOptionWidgetStructure();
+                optionEditorMode = "single";
+
+                if (!tLi || !tLi.length) {
+                    tLi = $("#AB li").first();
+                }
+                if (!tLi || !tLi.length) {
+                    return;
+                }
 
                 //console.log("Hola Click");
                 var xyPositiont = $(this).offset();
@@ -2141,7 +3440,7 @@
         function RowColPress() {
             console.log("RowColPress()");
             $("#cpOptSubTypeCol").off("click");
-            $("#cpOptSubTypeCol").off("click");
+            $("#cpOptSubTypeRow").off("click");
 
             //col
             $("#cpOptSubTypeCol").on("click", function() {
@@ -2375,11 +3674,17 @@
 
             $("#toolOptionEdit .closeM").on("click", function() {
                 $("body").css("overflow", "initial");
-                $("#toolOptionEdit").hide(500);
+                optionEditorMode = "single";
+                $("#toolOptionEdit").hide(500, function() {
+                    $("#toolOptionEdit").addClass("d-none");
+                });
             });
 
             $("#toolOptionEdit .toolOptionEditClose").on("click", function() {
-                $("#toolOptionEdit").hide(500);
+                optionEditorMode = "single";
+                $("#toolOptionEdit").hide(500, function() {
+                    $("#toolOptionEdit").addClass("d-none");
+                });
                 $("body").css("overflow", "initial");
             });
 
@@ -2622,7 +3927,7 @@
         }
 
         //-----------------------------------------START FUNCTIONS------//
-        
+
 
         function deleteOldCode() {
             $(".context").removeClass("w-100 h-100 p-3");
@@ -2731,6 +4036,11 @@
         //------------------------------------------------------------FORM-------------------------------------------------------------------------------------------//
         //fuction Title
         function formtitleF() {
+            if ($("#widgetContainerForm #AF[data-form-builder='dynamic']").length && typeof window.dynamicFormTitleTools === 'function') {
+                window.dynamicFormTitleTools();
+                return;
+            }
+
             document.querySelector("#AF #form-terms input").setAttribute('id', 'f-terms');
             $("#AF #form-title h3").blur(function() {
                 console.log("cambios de titulo");
@@ -2740,6 +4050,10 @@
 
         //Panel-Form-Inputs
         function formEditTools() {
+            if ($("#widgetContainerForm #AF[data-form-builder='dynamic']").length && typeof window.dynamicFormEditTools === 'function') {
+                window.dynamicFormEditTools();
+                return;
+            }
 
             //Open Tool Form Edit
             $("#fileds-form").off("click");
@@ -2779,7 +4093,8 @@
         function formColorsTools() {
             //Open Tool Form Edit
             $("#colors-form").off("click");
-            $("#colors-form-edit").hide();
+            $("#colors-form-edit .closeM").off("click");
+            $("#colors-form-edit .form-edit-close").off("click");
 
             console.log('-----------------------Load Forms Functions');
             $("#colors-form").on("click", function() {
@@ -2789,15 +4104,6 @@
                 $("#colors-form-edit").show(500);
                 loadColorsForms();
             });
-
-            $("#colors-form-edit .form-edit-close").on("click", function() {
-                $("#colors-form-edit").hide(500);
-                $("#colors-form-edit").addClass("d-none");
-                $("body").css("overflow", "initial");
-            });
-            //Close Tool Form Edit
-            $("#colors-form-edit .closeM").off("click");
-            $("#colors-form-edit .form-edit-close").off("click");
 
             $("#colors-form-edit .closeM").on("click", function() {
                 $("body").css("overflow", "initial");
@@ -2848,6 +4154,10 @@
 
         //LOAD CRM
         function loadCrmField() {
+            if ($("#widgetContainerForm #AF[data-form-builder='dynamic']").length && typeof window.dynamicLoadCrmField === 'function') {
+                return window.dynamicLoadCrmField();
+            }
+
             let form = document.querySelector('#AF');
             if (form.hasAttribute('crm')) {
                 if (form.getAttribute('crm') == 'true') {
@@ -2869,6 +4179,11 @@
 
         //SET CRM FORM
         function switcherCrm(bool, name) {
+            if ($("#widgetContainerForm #AF[data-form-builder='dynamic']").length && typeof window.dynamicSwitcherCrm === 'function') {
+                window.dynamicSwitcherCrm(bool);
+                return;
+            }
+
             //console.log(name);
             //console.log(bool);
             document.querySelector('#AF').setAttribute('crm', bool);
@@ -2939,6 +4254,133 @@
             updateTypeForm();
         }
 
+        function getFormReferenceFieldInput() {
+            var referenceField = $("#AF input[type=text], #AF input[type=email], #AF input[type=tel], #AF input[type=date], #AF textarea").first();
+            return referenceField.length ? referenceField : $("#AF");
+        }
+
+        function getFormEditableInputs() {
+            return $("#AF input[type=text], #AF input[type=email], #AF input[type=tel], #AF input[type=date], #AF textarea");
+        }
+
+        function getFormReferenceWrapper() {
+            var wrapper = $("#AF .form-field").first();
+            if (!wrapper.length) {
+                wrapper = $("#AF .itemForm").not("#form-title").first();
+            }
+            return wrapper;
+        }
+
+        function getFormFieldWrappers() {
+            var wrappers = $("#AF .form-field");
+            if (!wrappers.length) {
+                wrappers = $("#AF .itemForm").not("#form-title");
+            }
+            return wrappers;
+        }
+
+        function getFieldBorderModePreview(referenceField) {
+            var target = referenceField && referenceField.length ? referenceField : getFormReferenceFieldInput();
+            var topWidth = parseInt(target.css("border-top-width"), 10) || 0;
+            var rightWidth = parseInt(target.css("border-right-width"), 10) || 0;
+            var bottomWidth = parseInt(target.css("border-bottom-width"), 10) || 0;
+            var leftWidth = parseInt(target.css("border-left-width"), 10) || 0;
+
+            if (topWidth > 0 || rightWidth > 0 || leftWidth > 0) {
+                return "all";
+            }
+
+            if (bottomWidth > 0) {
+                return "bottom";
+            }
+
+            return "none";
+        }
+
+        function getFieldPlaceholderColorPreview(referenceField) {
+            var target = referenceField && referenceField.length ? referenceField : getFormReferenceFieldInput();
+            if (!target.length || !target[0]) {
+                return "#93aed0";
+            }
+
+            var inlineValue = target[0].style ? target[0].style.getPropertyValue("--field-placeholder-color") : "";
+            if (inlineValue && inlineValue.trim() !== "") {
+                return inlineValue.trim();
+            }
+
+            var computedValue = window.getComputedStyle(target[0]).getPropertyValue("--field-placeholder-color");
+            if (computedValue && computedValue.trim() !== "") {
+                return computedValue.trim();
+            }
+
+            return "#93aed0";
+        }
+
+        function applyFieldBorderPreview(mode, color) {
+            var borderMode = mode || $("#fieldBorderMode-form").val() || "bottom";
+            var borderColor = color || $("#hexcolorBorder-filed-form").val() || "#ffffff";
+            var inputs = getFormEditableInputs();
+
+            if (borderMode === "all") {
+                inputs.css({
+                    "border": "1px solid " + borderColor,
+                    "border-bottom": "1px solid " + borderColor,
+                    "border-color": borderColor,
+                    "border-bottom-color": borderColor
+                });
+                return;
+            }
+
+            if (borderMode === "none") {
+                inputs.css({
+                    "border": "none",
+                    "border-bottom": "none",
+                    "border-color": borderColor,
+                    "border-bottom-color": borderColor
+                });
+                return;
+            }
+
+            inputs.css({
+                "border": "none",
+                "border-bottom": "1px solid " + borderColor,
+                "border-color": borderColor,
+                "border-bottom-color": borderColor
+            });
+        }
+
+        function setFieldBorderModeButtons(mode) {
+            var borderMode = mode || "bottom";
+            $("#fieldBorderMode-form").val(borderMode);
+            $("#colors-form-edit .border-mode-btn").removeClass("active");
+            $('#colors-form-edit .border-mode-btn[data-border-mode="' + borderMode + '"]').addClass("active");
+        }
+
+        function applyFieldPlaceholderPreview(color) {
+            var placeholderColor = color || $("#hexcolorPlaceholder-field-form").val() || "#93aed0";
+            getFormEditableInputs().css("--field-placeholder-color", placeholderColor);
+        }
+
+        function applyFieldDividerPreview(color, width) {
+            var dividerWidth = parseInt(width, 10);
+            if (isNaN(dividerWidth) || dividerWidth < 0) {
+                dividerWidth = 0;
+            }
+
+            var wrappers = getFormFieldWrappers();
+            wrappers.css({
+                "border-bottom-style": dividerWidth > 0 ? "solid" : "none",
+                "border-bottom-width": dividerWidth + "px",
+                "border-bottom-color": color,
+                "padding-bottom": dividerWidth > 0 ? "12px" : "0px"
+            });
+
+            wrappers.last().css({
+                "border-bottom-width": "0px",
+                "padding-bottom": "0px"
+            });
+        }
+
         //Colors and CTA
         $("#colors-form-edit #cta-form").change(function() {
             $("#AF #form-cta").text($(this).val());
@@ -2950,12 +4392,10 @@
         $("#colors-form-edit input.colors").change(function() {
             var color = $(this).val();
             $(this).parent().find(".hex-colors").val(color);
-            updateTypeForm();
         });
         $("#colors-form-edit input.hex-colors").change(function() {
             var hex = $(this).val();
             $(this).parent().find(".colors").val(hex);
-            updateTypeForm();
         });
 
         //cta bg
@@ -2988,27 +4428,27 @@
         //field bg
         $("#colors-form-edit .field .bg input").change(function() {
             var color = $(this).val();
-            $("#AF input").css('background-color', color);
+            getFormEditableInputs().css('background-color', color);
             updateTypeForm();
-            $("#AF textarea").css('background-color', color);
-            updateTypeForm();
-
-
         });
         //field text
         $("#colors-form-edit .field .texts input").change(function() {
             var color = $(this).val();
-            $("#AF input").css('color', color);
+            getFormEditableInputs().css('color', color);
             updateTypeForm();
-            $("#AF textarea").css('color', color);
+        });
+
+        //field placeholder
+        $("#colors-form-edit .field .placeholder input").change(function() {
+            var color = $(this).val();
+            applyFieldPlaceholderPreview(color);
             updateTypeForm();
         });
 
         //field border
         $("#colors-form-edit .field .bor input").change(function() {
             var color = $(this).val();
-            $("#AF input").css('border-color', color);
-            $("#AF textarea").css('border-color', color);
+            applyFieldBorderPreview($("#fieldBorderMode-form").val(), color);
             updateTypeForm();
         });
 
@@ -3016,6 +4456,53 @@
         $("#colors-form-edit .field .label input").change(function() {
             var color = $(this).val();
             $("#AF .itemForm label").css('color', color);
+            updateTypeForm();
+        });
+
+        $("#fieldGap-form").change(function() {
+            var value = Math.max(0, parseInt($(this).val(), 10) || 0);
+            getFormFieldWrappers().css("margin-top", value + "px");
+            updateTypeForm();
+        });
+
+        $("#fieldRadius-form").change(function() {
+            var value = Math.max(0, parseInt($(this).val(), 10) || 0);
+            getFormEditableInputs().css("border-radius", value + "px");
+            updateTypeForm();
+        });
+
+        $("#colors-form-edit .border-mode-btn").on("click", function() {
+            var mode = $(this).attr("data-border-mode");
+            setFieldBorderModeButtons(mode);
+            applyFieldBorderPreview(mode, $("#hexcolorBorder-filed-form").val());
+            updateTypeForm();
+        });
+
+        $("#fieldPaddingY-form").change(function() {
+            var value = Math.max(0, parseInt($(this).val(), 10) || 0);
+            getFormEditableInputs().css({
+                "padding-top": value + "px",
+                "padding-bottom": value + "px"
+            });
+            updateTypeForm();
+        });
+
+        $("#fieldPaddingX-form").change(function() {
+            var value = Math.max(0, parseInt($(this).val(), 10) || 0);
+            getFormEditableInputs().css({
+                "padding-left": value + "px",
+                "padding-right": value + "px"
+            });
+            updateTypeForm();
+        });
+
+        $("#dividerWidth-form").change(function() {
+            applyFieldDividerPreview($("#hexcolorDivider-form").val(), $(this).val());
+            updateTypeForm();
+        });
+
+        $("#colors-form-edit .layout .divider input").change(function() {
+            applyFieldDividerPreview($(this).val(), $("#dividerWidth-form").val());
             updateTypeForm();
         });
 
@@ -3073,6 +4560,9 @@
         }
         //Colors
         function loadColorsForms() {
+            var referenceField = getFormReferenceFieldInput();
+            var referenceWrapper = getFormReferenceWrapper();
+
             //cta text
             $("#cta-form").val($("#form-cta span").text());
             //cta bg
@@ -3091,17 +4581,30 @@
             $("#hexcolor-bg-form").val(RgbaTohex($("#AF").css("background-color")));
 
             //field
-            $("#colorpicker-filed-form").val(RgbaTohex($("#AF input").css("background-color")));
-            $("#hexcolor-filed-form").val(RgbaTohex($("#AF input").css("background-color")));
+            $("#colorpicker-filed-form").val(RgbaTohex(referenceField.css("background-color")));
+            $("#hexcolor-filed-form").val(RgbaTohex(referenceField.css("background-color")));
             //field font
-            $("#colorpickerFont-field-form").val(RgbaTohex($("#AF input").css("color")));
-            $("#hexcolorFont-field-form").val(RgbaTohex($("#AF input").css("color")));
+            $("#colorpickerFont-field-form").val(RgbaTohex(referenceField.css("color")));
+            $("#hexcolorFont-field-form").val(RgbaTohex(referenceField.css("color")));
+            //placeholder
+            $("#colorpickerPlaceholder-field-form").val(getFieldPlaceholderColorPreview(referenceField));
+            $("#hexcolorPlaceholder-field-form").val(getFieldPlaceholderColorPreview(referenceField));
             //border
-            $("#colorpickerBorder-filed-form").val(RgbaTohex($("#AF input").css("border-color")));
-            $("#hexcolorBorder-filed-form").val(RgbaTohex($("#AF input").css("border-color")));
+            $("#colorpickerBorder-filed-form").val(RgbaTohex(referenceField.css("border-color")));
+            $("#hexcolorBorder-filed-form").val(RgbaTohex(referenceField.css("border-color")));
+            setFieldBorderModeButtons(getFieldBorderModePreview(referenceField));
             //border
             $("#colorpicker-filedTitle-form").val(RgbaTohex($("#AF label").css("color")));
             $("#hexcolor-filedTitle-form").val(RgbaTohex($("#AF label").css("color")));
+            //layout
+            $("#AF").css("padding", "0px");
+            $("#fieldGap-form").val(referenceWrapper.length ? (parseInt(referenceWrapper.css("margin-top"), 10) || 16) : 16);
+            $("#fieldRadius-form").val(referenceField.length && referenceField.attr("id") !== "AF" ? (parseInt(referenceField.css("border-radius"), 10) || 0) : 0);
+            $("#fieldPaddingY-form").val(referenceField.length && referenceField.attr("id") !== "AF" ? (parseInt(referenceField.css("padding-top"), 10) || 6) : 6);
+            $("#fieldPaddingX-form").val(referenceField.length && referenceField.attr("id") !== "AF" ? (parseInt(referenceField.css("padding-left"), 10) || 4) : 4);
+            $("#dividerWidth-form").val(referenceWrapper.length ? (parseInt(referenceWrapper.css("border-bottom-width"), 10) || 0) : 0);
+            $("#colorpickerDivider-form").val(referenceWrapper.length ? RgbaTohex(referenceWrapper.css("border-bottom-color")) : "#ffffff");
+            $("#hexcolorDivider-form").val(referenceWrapper.length ? RgbaTohex(referenceWrapper.css("border-bottom-color")) : "#ffffff");
 
         }
         //labels
@@ -3121,6 +4624,8 @@
             console.log("Start()");
             //deleteOldCode
             deleteOldCode();
+            ensureOptionWidgetStructure();
+            bindRightMenuScrollContainment();
 
             //Hover in Li-Option
             $(".edit-tooltip").remove();
@@ -3153,6 +4658,7 @@
             fontSize();
 
             resizeAddmedia();
+            loadOptionWidgetPanelValues();
         }
 
 
@@ -3229,10 +4735,7 @@
             $('#msgModal').modal('show');
         }
 
-
-		
-
     </script>
+    <script src="js/form-builder-editor.js"></script>
   </body>
 </html>
-

@@ -12,6 +12,24 @@
 			<p class="p-0 m-0 mr-2">NOMBRE:</p>
 			<input class="px-2 col text-left" type="text" id="optionName" placeholder="Nombre de la opción" onfocusout="setOptionName()">
 		</div>
+		<div class="name d-flex justify-content-betwee align-items-center w-100 mt-2">
+			<p class="p-0 m-0 mr-2">Etiqueta CRM:</p>
+			<select class="px-2 col text-left" id="optionTag" onchange="setOptionTag()">
+				<option value="">Sin etiqueta</option>
+			</select>
+		</div>
+		<div class="name d-flex justify-content-betwee align-items-center w-100 mt-2">
+			<p class="p-0 m-0 mr-2">Icono:</p>
+			<input class="px-2 col text-left" type="text" id="optionIconClass" placeholder="far fa-circle">
+		</div>
+		<div class="activePanel d-flex p-0 m-0 mt-2 align-items-center justify-content-between" id="optionUseGlobalStyleRow">
+			<p class="m-0 p-0 mr-3">Usar estilo general</p>
+			<label class="switch m-0 p-0">
+				<input type="checkbox" id="optionUseGlobalStyle" checked>
+				<span class="slider round"></span>
+			</label>
+		</div>
+		<p class="m-0 mt-1 c02" id="optionEditorModeHint"></p>
 		<hr class="my-2">
 		<div class="accion p-0 m-0">
 			<p class="p-0 m-0">ACCIÓN IR A:</p> 
@@ -86,11 +104,11 @@
 			</div>
 		</div>
 		<hr class="my-2">   
-			<div class="activePanel d-flex p-0 m-0 align-items-center justify-content-between">
+			<div class="activePanel d-flex p-0 m-0 align-items-center justify-content-between" id="optionImagePanel">
 			
 			<p class="m-0 p-0 mr-3">IMAGEN</p>
 			<label class="switch m-0 p-0">
-			<input type="checkbox" checked>
+			<input type="checkbox" id="optionImageEnabled" checked>
 			<span class="slider round"></span>
 			</label>
 			</div>   
@@ -133,6 +151,60 @@
 </div>
   
   <script>
+		function getOptionTagChoices(){
+			var tags = Array.isArray(window.crmTags) ? window.crmTags : [];
+			return tags
+				.map(function(tag){
+					return tag && tag.name ? String(tag.name).trim() : '';
+				})
+				.filter(function(name, index, arr){
+					return !!name && arr.indexOf(name) === index;
+				});
+		}
+
+		function renderOptionTagSelect(selectedTag){
+			var select = document.getElementById('optionTag');
+			if(!select){
+				return;
+			}
+
+			var currentValue = (selectedTag !== undefined && selectedTag !== null) ? String(selectedTag) : '';
+			var tags = getOptionTagChoices();
+
+			select.innerHTML = '';
+
+			var emptyOption = document.createElement('option');
+			emptyOption.value = '';
+			emptyOption.textContent = 'Sin etiqueta';
+			select.appendChild(emptyOption);
+
+			tags.forEach(function(tag){
+				var option = document.createElement('option');
+				option.value = tag;
+				option.textContent = tag;
+				select.appendChild(option);
+			});
+
+			if(currentValue && tags.indexOf(currentValue) === -1){
+				var legacyOption = document.createElement('option');
+				legacyOption.value = currentValue;
+				legacyOption.textContent = currentValue + ' (no disponible en CRM)';
+				select.appendChild(legacyOption);
+			}
+
+			select.value = currentValue;
+		}
+
+		function getSelectedOptionTag(){
+			var select = document.getElementById('optionTag');
+			if(!select){
+				return null;
+			}
+
+			var value = (select.value || '').trim();
+			return value.length ? value : null;
+		}
+
 		function copyCuepointListOption(){
       		console.log("Ejecutando copyCuepointListOption() " + $("#libraryId").val() );
 
@@ -152,7 +224,7 @@
       	}
     
       
-		function selectBrowseCuepointOption(button){
+    	function selectBrowseCuepointOption(button){
     		$("#dropdownMenu33").attr("cuepoint-id", $(button).attr("cuepoint-id"));
         	$("#dropdownName-Nav11").html($(button).children('p').eq(0).html());
         	$("#dropdownTime-Nav11").html($(button).children('p').eq(1).html());
@@ -163,22 +235,24 @@
 					var updated = false;
 					
     				$.each(arrOpciones, function(j, data) {
-						if(data.uuid == $("#optionUuid").val()){
+					if(data.uuid == $("#optionUuid").val()){
 							data.type 	 = "CUEPOINT";
 							data.goto 	 = $(button).attr("cuepoint-id");
 							data.options = null;
+							data.tag 	 = getSelectedOptionTag();
 							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
 							updated = true;
 						}
         			});
 
         			if(!updated){
-        				var data = {
+					var data = {
         		    			uuid : $("#optionUuid").val(),
 								type : "CUEPOINT",
         		              	name : null,
         		              	goto : $(button).attr("cuepoint-id"),
         		              	options : null,
+        		              	tag : getSelectedOptionTag(),
         		              	content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
@@ -227,22 +301,24 @@
 					var updated = false;
 					
     				$.each(arrOpciones, function(j, data) {
-						if(data.uuid == $("#optionUuid").val()){
+					if(data.uuid == $("#optionUuid").val()){
 							data.type 	 = "VIDEO";
 							data.goto 	 = $(button).attr("projectlib-id");
 							data.options = null;
+							data.tag 	 = getSelectedOptionTag();
 							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
 							updated = true;
 						}
         			});
 
         			if(!updated){
-        				var data = {
+					var data = {
         		    			uuid : $("#optionUuid").val(),
 								type : "VIDEO",
         		              	name : null,
         		              	goto : $(button).attr("projectlib-id"),
 								options : null,
+								tag : getSelectedOptionTag(),
 								content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
@@ -284,21 +360,23 @@
 					var updated = false;
 
     				$.each(arrOpciones, function(j, data) {
-						if(data.uuid == $("#optionUuid").val()){
+					if(data.uuid == $("#optionUuid").val()){
 							data.goto 	 = newURL;
 							data.options = newOpt;
+							data.tag 	 = getSelectedOptionTag();
 							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
 							updated 	 = true;
 						}
         			});
 
         			if(!updated){
-        				var data = {
+					var data = {
         		    			uuid : $("#optionUuid").val(),
 								type : "URL",
         		              	name : null,
         		              	goto : newURL,
         		              	options : newOpt,
+        		              	tag : getSelectedOptionTag(),
         		              	content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
@@ -322,20 +400,22 @@
 					var updated = false;
 
     				$.each(arrOpciones, function(j, data) {
-						if(data.uuid == $("#optionUuid").val()){
+					if(data.uuid == $("#optionUuid").val()){
 							data.name 	 = newName;
+							data.tag 	 = getSelectedOptionTag();
 							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
 							updated 	 = true;
 						}
         			});
 
         			if(!updated){
-        				var data = {
+					var data = {
         		    			uuid : $("#optionUuid").val(),
         		    			type : "URL",
         		              	name : newName,
         		              	goto : null,
 								options : null,
+        		              	tag : getSelectedOptionTag(),
         		              	content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
@@ -352,27 +432,29 @@
 
 
 
-    	function setURLOption(){
+		function setURLOption(){
     		$.each(cuePoints, function(i, item) {
     			if(item.id == $("#cuepointId").val()){
     				arrOpciones = item.type_option.type_option_data;
 					var updated = false;
 
     				$.each(arrOpciones, function(j, data) {
-						if(data.uuid == $("#optionUuid").val()){
+					if(data.uuid == $("#optionUuid").val()){
 							data.type 	 = "URL";
+							data.tag 	 = getSelectedOptionTag();
 							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
 							updated 	 = true;
 						}
         			});
 
         			if(!updated){
-        				var data = {
+					var data = {
         		    			uuid : $("#optionUuid").val(),
         		              	type : "URL",
         		              	name : null,
         		              	goto : newURL,
         		              	options : newOpt,
+        		              	tag : getSelectedOptionTag(),
         		              	content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
         				};
 
@@ -387,20 +469,63 @@
         }
 
 
+		function setOptionTag(){
+			var selectedTag = getSelectedOptionTag();
+
+			$.each(cuePoints, function(i, item) {
+				if(item.id == $("#cuepointId").val()){
+					arrOpciones = item.type_option.type_option_data;
+					var updated = false;
+
+					$.each(arrOpciones, function(j, data) {
+						if(data.uuid == $("#optionUuid").val()){
+							data.tag = selectedTag;
+							data.content = $('li[uuid=' + data.uuid + ']').prop('outerHTML');
+							updated = true;
+						}
+					});
+
+					if(!updated){
+						var data = {
+								uuid : $("#optionUuid").val(),
+								type : "URL",
+								name : null,
+								goto : null,
+								options : '_blank',
+								tag : selectedTag,
+								content : $('li[uuid=' + $("#optionUuid").val() + ']').prop('outerHTML'),
+						};
+
+						arrOpciones.push(data);
+                	}
+
+					item.action = 'UPDATE';
+					console.log("Actualizando tag de opción : %o", item);
+					return false;
+				}
+			});
+		}
+
 
     	function setOptionValues(){
 
     		//copyCuepointListOption();
     		//copyVideoListOption()
+			var selectedLi = $('li[uuid=' + $("#optionUuid").val() + ']');
+			if(selectedLi.length && typeof readOptionIconClass === 'function'){
+				$("#optionIconClass").val(readOptionIconClass(selectedLi));
+			}
 			
 			$.each(cuePoints, function(i, item) {
 				if(item.id == $("#cuepointId").val()){
 					arrOpciones = item.type_option.type_option_data;
 					var found = false;
+					renderOptionTagSelect('');
     				$.each(arrOpciones, function(j, data) {
 						if(data.uuid == $("#optionUuid").val()){
 							found = true;	
 							$("#optionName").val(data.name);
+							renderOptionTagSelect(data.tag || '');
 
 							if(data.type == "URL"){
 								$("#goto-url").click();
@@ -449,6 +574,8 @@
     				if(!found){
         				console.log("No se encontro!!!");
         				$("#optionName").val("");
+						$("#optionIconClass").val("");
+						renderOptionTagSelect('');
         				$("#dropdownMenuAccion > p").html("Seleccione una Acción");
 
     					//Url

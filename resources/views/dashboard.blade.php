@@ -210,7 +210,7 @@
                                       <th class="Tth">Nombre</th>
                                       <th class="Tth">Email</th>
                         -->
-                                      <th class="Tth">ID</th>                                     
+                                      <th class="Tth">ID</th>
                                       <th class="Tth">{{__('dashboard.answer')}}<!-- CUEPOINT NAME --></th>
                                       <th class="Tth">{{__('dashboard.activity')}}</th>
                                       <th class="Tth">{{__('dashboard.date')}}</th>
@@ -221,13 +221,23 @@
                               </thead>
                               <tbody >
                                   @foreach($tableData  as $key =>  $row)
+                                  @php
+                                      $countryCode = strtolower(trim((string) $row->loc_country_code));
+                                      $countryCode = preg_replace('/[^a-z]/', '', $countryCode);
+                                  @endphp
                                   <tr>
-                                      <td class="Ttd">{{$key+1}}</td>                                     
+                                      <td class="Ttd">{{$key+1}}</td>
                                       <td class="Ttd">{{$row->cuepointoptionname}}</td>
                                       <td class="Ttd">{{$row->actividad}}</td>
                                       <td class="Ttd">{{$row->created_at}}</td>
                                       <td class="Ttd">{{$row->loc_city}}</td>
-                                      <td class="Ttd"><img src="https://flagicons.lipis.dev/flags/4x3/{{strtolower($row->loc_country_code)}}.svg" width="20px"></td>                                   
+                                      <td class="Ttd" data-flag="{{ $countryCode }}">
+                                        @if($countryCode !== '')
+                                          <img src="https://flagicons.lipis.dev/flags/4x3/{{ $countryCode }}.svg" width="20px" alt="{{ strtoupper($countryCode) }}" loading="lazy">
+                                        @else
+                                          <span class="text-muted">--</span>
+                                        @endif
+                                      </td>
                                       <td class="Ttd">...</td>
                                   </tr>
                                   @endforeach
@@ -681,7 +691,7 @@
                 if (response[i]['completed'] != null && response[i]['completed'] >= 0) {
                     totalCompleted += response[i]['completed'];
                     console.log(response[i]['completed']);
-				} 
+				}
                 else if (response[i]['completed'] == null) {
                     console.log("completed = null");
                     response[i]['completed'] = 0;
@@ -783,8 +793,8 @@
 
         function monitorChange(objeto) {
 			objeto.on('change', function() {
-				console.log('Before monitorChange() : ' + objeto.attr('id') + " - Value: " + objeto.val()); 
-				
+				console.log('Before monitorChange() : ' + objeto.attr('id') + " - Value: " + objeto.val());
+
 				valor = objeto.val();
 
 				if (!valor || valor <= 0){
@@ -794,15 +804,14 @@
             });
     	}
 
-		
+
         $(document).ready(function() {
             reloadDate();
 
             monitorChange($('#date_filter_n_days_value'));
-            
+
         });
-        
+
       </script>
     </body>
 </html>
-

@@ -44,9 +44,17 @@ class ReCaptcha implements Rule
             $this->error_msg = 'Se requiere validdar reCAPTCHA';
             return false;
         }
-        
-        $response = Http::get(env('RECAPTCHA_V3_VERIFICATION_URL'),[
-            'secret' => env('RECAPTCHA_V3_SECRET_KEY'),
+
+        $verificationUrl = env('RECAPTCHA_V3_VERIFICATION_URL', 'https://www.google.com/recaptcha/api/siteverify');
+        $secretKey = config('services.recaptcha_v3.secretKey');
+
+        if (empty($secretKey)) {
+            $this->error_msg = 'ReCAPTCHA no configurado';
+            return false;
+        }
+
+        $response = Http::get($verificationUrl, [
+            'secret' => $secretKey,
             'response' => $value,
         ]);
         
@@ -58,10 +66,15 @@ class ReCaptcha implements Rule
         Log::debug('ReCaptcha Respuesta error-codes: ' . json_encode($response->json('error-codes')));
         
         if(!$response->json('success')){
-            
-            collect($response->object()->{"error-codes"})->each(function ($item) use(&$errorMessage){
-                $this->error_msg.=$this->errorMessage[$item];
+            collect((array) $response->json('error-codes'))->each(function ($item) {
+                if (isset($this->errorMessage[$item])) {
+                    $this->error_msg .= $this->errorMessage[$item];
+                }
             });
+
+            if ($this->error_msg === '') {
+                $this->error_msg = 'Error al validar reCAPTCHA';
+            }
             
             Log::debug('ReCaptcha error_msg: ' .  $this->error_msg);
             return false;

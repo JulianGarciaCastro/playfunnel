@@ -1,3 +1,14 @@
+@php
+    $previewFrom = request()->query('from');
+    $backUrl = 'actions?project=' . $project->id;
+    if ($previewFrom === 'publish') {
+        $backUrl = 'publish?project=' . $project->id;
+    } elseif ($previewFrom === 'cuePoints') {
+        $backUrl = 'cuePoints?project=' . $project->id;
+    } elseif ($previewFrom === 'addVideo') {
+        $backUrl = 'addVideo?project=' . $project->id;
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -14,7 +25,7 @@
         <script src="https://kit.fontawesome.com/0190c3506a.js" crossorigin="anonymous"></script>
 
     </head>
-	<body class="bg-white">
+	<body class="bg-white preview-page">
         <?php session()->put("preview", 1); ?>
 		@include('nav_bar_project')
     <!-------------------------------------MAIN------------------------------------------>
@@ -79,6 +90,25 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" 	integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var backUrl = @json($backUrl);
+            var setBackButton = function (elementId) {
+                var button = document.getElementById(elementId);
+                if (!button) {
+                    return;
+                }
+
+                button.setAttribute('type', 'button');
+                button.innerHTML = '<i class="fas fa-arrow-left mr-2"></i>Volver';
+                button.onclick = function (event) {
+                    event.preventDefault();
+                    window.location.href = backUrl;
+                };
+            };
+
+            setBackButton('guardarHeader');
+            setBackButton('guardarHeaderMobile');
+        });
 
 
 		/*----------------------------------Change of Device*/

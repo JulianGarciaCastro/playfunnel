@@ -356,6 +356,9 @@
         newMedia.attr('media-src', media);
         newMedia.attr('media-id', id);
         newMedia.attr('media-type', type);
+        if (url) {
+            newMedia.attr('media-preview', url);
+        }
 
         // Uri de la imagen o video
         let nameSpace = media.split("/");
@@ -364,12 +367,12 @@
         var playMedia = "";
         
         if (type.startsWith("video/")) {
-            newMedia.attr('src', url);
+            newMedia.attr('src', url || media);
             media = "'" + media + "'";
             playMedia = 'ontouchstart="doubleTouchFunction(\'video\', ' + media + ')" ondblclick="playVideo(' + media + ')"';
         }
         if (type.startsWith("image/")) {
-            newMedia.attr('src', media);
+            newMedia.attr('src', url || media);
             media = "'" + media + "'";
             playMedia = 'ontouchstart="doubleTouchFunction(\'image\', ' + media + ')" ondblclick="playImage(' + media + ')"';
         }
@@ -733,8 +736,18 @@
             error: function(request, error) {
                 console.log(error);
                 console.log(request);
-                //alert("Error: "+JSON.stringify(error));
-                modalMsgShow(JSON.stringify(error));
+                var fallback = 'Error eliminando archivo';
+                var backendMessage = request && request.responseJSON
+                    ? (request.responseJSON.message || request.responseJSON.error || '')
+                    : '';
+
+                if (Array.isArray(backendMessage)) {
+                    backendMessage = backendMessage.join(' | ');
+                } else if (typeof backendMessage === 'object' && backendMessage !== null) {
+                    backendMessage = JSON.stringify(backendMessage);
+                }
+
+                modalMsgShow(backendMessage || fallback);
             }
         });
     }

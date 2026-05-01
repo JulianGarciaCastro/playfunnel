@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\NewSubscription;
 use Illuminate\Support\Facades\Notification;
+use Throwable;
 
 
 class Login extends Controller
@@ -60,16 +61,16 @@ class Login extends Controller
                 $user = User::find(Auth::id());
                 
                 if($user->status == 'ACTIVE'){
-                    $intended_url = Session::get('url.intended', url('/'));
+                    $intended_url = Session::pull('url.intended', route('dashboard'));
+                    $intended_url = $this->sanitizeIntendedUrl($intended_url);
                     
                     Log::debug('Usuario ACTIVO URL: ' . Session::get('url.intended', 'Sin Definir. Previa: ' . url()->previous()));
                     Log::debug('Usuario ACTIVO URL: ' . $intended_url);
-                    Session::forget('url.intended');
                     
                     DashboardController::resetFilters();
 
                     RateLimiter::clear($this->throttleKey( $request->input('email')));
-                    return Redirect::intended($intended_url);
+                    return Redirect::to($intended_url);
                 }
                 
                 Log::debug('Usuario NO ACTIVO');
@@ -85,6 +86,28 @@ class Login extends Controller
                 //return Redirect::to('login')->withInput($request->except('password'))->withErrors(["Account not exists or Validation error"]);
             }
         }
+    }
+
+    private function sanitizeIntendedUrl($intendedUrl)
+    {
+        $fallbackUrl = route('dashboard');
+        if (empty($intendedUrl)) {
+            return $fallbackUrl;
+        }
+
+        $intendedPath = parse_url($intendedUrl, PHP_URL_PATH) ?: '/';
+        $filamentPath = trim((string) config('filament.path', 'admin'), '/');
+
+        if ($filamentPath !== '') {
+            $filamentPrefix = '/' . $filamentPath;
+            $isFilamentRedirect = $intendedPath === $filamentPrefix || Str::startsWith($intendedPath, $filamentPrefix . '/');
+
+            if ($isFilamentRedirect) {
+                return $fallbackUrl;
+            }
+        }
+
+        return $intendedUrl;
     }
     
    
@@ -151,8 +174,11 @@ class Login extends Controller
             'email'                  => 'required|email|unique:users',
             'password'               => 'required|min:8|alphaNum',
             'password_confirmation'  => 'required|same:password',
-            'g-recaptcha-response'   => ['required', new ReCaptcha],
         );
+
+        if ($this->shouldValidateRecaptcha()) {
+            $rules['g-recaptcha-response'] = ['required', new ReCaptcha];
+        }
         
         $messages = [
             //'name.required'              => __('Name is required'),
@@ -179,13 +205,72 @@ class Login extends Controller
         $user->email    =  $email;
         $user->password =  $pwd;
         $user->save();
-        
-        event(new Registered($user));
-        
-        Notification::route('mail', env('MAIL_USERNAME'))->notify(new NewSubscription($user));
+
+        $this->finalizeUserRegistration($user);
+        $this->notifyNewSubscription($user);
         
         //return Redirect::to('login')->with('status', __('Check your email and confirm your account'));
         return Redirect::to('login')->with('status', __('Account created successfully'));
+    }
+
+    private function shouldValidateRecaptcha(): bool
+    {
+        if (app()->environment(['local', 'development', 'testing'])) {
+            return false;
+        }
+
+        return filled(config('services.recaptcha_v3.siteKey')) && filled(config('services.recaptcha_v3.secretKey'));
+    }
+
+    private function shouldBypassEmailVerification(): bool
+    {
+        return app()->environment(['local', 'development', 'testing']);
+    }
+
+    private function finalizeUserRegistration(User $user): void
+    {
+        if ($this->shouldBypassEmailVerification()) {
+            $user->email_verified_at = now();
+            $user->status = 'ACTIVE';
+            $user->save();
+            return;
+        }
+
+        try {
+            event(new Registered($user));
+        } catch (Throwable $exception) {
+            Log::error('Error sending verification email during register', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    private function notifyNewSubscription(User $user): void
+    {
+        if ($this->shouldBypassEmailVerification()) {
+            return;
+        }
+
+        $mailTo = env('MAIL_USERNAME');
+        if (blank($mailTo)) {
+            Log::warning('NewSubscription skipped: MAIL_USERNAME is empty', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+            return;
+        }
+
+        try {
+            Notification::route('mail', $mailTo)->notify(new NewSubscription($user));
+        } catch (Throwable $exception) {
+            Log::error('Error sending NewSubscription notification', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
     
     

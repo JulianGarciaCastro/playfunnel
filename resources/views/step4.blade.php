@@ -112,8 +112,8 @@
                                     <!--<li class="m-0 mx-3 p-2 table" data-id="table"><i class="fas fa-tablet-alt c05"></i></li>-->
                                     <li class="m-0 ml-3 mr-3 p-2 mobile" data-id="mobile"><i class="fas fa-mobile-alt c05"></i></li>
                                 </ul>
-                                <button id="preview-project"
-                                    onclick="window.location.href='preview?project={{ $project->id }}';"
+                                 <button id="preview-project"
+                                    onclick="window.location.href='preview?project={{ $project->id }}&from=publish';"
                                     class="btn-square bg-01 cWhite px-3 ml-0 d-none">
                                     {{ __('step4.preview') }}
                                     <i class="far fa-eye ml-2 py-0"></i>

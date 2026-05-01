@@ -1,4 +1,20 @@
-<div class="NavUp fixed-top m-0 p-0 d-flex px-2 align-items-center">
+<?php
+$isImpersonating = app()->bound('impersonate') && app('impersonate')->isImpersonating();
+?>
+
+<?php if ($isImpersonating) { ?>
+<div class="impersonation-banner" style="position:fixed;top:0;left:0;right:0;z-index:2000;background:#fbbf24;color:#111827;padding:6px 12px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:12px;">
+  <span><?= __('nav_bar.impersonating_as') ?></span>
+  <form method="POST" action="<?= route('impersonation.leave') ?>" style="margin:0;">
+    <?= csrf_field() ?>
+    <button type="submit" style="border:1px solid #111827;background:#111827;color:#ffffff;padding:2px 8px;border-radius:4px;font-size:12px;line-height:1.4;cursor:pointer;">
+      <?= __('nav_bar.leave_impersonation') ?>
+    </button>
+  </form>
+</div>
+<?php } ?>
+
+<div class="NavUp fixed-top m-0 p-0 d-flex px-2 align-items-center" style="<?= $isImpersonating ? 'top:32px;' : '' ?>">
     <nav class="navbar navbar-expand-lg  navbar-dark p-0 d-flex justify-content-between w-100">         
                 
         <button class="navbar-toggler d-md-none d-inline mr-2" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

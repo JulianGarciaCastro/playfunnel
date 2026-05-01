@@ -2,7 +2,7 @@
 
 return [
     'title' => 'PlayFunnel - The interactive video funnel',
-    'enter_login' => 'Enter',
+    'enter_login' => 'Sing In',
     'account' => 'Do you have an account?',
     'start_now' => 'Start now',
     'email' => 'Email',
