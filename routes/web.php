@@ -314,6 +314,8 @@ Route::middleware(LocaleCookieMiddleware::class)->group(function (){
 
     Route::post('ajax-delMedia', [App\Http\Controllers\LibraryController::class, 'delMedia'])->middleware(['auth'])->name('project.delMedia');
 
+    Route::post('ajax-editVideo', [App\Http\Controllers\LibraryController::class, 'editVideo'])->middleware(['auth'])->name('project.editVideo');
+
     Route::post('ajax-loadMedia', [App\Http\Controllers\LibraryController::class, 'loadMedia'])->middleware(['auth'])->name('project.loadMedia');
 
     Route::post('ajax-newFolder', [App\Http\Controllers\LibraryController::class, 'newFolder'])->middleware(['auth'])->name('project.newFolder');

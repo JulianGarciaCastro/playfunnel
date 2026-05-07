@@ -81,6 +81,123 @@
     </div>
 </div>
 
+<!--- Modal Video Editor --->
+<div class="modal fade" id="videoEditorModal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl video-editor-dialog">
+        <div class="modal-content video-editor-modal">
+            <div class="video-editor-topbar">
+                <button type="button" class="video-editor-icon" data-dismiss="modal" aria-label="Close" onclick="closeVideoEditor()">
+                    <span class="material-icons">clear</span>
+                </button>
+                <p class="video-editor-title">{{ __('library.video_editor') }}</p>
+                <button type="button" id="videoEditorSave" class="video-editor-export" onclick="saveVideoEdit()">
+                    <span class="material-icons">file_upload</span>{{ __('library.export') }}
+                </button>
+            </div>
+            <div class="video-editor-layout">
+                <aside class="video-editor-left-panel">
+                    <h3>{{ __('library.text_panel') }}</h3>
+                    <div class="video-text-card active" data-style="plain" data-target="title">
+                            <span>{{ __('library.plain_text') }}</span>
+                    </div>
+                    <p class="video-editor-subhead">{{ __('library.text_styles') }}</p>
+                    <div class="video-editor-style-grid">
+                        <button type="button" data-style="creator" data-target="title">{{ __('library.style_creator') }}</button>
+                        <button type="button" data-style="box" data-target="title">{{ __('library.style_box') }}</button>
+                        <button type="button" data-style="pride" data-target="title">Pride</button>
+                        <button type="button" data-style="button" data-target="title">Button</button>
+                        <button type="button" data-style="bubble" data-target="title">Bubble</button>
+                        <button type="button" data-style="retro" data-target="title">{{ __('library.style_retro') }}</button>
+                        <button type="button" data-style="machine" data-target="title">Maquina</button>
+                        <button type="button" data-style="circular" data-target="title">Circular</button>
+                        <button type="button" data-style="sharp" data-target="title">Nitido titulo</button>
+                        <button type="button" data-style="double" data-target="title">Lineas dobles</button>
+                    </div>
+                </aside>
+                <div class="video-editor-stage">
+                <div class="video-editor-preview-wrap">
+                    <video id="videoEditorPreview" class="video-editor-preview" controls playsinline>
+                        <source src="" type="video/mp4" />
+                    </video>
+                    <div class="video-editor-text-preview">
+                        <div id="videoEditorTitleBox" class="video-editor-title-box selected">
+                            <div class="video-editor-floating-toolbar">
+                                <span class="material-icons">edit</span>
+                                <button type="button" data-color="#ffffff"></button>
+                                <select id="videoEditorFont">
+                                    <option value="Open Sans">Open Sans</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Arial">Arial</option>
+                                </select>
+                                <select id="videoEditorFontSize">
+                                    <option value="28">28</option>
+                                    <option value="36" selected>36</option>
+                                    <option value="48">48</option>
+                                    <option value="64">64</option>
+                                </select>
+                            </div>
+                            <p id="videoEditorTitlePreview" contenteditable="true"></p>
+                            <span class="video-editor-box-dot dot-tl"></span>
+                            <span class="video-editor-box-dot dot-tr"></span>
+                            <span class="video-editor-box-dot dot-bl"></span>
+                            <span class="video-editor-box-dot dot-br"></span>
+                            <span class="video-editor-box-dot dot-l"></span>
+                            <span class="video-editor-box-dot dot-r"></span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="video-editor-controls">
+                <div class="video-editor-playback">
+                    <button type="button" class="video-editor-play" onclick="toggleVideoEditorPlay()">
+                        <span id="videoEditorPlayIcon" class="material-icons">play_arrow</span>
+                    </button>
+                    <span id="videoEditorCurrent">0:00</span>
+                    <span>/</span>
+                    <span id="videoEditorDuration">0:00</span>
+                </div>
+                <input type="hidden" id="videoEditorStart" value="0">
+                <input type="hidden" id="videoEditorEnd" value="0">
+                <input type="hidden" id="videoEditorOffset" value="0">
+                <input type="hidden" id="videoEditorTextStart" value="0">
+                <input type="hidden" id="videoEditorTextEnd" value="0">
+                <input type="hidden" id="videoEditorTextVisible" value="1">
+                <input type="hidden" id="videoEditorSubtitleInput" value="">
+                <div class="video-editor-timeline">
+                    <div class="video-editor-ruler" id="videoEditorRuler"></div>
+                    <span class="video-editor-playhead" id="videoEditorPlayhead"></span>
+                    <div class="video-editor-row video-editor-text-row">
+                        <button type="button" id="videoEditorAddText" class="video-editor-add-text" onclick="showVideoEditorText()">
+                            <span class="material-icons">title</span>
+                            <span>+ Añadir texto</span>
+                        </button>
+                        <div id="videoEditorTextClip" class="video-editor-text-clip">
+                            <span class="video-editor-handle video-editor-text-handle-left"></span>
+                            <span class="material-icons">title</span>
+                            <input type="text" id="videoEditorTitleInput" maxlength="120" value="Agrega tu texto aqui">
+                            <button type="button" class="video-editor-text-hide" onclick="hideVideoEditorText(event)" title="Ocultar texto">
+                                <span class="material-icons">visibility_off</span>
+                            </button>
+                            <span class="video-editor-handle video-editor-text-handle-right"></span>
+                        </div>
+                    </div>
+                    <div class="video-editor-row">
+                        <div id="videoEditorClip" class="video-editor-clip">
+                            <span class="video-editor-handle video-editor-handle-left"></span>
+                            <div class="video-editor-strip">
+                                <span class="material-icons">volume_up</span>
+                            </div>
+                            <span class="video-editor-handle video-editor-handle-right"></span>
+                        </div>
+                    </div>
+                </div>
+                <p id="videoEditorStatus" class="video-editor-status"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!--- Modal PlayVideo --->
 <div class="modal fade bd-example-modal-sm" id="playMediaModal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -225,6 +342,670 @@
     .playVideo {
         border: 3px solid #000;
     }
+
+    .cards {
+        position: relative;
+    }
+
+    .video-editor-dialog {
+        max-width: min(1180px, 96vw);
+    }
+
+    .video-editor-modal {
+        border: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #f7f7fb;
+    }
+
+    .video-editor-topbar {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 18px;
+        background: #ffffff;
+        border-bottom: 1px solid #e8e8f2;
+    }
+
+    .video-editor-title {
+        margin: 0;
+        color: #27263b;
+        font-weight: 700;
+        font-size: 20px;
+    }
+
+    .video-editor-icon,
+    .video-editor-play {
+        width: 42px;
+        height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #2b293d;
+        box-shadow: 0 2px 10px rgba(23, 22, 34, 0.12);
+    }
+
+    .video-editor-export {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 6px;
+        padding: 0 18px;
+        background: #8d2df8;
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .video-editor-layout {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        min-height: 520px;
+    }
+
+    .video-editor-left-panel {
+        background: #f7f7fb;
+        border-right: 1px solid #e1e1ec;
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 64vh;
+    }
+
+    .video-editor-left-panel h3 {
+        margin: 0 0 18px;
+        color: #242235;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    .video-text-card {
+        height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        background: #000000;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .video-text-card.active {
+        border-color: #8d2df8;
+    }
+
+    .video-editor-subhead {
+        margin-top: 20px !important;
+        padding-top: 18px;
+        border-top: 1px solid #e1e1ec;
+        color: #242235 !important;
+        font-size: 16px;
+    }
+
+    .video-editor-style-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .video-editor-style-grid button,
+    .video-editor-pill {
+        min-height: 74px;
+        border: 1px solid #d9d7e8;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #242235;
+        font-weight: 800;
+    }
+
+    .video-editor-style-grid button[data-style="creator"] {
+        color: #ffffff;
+        -webkit-text-stroke: 1px #111111;
+        text-shadow: 2px 2px 0 #111111;
+    }
+
+    .video-editor-style-grid button[data-style="box"] {
+        background: #111111;
+        color: #ffffff;
+    }
+
+    .video-editor-style-grid button[data-style="pride"] {
+        color: #ffffff;
+        text-shadow: 3px 3px 0 #ff5757, 6px 6px 0 #48a7ff;
+    }
+
+    .video-editor-style-grid button[data-style="button"] {
+        border-radius: 999px;
+        box-shadow: 0 8px 18px rgba(23, 22, 34, 0.18);
+    }
+
+    .video-editor-style-grid button[data-style="bubble"] {
+        color: #8cff2f;
+        -webkit-text-stroke: 1px #2f7f16;
+    }
+
+    .video-editor-style-grid button[data-style="retro"] {
+        color: #221d1d;
+        text-shadow: 3px 3px 0 #ff9a21, 6px 6px 0 #2a6bff;
+    }
+
+    .video-editor-style-grid button.active,
+    .video-editor-pill.active {
+        border-color: #8d2df8;
+        color: #8d2df8;
+        box-shadow: 0 0 0 2px rgba(141, 45, 248, 0.14);
+    }
+
+    .video-editor-stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 520px;
+        background: #ffffff;
+    }
+
+    .video-editor-preview-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: #fdfdfd;
+    }
+
+    .video-editor-preview {
+        width: 100%;
+        max-height: 58vh;
+        background: #000000;
+        border: 3px solid #9b34ff;
+    }
+
+    .video-editor-preview.is-outside-clip {
+        opacity: 0;
+    }
+
+    .video-editor-text-preview {
+        position: absolute;
+        inset: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 44px 24px;
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+    }
+
+    .video-editor-title-box {
+        position: relative;
+        min-width: 340px;
+        max-width: 82%;
+        padding: 18px 26px;
+        border: 3px solid transparent;
+    }
+
+    .video-editor-title-box.selected {
+        border-color: #8d2df8;
+    }
+
+    .video-editor-title-box p {
+        margin: 0;
+        font-size: 36px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+        outline: 0;
+        cursor: text;
+    }
+
+    .video-editor-floating-toolbar {
+        position: absolute;
+        left: 50%;
+        top: -58px;
+        transform: translateX(-50%);
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #2a293b;
+        box-shadow: 0 4px 16px rgba(22, 20, 34, 0.18);
+        text-shadow: none;
+    }
+
+    .video-editor-floating-toolbar button {
+        width: 26px;
+        height: 26px;
+        border: 1px solid #c9c7d8;
+        border-radius: 50%;
+        background: #ffffff;
+    }
+
+    .video-editor-floating-toolbar select {
+        height: 30px;
+        border: 1px solid #d9d7e8;
+        border-radius: 4px;
+        color: #2a293b;
+        background: #ffffff;
+    }
+
+    .video-editor-box-dot {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #8d2df8;
+    }
+
+    .dot-tl { left: -7px; top: -7px; }
+    .dot-tr { right: -7px; top: -7px; }
+    .dot-bl { left: -7px; bottom: -7px; }
+    .dot-br { right: -7px; bottom: -7px; }
+    .dot-l { left: -7px; top: calc(50% - 5px); }
+    .dot-r { right: -7px; top: calc(50% - 5px); }
+
+    .video-editor-title-box .text-box {
+        padding: 10px 18px;
+        background: rgba(0, 0, 0, 0.76);
+        border-radius: 4px;
+        text-shadow: none;
+    }
+
+    .video-editor-title-box .text-creator {
+        color: #fff36b;
+        -webkit-text-stroke: 1px #111111;
+    }
+
+    .video-editor-title-box .text-retro {
+        color: #ffffff;
+        text-shadow: 3px 3px 0 #ff8b2b, -3px -3px 0 #8d2df8;
+    }
+
+    .video-editor-title-box .text-pride {
+        color: #ffffff;
+        text-shadow: 3px 3px 0 #ff5757, 6px 6px 0 #48a7ff, 9px 9px 0 #ffd84d;
+    }
+
+    .video-editor-title-box .text-button {
+        padding: 12px 28px;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #242235;
+        text-shadow: none;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .video-editor-title-box .text-bubble {
+        color: #8cff2f;
+        -webkit-text-stroke: 2px #2f7f16;
+    }
+
+    .video-editor-title-box .text-machine {
+        font-family: Georgia, serif;
+        letter-spacing: 0;
+    }
+
+    .video-editor-title-box .text-circular {
+        padding: 28px;
+        border-radius: 50%;
+        background: #4b91e8;
+        color: #ffffff;
+        text-shadow: none;
+    }
+
+    .video-editor-title-box .text-sharp {
+        padding: 10px 16px;
+        border: 3px solid #ff9da1;
+        color: #ffffff;
+    }
+
+    .video-editor-title-box .text-double {
+        border-top: 4px solid #c15be8;
+        border-bottom: 4px solid #c15be8;
+        padding: 8px 0;
+    }
+
+    .video-editor-controls {
+        padding: 16px 22px 20px;
+        background: #ffffff;
+        border-top: 1px solid #e8e8f2;
+    }
+
+    .video-editor-playback,
+    .video-editor-trim,
+    .video-editor-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .video-editor-trim label,
+    .video-editor-text label {
+        margin: 0;
+        color: #6f6b85;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .video-editor-trim input[type="range"] {
+        min-width: 120px;
+        flex: 1;
+        accent-color: #8d2df8;
+    }
+
+    .video-editor-timeline {
+        width: 100%;
+        position: relative;
+        padding-top: 6px;
+    }
+
+    .video-editor-ruler {
+        position: relative;
+        height: 38px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        background: #f1e7ff;
+        overflow: hidden;
+    }
+
+    .video-editor-ruler span {
+        position: absolute;
+        top: 11px;
+        transform: translateX(-50%);
+        color: #6f6b85;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .video-editor-row {
+        position: relative;
+        height: 62px;
+        margin-bottom: 10px;
+        background: #f4f4fa;
+        overflow: hidden;
+    }
+
+    .video-editor-playhead {
+        position: absolute;
+        top: 6px;
+        left: 0;
+        width: 4px;
+        height: calc(100% - 6px);
+        background: #242235;
+        border-radius: 4px;
+        z-index: 20;
+        pointer-events: none;
+    }
+
+    .video-editor-playhead:before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        left: -11px;
+        width: 26px;
+        height: 28px;
+        border-radius: 8px 8px 14px 14px;
+        background: #242235;
+    }
+
+    .video-editor-playhead:after {
+        content: attr(data-time);
+        position: absolute;
+        top: -42px;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 46px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        background: #242235;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        opacity: 0;
+    }
+
+    .video-editor-playhead.is-dragging:after,
+    .video-editor-playhead:hover:after {
+        opacity: 1;
+    }
+
+    .video-editor-text-row {
+        height: 42px;
+    }
+
+    .video-editor-text-clip,
+    .video-editor-clip {
+        position: absolute;
+        top: 5px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 10px);
+        border: 3px solid #8d2df8;
+        border-radius: 8px;
+        background: #efa0f6;
+        overflow: hidden;
+    }
+
+    .video-editor-text-clip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 28px;
+        color: #7a176f;
+        font-weight: 800;
+        cursor: grab;
+    }
+
+    .video-editor-text-clip.is-dragging {
+        cursor: grabbing;
+    }
+
+    .video-editor-add-text {
+        position: absolute;
+        inset: 8px 0;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        padding: 0 20px;
+        border: 2px dashed #dedce8;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #74718a;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    .video-editor-text-clip input {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: #7a176f;
+        font-weight: 800;
+        outline: 0;
+        cursor: text;
+    }
+
+    .video-editor-text-clip .material-icons {
+        flex: 0 0 auto;
+    }
+
+    .video-editor-text-hide {
+        flex: 0 0 auto;
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.45);
+        color: #7a176f;
+        cursor: pointer;
+    }
+
+    .video-editor-text-hide .material-icons {
+        font-size: 18px;
+    }
+
+    .video-editor-clip {
+        background: #111111;
+        cursor: grab;
+    }
+
+    .video-editor-clip.is-dragging {
+        cursor: grabbing;
+    }
+
+    .video-editor-strip {
+        height: 100%;
+        margin: 0 18px;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(90deg, #f7fbff 0 12%, #dceefd 12% 26%, #ffffff 26% 42%, #cfe8ff 42% 58%, #ffffff 58% 76%, #ddefff 76% 100%);
+        background-position: center;
+        background-size: cover;
+    }
+
+    .video-editor-clip:before,
+    .video-editor-clip:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 24px;
+        background: repeating-linear-gradient(-45deg, rgba(36, 34, 53, 0.12), rgba(36, 34, 53, 0.12) 6px, rgba(255,255,255,0.7) 6px, rgba(255,255,255,0.7) 12px);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .video-editor-clip:before {
+        left: 18px;
+    }
+
+    .video-editor-clip:after {
+        right: 18px;
+    }
+
+    .video-editor-strip .material-icons {
+        margin-left: 10px;
+        padding: 5px;
+        border-radius: 4px;
+        background: #ffffff;
+        color: #242235;
+    }
+
+    .video-editor-handle {
+        position: absolute;
+        top: 0;
+        width: 18px;
+        height: 100%;
+        background: #8d2df8;
+        cursor: ew-resize;
+        z-index: 2;
+    }
+
+    .video-editor-handle:after {
+        content: "";
+        position: absolute;
+        top: 12px;
+        bottom: 12px;
+        left: 7px;
+        width: 4px;
+        border-radius: 4px;
+        background: #ffffff;
+    }
+
+    .video-editor-handle-left {
+        left: 0;
+    }
+
+    .video-editor-handle-right {
+        right: 0;
+    }
+
+    .video-editor-text-handle-left {
+        left: 0;
+    }
+
+    .video-editor-text-handle-right {
+        right: 0;
+    }
+
+    .video-editor-text input {
+        width: 100%;
+        min-height: 40px;
+        border: 1px solid #d9d7e8;
+        border-radius: 6px;
+        padding: 0 12px;
+        color: #27263b;
+    }
+
+    .video-editor-text label {
+        flex: 1;
+    }
+
+    .video-editor-status {
+        min-height: 22px;
+        margin: 0;
+        color: #8d2df8;
+        font-weight: 700;
+    }
+
+    .video-card-edit {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 50%;
+        background: #ffffff;
+        color: #8d2df8;
+        box-shadow: 0 2px 10px rgba(23, 22, 34, 0.22);
+        opacity: 0.95;
+        z-index: 3;
+    }
+
+    .video-card-edit .material-icons {
+        font-size: 19px;
+        line-height: 34px;
+    }
+
+    @media screen and (max-width: 768px) {
+        .video-editor-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .video-editor-left-panel {
+            max-height: 260px;
+            border-right: 0;
+            border-bottom: 1px solid #e1e1ec;
+        }
+
+        .video-editor-stage {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .video-editor-playback,
+        .video-editor-trim,
+        .video-editor-text {
+            align-items: stretch;
+            flex-direction: column;
+        }
+    }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -236,6 +1017,9 @@
     //var currentTab = "VIDEO";
     var currentFolder = [];
     const folderNames = new Map();
+    var videoEditorMedia = null;
+    var videoEditorProjectTime = 0;
+    var syncingVideoEditorTime = false;
 
 
     $(document).ready(function() {
@@ -265,6 +1049,10 @@
         openFolder('MAIN');
         updateModalEvent();
         selectInputsMedia();
+        bindVideoEditorTrimHandles();
+        bindVideoEditorTextHandles();
+        bindVideoEditorPlayhead();
+        bindVideoEditorStageText();
         //updateViewDivs();
 
 
@@ -346,6 +1134,8 @@
 
         // Creo el elemento vacio
         var newMedia = '';
+        var originalMedia = media;
+        var originalPreview = url || media;
 
         if (type == 'FOLDER') {
             newMedia = $('<span class="material-icons"></span>');
@@ -420,9 +1210,613 @@
         }
         if (type.includes('video')) {
             newDiv.prepend('<span class="tagVideo material-icons">play_circle_filled</span>');
+            newDiv.append('<button type="button" class="video-card-edit" title="' + libraryMsg.edit_video + '" onclick="openVideoEditor(event, ' + id + ', \'' + escapeJsAttribute(originalMedia) + '\', \'' + escapeJsAttribute(originalPreview) + '\')"><span class="material-icons">edit</span></button>');
         }
 
         return newDiv;
+    }
+
+    function escapeJsAttribute(value) {
+        return String(value || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function formatEditorTime(seconds) {
+        seconds = Math.max(0, Number(seconds) || 0);
+        var minutes = Math.floor(seconds / 60);
+        var rest = Math.floor(seconds % 60);
+        return minutes + ':' + String(rest).padStart(2, '0');
+    }
+
+    function openVideoEditor(event, id, media, preview) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        videoEditorMedia = {
+            id: id,
+            media: media,
+            preview: preview
+        };
+
+        var video = $('#videoEditorPreview').get(0);
+        $('#videoEditorPreview source').attr('src', media);
+        $('.video-editor-strip').css('background-image', preview ? 'url("' + preview + '")' : '');
+        $('#videoEditorTitleInput').val('Agrega tu texto aqui');
+        $('#videoEditorSubtitleInput').val('');
+        $('.video-editor-style-grid button, .video-text-card').removeClass('active');
+        $('.video-text-card[data-style="plain"]').addClass('active');
+        $('#videoEditorTitleInput').attr('data-style', 'plain');
+        $('#videoEditorSubtitleInput').attr('data-style', 'plain');
+        $('#videoEditorTitlePreview').text('Agrega tu texto aqui');
+        $('#videoEditorTextVisible').val(1);
+        videoEditorProjectTime = 0;
+        $('#videoEditorTextClip').show();
+        $('#videoEditorAddText').hide();
+        $('#videoEditorTitleBox').show().addClass('selected');
+        updateVideoEditorTextStyles();
+        $('#videoEditorStatus').text('');
+        $('#videoEditorPlayIcon').text('play_arrow');
+        video.load();
+
+        $('#videoEditorModal').modal('show');
+    }
+
+    $('#videoEditorPreview').on('loadedmetadata', function() {
+        var duration = this.duration || 0;
+        $('#videoEditorStart').val(0);
+        $('#videoEditorEnd').val(duration);
+        $('#videoEditorOffset').val(0);
+        $('#videoEditorTextStart').val(0);
+        $('#videoEditorTextEnd').val(duration);
+        $('#videoEditorDuration').text(formatEditorTime(duration));
+        setVideoEditorProjectTime(0);
+        updateVideoEditorLabels();
+        updateVideoEditorTimeline();
+    });
+
+    $('#videoEditorPreview').on('timeupdate', function() {
+        if (!syncingVideoEditorTime && !this.paused) {
+            var start = Number($('#videoEditorStart').val()) || 0;
+            var offset = Number($('#videoEditorOffset').val()) || 0;
+            videoEditorProjectTime = Math.max(0, offset + ((this.currentTime || start) - start));
+        }
+        updateVideoEditorClock();
+        updateVideoEditorPlayhead();
+        updateVideoEditorTextVisibility();
+        updateVideoEditorClipVisibility();
+        var end = Number($('#videoEditorEnd').val()) || this.duration || 0;
+        if (this.currentTime >= end) {
+            this.pause();
+            $('#videoEditorPlayIcon').text('play_arrow');
+        }
+    });
+
+    $('#videoEditorPreview').on('play', function() {
+        syncVideoEditorSourceToProjectTime();
+    });
+
+    $('#videoEditorTitleInput, #videoEditorSubtitleInput').on('input', function() {
+        $('#videoEditorTitlePreview').text($('#videoEditorTitleInput').val());
+        $('#videoEditorTitleBox').show().addClass('selected');
+    });
+
+    $('#videoEditorTitlePreview').on('input', function() {
+        $('#videoEditorTitleInput').val($(this).text().trim());
+    });
+
+    $('#videoEditorTitleInput').on('mousedown touchstart click', function(event) {
+        event.stopPropagation();
+    });
+
+    $('#videoEditorFont').on('change', function() {
+        $('#videoEditorTitlePreview').css('font-family', $(this).val());
+    });
+
+    $('#videoEditorFontSize').on('change', function() {
+        $('#videoEditorTitlePreview').css('font-size', $(this).val() + 'px');
+    });
+
+    $('.video-editor-style-grid button, .video-text-card').on('click', function() {
+        var target = $(this).data('target') || 'title';
+        var style = $(this).data('style') || 'plain';
+        $('[data-target="' + target + '"]').removeClass('active');
+        $(this).addClass('active');
+
+        if (target == 'subtitle') {
+            $('#videoEditorSubtitleInput').attr('data-style', style);
+        } else {
+            $('#videoEditorTitleInput').attr('data-style', style);
+        }
+
+        updateVideoEditorTextStyles();
+    });
+
+    function updateVideoEditorTextStyles() {
+        applyVideoEditorTextStyle($('#videoEditorTitlePreview'), $('#videoEditorTitleInput').attr('data-style'));
+    }
+
+    function applyVideoEditorTextStyle($element, style) {
+        $element.removeClass('text-box text-creator text-retro text-pride text-button text-bubble text-machine text-circular text-sharp text-double');
+        if (style == 'box') {
+            $element.addClass('text-box');
+        } else if (style == 'creator') {
+            $element.addClass('text-creator');
+        } else if (style == 'retro') {
+            $element.addClass('text-retro');
+        } else if (style == 'pride') {
+            $element.addClass('text-pride');
+        } else if (style == 'button') {
+            $element.addClass('text-button');
+        } else if (style == 'bubble') {
+            $element.addClass('text-bubble');
+        } else if (style == 'machine') {
+            $element.addClass('text-machine');
+        } else if (style == 'circular') {
+            $element.addClass('text-circular');
+        } else if (style == 'sharp') {
+            $element.addClass('text-sharp');
+        } else if (style == 'double') {
+            $element.addClass('text-double');
+        }
+    }
+
+    function updateVideoEditorLabels() {
+        var duration = $('#videoEditorPreview').get(0).duration || 0;
+        var start = Number($('#videoEditorStart').val()) || 0;
+        var end = Number($('#videoEditorEnd').val()) || duration;
+        $('#videoEditorStartLabel').text(formatEditorTime(start));
+        $('#videoEditorEndLabel').text(formatEditorTime(end));
+        $('#videoEditorStartPanel').text(formatEditorTime(start));
+        $('#videoEditorEndPanel').text(formatEditorTime(end));
+        $('#videoEditorDuration').text(formatEditorTime(duration));
+        updateVideoEditorClock();
+    }
+
+    function updateVideoEditorClock() {
+        var video = $('#videoEditorPreview').get(0);
+        var duration = video.duration || 0;
+        var current = Math.max(0, Math.min(videoEditorProjectTime || 0, duration));
+        $('#videoEditorCurrent').text(formatEditorTime(current));
+    }
+
+    function setVideoEditorProjectTime(projectTime) {
+        var video = $('#videoEditorPreview').get(0);
+        var duration = video.duration || 0;
+
+        videoEditorProjectTime = Math.max(0, Math.min(Number(projectTime) || 0, duration));
+
+        if (duration) {
+            syncVideoEditorSourceToProjectTime();
+        }
+
+        updateVideoEditorClock();
+        updateVideoEditorPlayhead();
+        updateVideoEditorTextVisibility();
+        updateVideoEditorClipVisibility();
+    }
+
+    function videoEditorSourceTimeFromProject(projectTime) {
+        var video = $('#videoEditorPreview').get(0);
+        var duration = video.duration || 0;
+        var start = Number($('#videoEditorStart').val()) || 0;
+        var end = Number($('#videoEditorEnd').val()) || duration;
+        var offset = Number($('#videoEditorOffset').val()) || 0;
+        var clipDuration = Math.max(0.5, end - start);
+        var insideClip = projectTime >= offset && projectTime <= offset + clipDuration;
+        var sourceTime = insideClip ? start + (projectTime - offset) : start;
+
+        return Math.max(start, Math.min(sourceTime, end));
+    }
+
+    function syncVideoEditorSourceToProjectTime() {
+        var video = $('#videoEditorPreview').get(0);
+        var sourceTime = videoEditorSourceTimeFromProject(videoEditorProjectTime || 0);
+
+        if (Math.abs((video.currentTime || 0) - sourceTime) > 0.05) {
+            syncingVideoEditorTime = true;
+            video.currentTime = sourceTime;
+            setTimeout(function() {
+                syncingVideoEditorTime = false;
+            }, 0);
+        }
+    }
+
+    function buildVideoEditorRuler(duration) {
+        var $ruler = $('#videoEditorRuler');
+        $ruler.empty();
+        duration = Math.max(0.5, duration || 0.5);
+        var step = duration <= 90 ? 15 : 30;
+        for (var second = 0; second <= duration + 0.1; second += step) {
+            $ruler.append('<span style="left:' + ((second / duration) * 100) + '%">' + formatEditorTime(second) + '</span>');
+        }
+    }
+
+    function updateVideoEditorTimeline() {
+        var duration = $('#videoEditorPreview').get(0).duration || 0;
+        var start = Number($('#videoEditorStart').val()) || 0;
+        var end = Number($('#videoEditorEnd').val()) || duration;
+        var offset = Number($('#videoEditorOffset').val()) || 0;
+        var rawTextStart = Number($('#videoEditorTextStart').val());
+        var rawTextEnd = Number($('#videoEditorTextEnd').val());
+        var textStart = isNaN(rawTextStart) ? 0 : rawTextStart;
+        var textEnd = isNaN(rawTextEnd) ? duration : rawTextEnd;
+        if (!duration) {
+            return;
+        }
+
+        var editedDuration = Math.max(0.5, end - start);
+        offset = Math.max(0, Math.min(offset, duration - editedDuration));
+        textStart = Math.max(0, Math.min(textStart, duration - 0.5));
+        textEnd = Math.max(textStart + 0.5, Math.min(textEnd, duration));
+
+        var videoLeft = (offset / duration) * 100;
+        var videoWidth = (editedDuration / duration) * 100;
+        var textLeft = (textStart / duration) * 100;
+        var textWidth = ((textEnd - textStart) / duration) * 100;
+
+        $('#videoEditorOffset').val(offset);
+        $('#videoEditorTextStart').val(textStart);
+        $('#videoEditorTextEnd').val(textEnd);
+        $('#videoEditorClip').css({ left: videoLeft + '%', width: videoWidth + '%' });
+        $('#videoEditorTextClip').css({ left: textLeft + '%', width: textWidth + '%' });
+        buildVideoEditorRuler(duration);
+        updateVideoEditorPlayhead();
+        updateVideoEditorClipVisibility();
+    }
+
+    function updateVideoEditorPlayhead() {
+        var duration = $('#videoEditorPreview').get(0).duration || 0;
+        if (!duration) {
+            return;
+        }
+        var current = $('#videoEditorPreview').get(0).currentTime || 0;
+        var left = Math.max(0, Math.min(100, ((videoEditorProjectTime || 0) / duration) * 100));
+        $('#videoEditorPlayhead').css('left', left + '%').attr('data-time', formatEditorTime(videoEditorProjectTime || 0));
+    }
+
+    function projectTimeFromTimelinePointer(event) {
+        var pointer = event.originalEvent && event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+        var $timeline = $('#videoEditorRuler');
+        var duration = $('#videoEditorPreview').get(0).duration || 0;
+        var left = Math.max(0, Math.min(pointer.pageX - $timeline.offset().left, $timeline.width()));
+
+        return duration ? (left / $timeline.width()) * duration : 0;
+    }
+
+    function bindVideoEditorPlayhead() {
+        var dragging = false;
+
+        $('#videoEditorPlayhead').on('mousedown touchstart', function(event) {
+            dragging = true;
+            $(this).addClass('is-dragging');
+            event.preventDefault();
+            event.stopPropagation();
+        });
+
+        $('#videoEditorRuler').on('mousedown touchstart', function(event) {
+            dragging = true;
+            $('#videoEditorPlayhead').addClass('is-dragging');
+            setVideoEditorProjectTime(projectTimeFromTimelinePointer(event));
+            event.preventDefault();
+        });
+
+        $(document).on('mousemove.videoEditorPlayhead touchmove.videoEditorPlayhead', function(event) {
+            if (!dragging) {
+                return;
+            }
+
+            setVideoEditorProjectTime(projectTimeFromTimelinePointer(event));
+            event.preventDefault();
+        });
+
+        $(document).on('mouseup.videoEditorPlayhead touchend.videoEditorPlayhead', function() {
+            dragging = false;
+            $('#videoEditorPlayhead').removeClass('is-dragging');
+        });
+    }
+
+    function bindVideoEditorTrimHandles() {
+        var dragSide = null;
+        var dragStartX = 0;
+        var dragStartValue = 0;
+        var dragEndValue = 0;
+        var dragOffsetValue = 0;
+        var dragHasMoved = false;
+
+        $('#videoEditorClip').on('mousedown touchstart', function(event) {
+            if ($(event.target).hasClass('video-editor-handle')) {
+                return;
+            }
+
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            dragSide = 'move';
+            dragStartX = pointer.pageX;
+            dragStartValue = Number($('#videoEditorStart').val()) || 0;
+            dragEndValue = Number($('#videoEditorEnd').val()) || ($('#videoEditorPreview').get(0).duration || 0);
+            dragOffsetValue = Number($('#videoEditorOffset').val()) || 0;
+            dragHasMoved = false;
+            $('#videoEditorClip').addClass('is-dragging');
+            event.preventDefault();
+        });
+
+        $('#videoEditorClip .video-editor-handle').on('mousedown touchstart', function(event) {
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            dragSide = $(this).hasClass('video-editor-handle-left') ? 'left' : 'right';
+            dragStartX = pointer.pageX;
+            dragStartValue = Number($('#videoEditorStart').val()) || 0;
+            dragEndValue = Number($('#videoEditorEnd').val()) || ($('#videoEditorPreview').get(0).duration || 0);
+            dragOffsetValue = Number($('#videoEditorOffset').val()) || 0;
+            dragHasMoved = true;
+            event.preventDefault();
+            event.stopPropagation();
+        });
+
+        $(document).on('mousemove.videoEditorTrim touchmove.videoEditorTrim', function(event) {
+            if (!dragSide) {
+                return;
+            }
+
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            var $row = $('#videoEditorClip').parent();
+            var width = $row.width();
+            var duration = $('#videoEditorPreview').get(0).duration || 0;
+            var deltaSeconds = ((pointer.pageX - dragStartX) / width) * duration;
+            var start = dragStartValue;
+            var end = dragEndValue;
+            var offset = dragOffsetValue;
+            var clipDuration = Math.max(0.5, end - start);
+
+            if (dragSide == 'move' && !dragHasMoved && Math.abs(pointer.pageX - dragStartX) < 4) {
+                return;
+            }
+            dragHasMoved = true;
+
+            if (dragSide == 'left') {
+                start = Math.max(0, Math.min(dragStartValue + deltaSeconds, end - 0.5));
+                $('#videoEditorStart').val(Math.max(0, start));
+                offset = Math.max(0, Math.min(dragOffsetValue + (start - dragStartValue), duration - (end - start)));
+                $('#videoEditorOffset').val(offset);
+                setVideoEditorProjectTime(offset);
+            } else {
+                if (dragSide == 'move') {
+                    offset = Math.max(0, Math.min(dragOffsetValue + deltaSeconds, duration - clipDuration));
+                    $('#videoEditorOffset').val(offset);
+                    setVideoEditorProjectTime(offset);
+                } else {
+                end = Math.min(duration, Math.max(dragEndValue + deltaSeconds, start + 0.5));
+                $('#videoEditorEnd').val(Math.min(duration, end));
+                    setVideoEditorProjectTime((Number($('#videoEditorOffset').val()) || 0) + (end - start));
+                }
+            }
+
+            updateVideoEditorLabels();
+            updateVideoEditorTimeline();
+        });
+
+        $(document).on('mouseup.videoEditorTrim touchend.videoEditorTrim', function() {
+            dragSide = null;
+            $('#videoEditorClip').removeClass('is-dragging');
+        });
+    }
+
+    function bindVideoEditorTextHandles() {
+        var dragSide = null;
+        var dragStartX = 0;
+        var dragTextStartValue = 0;
+        var dragTextEndValue = 0;
+        var dragHasMoved = false;
+
+        $('#videoEditorTextClip').on('mousedown touchstart', function(event) {
+            if ($(event.target).hasClass('video-editor-handle')) {
+                return;
+            }
+
+            if ($(event.target).is('input, select, button, textarea')) {
+                return;
+            }
+
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            dragSide = 'move';
+            dragStartX = pointer.pageX;
+            dragTextStartValue = Number($('#videoEditorTextStart').val()) || 0;
+            dragTextEndValue = Number($('#videoEditorTextEnd').val()) || ($('#videoEditorPreview').get(0).duration || 0);
+            dragHasMoved = false;
+            $('#videoEditorTextClip').addClass('is-dragging');
+        });
+
+        $('#videoEditorTextClip .video-editor-handle').on('mousedown touchstart', function(event) {
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            dragSide = $(this).hasClass('video-editor-text-handle-left') ? 'left' : 'right';
+            dragStartX = pointer.pageX;
+            dragTextStartValue = Number($('#videoEditorTextStart').val()) || 0;
+            dragTextEndValue = Number($('#videoEditorTextEnd').val()) || ($('#videoEditorPreview').get(0).duration || 0);
+            dragHasMoved = true;
+            event.preventDefault();
+            event.stopPropagation();
+        });
+
+        $(document).on('mousemove.videoEditorTextTrim touchmove.videoEditorTextTrim', function(event) {
+            if (!dragSide) {
+                return;
+            }
+
+            var pointer = event.originalEvent.touches ? event.originalEvent.touches[0] : event;
+            var $row = $('#videoEditorTextClip').parent();
+            var width = $row.width();
+            var duration = $('#videoEditorPreview').get(0).duration || 0;
+            var projectStart = 0;
+            var projectEnd = duration;
+            if (dragSide == 'move' && !dragHasMoved && Math.abs(pointer.pageX - dragStartX) < 4) {
+                return;
+            }
+            dragHasMoved = true;
+            var deltaSeconds = ((pointer.pageX - dragStartX) / width) * Math.max(0.5, projectEnd - projectStart);
+            var textStart = dragTextStartValue;
+            var textEnd = dragTextEndValue;
+
+            if (dragSide == 'left') {
+                textStart = Math.min(dragTextStartValue + deltaSeconds, textEnd - 0.5);
+                textStart = Math.max(projectStart, textStart);
+                $('#videoEditorTextStart').val(textStart);
+                $('#videoEditorPreview').get(0).currentTime = textStart;
+            } else if (dragSide == 'right') {
+                textEnd = Math.max(dragTextEndValue + deltaSeconds, textStart + 0.5);
+                textEnd = Math.min(projectEnd, textEnd);
+                $('#videoEditorTextEnd').val(textEnd);
+                $('#videoEditorPreview').get(0).currentTime = textEnd;
+            } else {
+                var textDuration = Math.max(0.5, dragTextEndValue - dragTextStartValue);
+                textStart = dragTextStartValue + deltaSeconds;
+                textStart = Math.max(projectStart, Math.min(textStart, projectEnd - textDuration));
+                textEnd = textStart + textDuration;
+                $('#videoEditorTextStart').val(textStart);
+                $('#videoEditorTextEnd').val(textEnd);
+                $('#videoEditorPreview').get(0).currentTime = textStart;
+            }
+
+            event.preventDefault();
+            updateVideoEditorTimeline();
+            updateVideoEditorTextVisibility();
+        });
+
+        $(document).on('mouseup.videoEditorTextTrim touchend.videoEditorTextTrim', function() {
+            dragSide = null;
+            $('#videoEditorTextClip').removeClass('is-dragging');
+        });
+    }
+
+    function bindVideoEditorStageText() {
+        $('#videoEditorTitleBox').on('click', function() {
+            $(this).addClass('selected');
+            $('#videoEditorTitlePreview').focus();
+        });
+    }
+
+    function hideVideoEditorText(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        $('#videoEditorTextVisible').val(0);
+        $('#videoEditorTextClip').hide();
+        $('#videoEditorAddText').css('display', 'flex');
+        $('#videoEditorTitleBox').hide();
+    }
+
+    function showVideoEditorText() {
+        $('#videoEditorTextVisible').val(1);
+        $('#videoEditorTextClip').show();
+        $('#videoEditorAddText').hide();
+        $('#videoEditorTitleBox').show().addClass('selected');
+        updateVideoEditorTimeline();
+        updateVideoEditorTextVisibility();
+    }
+
+    function updateVideoEditorTextVisibility() {
+        if ($('#videoEditorTextVisible').val() == '0') {
+            $('#videoEditorTitleBox').hide();
+            return;
+        }
+
+        var current = videoEditorProjectTime || 0;
+        var textStart = Number($('#videoEditorTextStart').val()) || 0;
+        var textEnd = Number($('#videoEditorTextEnd').val()) || ($('#videoEditorPreview').get(0).duration || 0);
+        $('#videoEditorTitleBox').toggle(current >= textStart && current <= textEnd);
+    }
+
+    function updateVideoEditorClipVisibility() {
+        var video = $('#videoEditorPreview').get(0);
+        var current = videoEditorProjectTime || 0;
+        var duration = video.duration || 0;
+        var start = Number($('#videoEditorStart').val()) || 0;
+        var end = Number($('#videoEditorEnd').val()) || duration;
+        var offset = Number($('#videoEditorOffset').val()) || 0;
+        var clipDuration = Math.max(0.5, end - start);
+        $('#videoEditorPreview').toggleClass('is-outside-clip', current < offset || current > offset + clipDuration);
+    }
+
+    function toggleVideoEditorPlay() {
+        var video = $('#videoEditorPreview').get(0);
+        var start = Number($('#videoEditorStart').val()) || 0;
+        var end = Number($('#videoEditorEnd').val()) || video.duration || 0;
+
+        if (video.paused) {
+            if (video.currentTime >= video.duration) {
+                video.currentTime = 0;
+            }
+            syncVideoEditorSourceToProjectTime();
+            video.play();
+            $('#videoEditorPlayIcon').text('pause');
+        } else {
+            video.pause();
+            $('#videoEditorPlayIcon').text('play_arrow');
+        }
+    }
+
+    function closeVideoEditor() {
+        var video = $('#videoEditorPreview').get(0);
+        video.pause();
+        $('#videoEditorPlayIcon').text('play_arrow');
+    }
+
+    function saveVideoEdit() {
+        if (!videoEditorMedia) {
+            return;
+        }
+
+        var form = new FormData();
+        form.append('_token', $("input[name=_token]").val());
+        form.append('id', videoEditorMedia.id);
+        form.append('start', $('#videoEditorStart').val());
+        form.append('end', $('#videoEditorEnd').val());
+        form.append('offset', $('#videoEditorOffset').val());
+        form.append('title', $('#videoEditorTextVisible').val() == '0' ? '' : $('#videoEditorTitleInput').val());
+        form.append('subtitle', $('#videoEditorSubtitleInput').val());
+        form.append('titleStyle', $('#videoEditorTitleInput').attr('data-style') || 'plain');
+        form.append('subtitleStyle', $('#videoEditorSubtitleInput').attr('data-style') || 'plain');
+        form.append('titleStart', $('#videoEditorTextStart').val());
+        form.append('titleEnd', $('#videoEditorTextEnd').val());
+        form.append('titleVisible', $('#videoEditorTextVisible').val());
+        form.append('titleFontSize', $('#videoEditorFontSize').val());
+
+        $('#videoEditorSave').prop('disabled', true);
+        $('#videoEditorStatus').text(libraryMsg.saving_video);
+
+        $.ajax({
+            url: '/ajax-editVideo',
+            type: 'POST',
+            data: form,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success == 'Y') {
+                    var newDiv = makeDiv(response.file, response.id, response.type, response.media);
+                    $('#myMedia').append(newDiv);
+                    updateModalEvent();
+                    selectInputsMedia();
+                    $('#videoEditorStatus').text(response.message || libraryMsg.video_editor_saved);
+                    setTimeout(function() {
+                        $('#videoEditorModal').modal('hide');
+                        closeVideoEditor();
+                    }, 700);
+                } else {
+                    $('#videoEditorStatus').text(response.error || libraryMsg.video_editor_error);
+                }
+            },
+            error: function(request, error) {
+                var backendMessage = request && request.responseJSON
+                    ? (request.responseJSON.message || request.responseJSON.error || '')
+                    : '';
+                $('#videoEditorStatus').text(backendMessage || error || libraryMsg.video_editor_error);
+            },
+            complete: function() {
+                $('#videoEditorSave').prop('disabled', false);
+            }
+        });
     }
 
 	//TODO

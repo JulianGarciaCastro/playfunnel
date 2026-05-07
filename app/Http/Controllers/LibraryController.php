@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Exception;
 use App\Models\Library;
 use App\Models\Project;
 use Carbon\Carbon;
@@ -115,7 +117,8 @@ class LibraryController extends Controller{
                     Storage::makeDirectory($folderThumbNail);
                 }
                 
-                $ffprobe = FFProbe::create([  'ffmpeg.binaries'  => env("FFMPEG"), 'ffprobe.binaries' => env("FFPROBE")]);
+                $ffmpegOptions = $this->ffmpegOptions();
+                $ffprobe = FFProbe::create($ffmpegOptions);
                 $duracion = $ffprobe->format($mediaFile) // extracts file informations
                 ->get('duration');   // returns the duration property
                 
@@ -123,7 +126,7 @@ class LibraryController extends Controller{
                 $duracion = rand ( 2 , $duracion-2 );
                 Log::debug('Duracion del video: ' . $duracion . " - Aleatorio: " . $duracion );
                 
-                $ffmpeg = FFMpeg::create([  'ffmpeg.binaries'  => env("FFMPEG"), 'ffprobe.binaries' => env("FFPROBE")]);
+                $ffmpeg = FFMpeg::create($ffmpegOptions);
                 $media = $ffmpeg->open($mediaFile);
                 
                 Log::debug("thumbnailURL:".$thumbnailURL);
@@ -249,6 +252,121 @@ class LibraryController extends Controller{
         }
 
         return response()->json(['success'=>'N', 'message'=> __('add-video.noPermissionDelete')]);
+    }
+
+    public function editVideo(Request $request){
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer',
+            'start' => 'required|numeric|min:0',
+            'end' => 'required|numeric|min:0.1',
+            'offset' => 'nullable|numeric|min:0',
+            'title' => 'nullable|string|max:120',
+            'subtitle' => 'nullable|string|max:180',
+            'titleStyle' => 'nullable|string|max:30',
+            'subtitleStyle' => 'nullable|string|max:30',
+            'titleStart' => 'nullable|numeric|min:0',
+            'titleEnd' => 'nullable|numeric|min:0',
+            'titleVisible' => 'nullable|integer|min:0|max:1',
+            'titleFontSize' => 'nullable|integer|min:18|max:96',
+            'filter' => 'nullable|string|max:30',
+            'brightness' => 'nullable|numeric|min:-1|max:1',
+            'contrast' => 'nullable|numeric|min:0|max:3',
+            'fadeIn' => 'nullable|numeric|min:0|max:5',
+            'fadeOut' => 'nullable|numeric|min:0|max:5',
+            'speed' => 'nullable|numeric|min:0.25|max:2',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success'=>'N', 'error'=>$validator->errors()->all()]);
+        }
+
+        $library = Library::where('createdby', Auth::id())
+            ->where('id', $request->input('id'))
+            ->first();
+
+        if (!$library || !(Str::startsWith($library->type, 'video') || strtoupper($library->type) === 'VIDEO')) {
+            return response()->json(['success'=>'N', 'error'=>__('library.video_editor_not_found')]);
+        }
+
+        if (!Storage::exists($library->url)) {
+            return response()->json(['success'=>'N', 'error'=>__('library.video_editor_not_found')]);
+        }
+
+        try {
+            $start = max(0, (float) $request->input('start'));
+            $end = max(0.1, (float) $request->input('end'));
+
+            $ffmpegOptions = $this->ffmpegOptions();
+            $ffprobe = FFProbe::create($ffmpegOptions);
+            $duration = (float) $ffprobe->format(Storage::path($library->url))->get('duration');
+
+            if ($duration <= 0) {
+                return response()->json(['success'=>'N', 'error'=>__('library.video_editor_invalid_duration')]);
+            }
+
+            $end = min($end, $duration);
+            $offset = max(0, (float) $request->input('offset', 0));
+            if ($start >= $end) {
+                return response()->json(['success'=>'N', 'error'=>__('library.video_editor_invalid_range')]);
+            }
+
+            $sourceFolder = dirname($library->url);
+            $baseName = pathinfo($library->name, PATHINFO_FILENAME);
+            $outputName = $this->editedVideoName($sourceFolder, $baseName);
+            $outputUrl = $sourceFolder . '/' . $outputName;
+
+            $ffmpeg = FFMpeg::create($ffmpegOptions);
+            $video = $ffmpeg->open(Storage::path($library->url));
+            $video->filters()->clip(TimeCode::fromSeconds($start), TimeCode::fromSeconds($end - $start));
+
+            $videoFilter = $this->buildVideoEditorFilter(
+                (int) $request->input('titleVisible', 1) === 0 ? '' : trim((string) $request->input('title')),
+                trim((string) $request->input('subtitle')),
+                (string) $request->input('titleStyle', 'plain'),
+                (string) $request->input('subtitleStyle', 'plain'),
+                (string) $request->input('filter', 'none'),
+                (float) $request->input('brightness', 0),
+                (float) $request->input('contrast', 1),
+                (float) $request->input('fadeIn', 0),
+                (float) $request->input('fadeOut', 0),
+                (float) $request->input('speed', 1),
+                $end - $start,
+                max(0, (float) $request->input('titleStart', 0) - $offset),
+                max(0, (float) $request->input('titleEnd', $end) - $offset),
+                (int) $request->input('titleFontSize', 36)
+            );
+
+            if ($videoFilter !== '') {
+                $video->filters()->custom($videoFilter);
+            }
+
+            $format = (new X264('aac', 'libx264'))->setKiloBitrate(1800)->setAudioKiloBitrate(128);
+            $video->save($format, Storage::path($outputUrl));
+
+            $thumbnailUrl = $this->createVideoThumbnail($ffmpeg, $outputUrl, $sourceFolder, $outputName);
+
+            $edited = new Library();
+            $edited->createdby = Auth::id();
+            $edited->url = $outputUrl;
+            $edited->thumbnail = $thumbnailUrl;
+            $edited->name = $outputName;
+            $edited->type = 'video/mp4';
+            $edited->mediasize = Storage::exists($outputUrl) ? Storage::size($outputUrl)/(1048576*1014) : 0;
+            $edited->description = trim((string) $request->input('title'));
+            $edited->save();
+
+            return response()->json([
+                'success'=>'Y',
+                'file'=>$thumbnailUrl ?: $outputUrl,
+                'id'=>$edited->id,
+                'type'=>$edited->type,
+                'media'=>$outputUrl,
+                'message'=>__('library.video_editor_saved')
+            ]);
+        } catch (Exception $e) {
+            Log::error('LibraryController.editVideo() Error: ' . $e->getMessage());
+            return response()->json(['success'=>'N', 'error'=>__('library.video_editor_error') . ': ' . $e->getMessage()]);
+        }
     }
 
 
@@ -445,6 +563,183 @@ class LibraryController extends Controller{
     {
         $normalizedType = strtolower($mediaType);
         return strpos($normalizedType, 'svg') === false;
+    }
+
+    private function buildVideoEditorFilter(
+        string $title,
+        string $subtitle,
+        string $titleStyle,
+        string $subtitleStyle,
+        string $filter,
+        float $brightness,
+        float $contrast,
+        float $fadeIn,
+        float $fadeOut,
+        float $speed,
+        float $clipDuration,
+        float $titleStart,
+        float $titleEnd,
+        int $titleFontSize
+    ): string
+    {
+        $filters = [];
+        $speed = max(0.25, min(2, $speed));
+
+        if ($speed !== 1.0) {
+            $filters[] = 'setpts=' . round(1 / $speed, 4) . '*PTS';
+        }
+
+        if ($filter === 'grayscale') {
+            $filters[] = 'hue=s=0';
+        } else if ($filter === 'sepia') {
+            $filters[] = 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131';
+        } else if ($filter === 'vivid') {
+            $filters[] = 'eq=saturation=1.35:contrast=1.08';
+        }
+
+        if ($brightness != 0 || $contrast != 1) {
+            $filters[] = 'eq=brightness=' . round($brightness, 2) . ':contrast=' . round($contrast, 2);
+        }
+
+        if ($fadeIn > 0) {
+            $filters[] = 'fade=t=in:st=0:d=' . round($fadeIn, 2);
+        }
+
+        if ($fadeOut > 0 && $clipDuration > $fadeOut) {
+            $filters[] = 'fade=t=out:st=' . round($clipDuration - $fadeOut, 2) . ':d=' . round($fadeOut, 2);
+        }
+
+        $fontFile = $this->escapeDrawTextFontPath(public_path('fonts/OpenSans-Bold.ttf'));
+
+        if ($title !== '') {
+            $filters[] = $this->drawTextCommand($fontFile, $title, $titleStyle, '(h-text_h)/2', (string) max(18, $titleFontSize), $titleStart, $titleEnd);
+        }
+
+        if ($subtitle !== '') {
+            $filters[] = $this->drawTextCommand($fontFile, $subtitle, $subtitleStyle, 'h-text_h-h*0.12', 'h/22', 0, $clipDuration);
+        }
+
+        return implode(',', $filters);
+    }
+
+    private function drawTextCommand(string $fontFile, string $text, string $style, string $y, string $fontSize, float $start = 0, float $end = 0): string
+    {
+        $fontColor = 'white';
+        $box = '';
+        $border = 'borderw=3:bordercolor=black@0.75';
+
+        if ($style === 'box') {
+            $box = ':box=1:boxcolor=black@0.75:boxborderw=18';
+            $border = 'borderw=0';
+        } else if ($style === 'creator') {
+            $fontColor = 'yellow';
+            $border = 'borderw=5:bordercolor=black';
+        } else if ($style === 'retro') {
+            $fontColor = 'white';
+            $border = 'borderw=4:bordercolor=purple@0.95:shadowx=4:shadowy=4:shadowcolor=orange@0.95';
+        } else if ($style === 'pride') {
+            $border = 'borderw=3:bordercolor=black:shadowx=6:shadowy=6:shadowcolor=blue@0.8';
+        } else if ($style === 'button') {
+            $fontColor = 'black';
+            $box = ':box=1:boxcolor=white@0.95:boxborderw=24';
+            $border = 'borderw=0:shadowx=3:shadowy=3:shadowcolor=black@0.35';
+        } else if ($style === 'bubble') {
+            $fontColor = 'lime';
+            $border = 'borderw=4:bordercolor=green@0.9';
+        } else if ($style === 'sharp') {
+            $box = ':box=1:boxcolor=black@0.35:boxborderw=12';
+            $border = 'borderw=2:bordercolor=pink@0.95';
+        } else if ($style === 'double') {
+            $fontColor = 'white';
+            $border = 'borderw=1:bordercolor=black:shadowx=0:shadowy=5:shadowcolor=purple@0.8';
+        }
+
+        $enable = $end > $start ? ":enable='between(t," . round($start, 2) . "," . round($end, 2) . ")'" : '';
+
+        return "drawtext=fontfile='{$fontFile}':text='" . $this->escapeDrawText($text) . "':fontcolor={$fontColor}:fontsize={$fontSize}:{$border}{$box}:x=(w-text_w)/2:y={$y}{$enable}";
+    }
+
+    private function escapeDrawText(string $value): string
+    {
+        $value = str_replace(["\r", "\n"], ' ', $value);
+        return str_replace(["\\", "'", ":", "%"], ["\\\\", "\\'", "\\:", "\\%"], $value);
+    }
+
+    private function escapeDrawTextFontPath(string $path): string
+    {
+        return str_replace(['\\', ':'], ['/', '\\:'], $path);
+    }
+
+    private function createVideoThumbnail(FFMpeg $ffmpeg, string $videoUrl, string $folderPath, string $videoName): string
+    {
+        $folderThumbNail = $folderPath . '/thumbnails';
+        $thumbNailName = pathinfo($videoName, PATHINFO_FILENAME) . '.jpg';
+        $thumbnailUrl = $folderThumbNail . '/' . $thumbNailName;
+
+        if(!Storage::exists($folderThumbNail)){
+            Storage::makeDirectory($folderThumbNail);
+        }
+
+        try {
+            $ffmpeg
+                ->open(Storage::path($videoUrl))
+                ->frame(TimeCode::fromSeconds(0))
+                ->save(Storage::path($thumbnailUrl));
+
+            return $thumbnailUrl;
+        } catch (Exception $e) {
+            Log::warning('LibraryController.createVideoThumbnail() Error: ' . $e->getMessage());
+            return '';
+        }
+    }
+
+    private function ffmpegOptions(): array
+    {
+        return [
+            'ffmpeg.binaries' => $this->resolveFfmpegBinary(env('FFMPEG'), 'ffmpeg'),
+            'ffprobe.binaries' => $this->resolveFfmpegBinary(env('FFPROBE'), 'ffprobe'),
+        ];
+    }
+
+    private function resolveFfmpegBinary(?string $configuredPath, string $binary): string
+    {
+        $candidates = [];
+
+        if (!empty($configuredPath)) {
+            $candidates[] = $configuredPath;
+            $candidates[] = public_path($configuredPath);
+            $candidates[] = base_path($configuredPath);
+        }
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $candidates[] = public_path("lib/ffmpeg-4.4-full_build_win/bin/{$binary}.exe");
+        }
+
+        $candidates[] = public_path("lib/ffmpeg-4.4.1-i686-static/{$binary}");
+        $candidates[] = public_path("lib/ffmpeg-git-20211013-amd64-static/{$binary}");
+
+        foreach ($candidates as $candidate) {
+            $candidate = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $candidate);
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return (string) $configuredPath;
+    }
+
+    private function editedVideoName(string $folder, string $baseName): string
+    {
+        $cleanBaseName = Str::slug($baseName, '-');
+        $outputName = $cleanBaseName . '_Edit.mp4';
+        $counter = 2;
+
+        while (Storage::exists($folder . '/' . $outputName)) {
+            $outputName = $cleanBaseName . '_Edit_' . $counter . '.mp4';
+            $counter++;
+        }
+
+        return $outputName;
     }
 
     private function findProjectsUsingLibraryInOptions(Library $library)
