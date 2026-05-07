@@ -17,6 +17,7 @@ use App\Http\Middleware\LocaleCookieMiddleware;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\PageViewController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\WebhookIntegrationController;
 
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -687,6 +688,10 @@ Route::middleware(LocaleCookieMiddleware::class)->group(function (){
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->middleware(['verified'])->name('dashboard');
 
     Route::get('/crm', [App\Http\Controllers\CrmController::class, 'index'])->middleware(['auth', 'verified'])->name('crm');
+    Route::get('/integrations/webhook', [WebhookIntegrationController::class, 'index'])->middleware(['auth', 'verified'])->name('integrations.webhook');
+    Route::post('/integrations/webhook', [WebhookIntegrationController::class, 'store'])->middleware(['auth', 'verified'])->name('integrations.webhook.store');
+    Route::put('/integrations/webhook/{id}', [WebhookIntegrationController::class, 'update'])->middleware(['auth', 'verified'])->name('integrations.webhook.update');
+    Route::delete('/integrations/webhook/{id}', [WebhookIntegrationController::class, 'destroy'])->middleware(['auth', 'verified'])->name('integrations.webhook.destroy');
     Route::post('crm-CustomerByProjectId', [App\Http\Controllers\CrmController::class, 'getCustomersByProject'])->middleware(['auth', 'verified'])->name('getCustomersByProject');
     Route::post('crm-CustomerById', [App\Http\Controllers\CrmController::class, 'getCutomerById'])->middleware(['auth', 'verified'])->name('getCutomerById');
     Route::post('crm-update-customer', [App\Http\Controllers\CrmController::class, 'updateCustomer'])->middleware(['auth', 'verified'])->name('updateCustomer');

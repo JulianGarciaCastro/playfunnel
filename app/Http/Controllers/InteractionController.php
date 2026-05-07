@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerProjects;
 use App\Models\Interaction;
+use App\Models\Project;
+use App\Services\WebhookDispatcher;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -83,10 +85,40 @@ class InteractionController extends Controller
             $info['cuepointtag'] = $request->cuepointtag;
         }
 
-        Interaction::create($info);
+        $interaction = Interaction::create($info);
         $this->syncInteractionTagToCustomer($request);
 
+        $project = Project::find($request->project);
+        $payload = [
+            'interaction' => $interaction->toArray(),
+            'session_id' => $request->_token,
+            'cuepoint' => [
+                'id' => $request->cuepointid,
+                'name' => $request->cuepointname,
+                'option_id' => $request->cuepointoptionid,
+                'option_name' => $request->cuepointoptionname,
+                'tag' => $request->cuepointtag,
+            ],
+            'location' => [
+                'ip' => $ip,
+                'city' => $location['city'],
+                'state' => $location['state'],
+                'country' => $location['country'],
+                'country_code' => $location['country_code'],
+                'continent' => $location['continent'],
+                'continent_code' => $location['continent_code'],
+            ],
+            'device' => $device,
+        ];
+
+        app(WebhookDispatcher::class)->dispatch('interaction.created', $project, $payload);
+
+        if($request->cuepointtag){
+            app(WebhookDispatcher::class)->dispatch('tag.assigned', $project, $payload);
+        }
+
         if($request->interactiontype==1){// Interacción final
+            app(WebhookDispatcher::class)->dispatch('funnel.completed', $project, $payload);
             Log::debug("InteractionController / Destruyendo la sesión...");
             Session::regenerate();
             Log::debug("InteractionController / Sesión destruida");

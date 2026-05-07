@@ -12,6 +12,7 @@ use App\Models\Interaction;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\UserConfig;
+use App\Services\WebhookDispatcher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -681,6 +682,20 @@ class CrmController extends Controller
         }
 
         $this->saveCustomFieldValues($customerId, $request->input('crm_custom_field_data'), $projectOwnerId);
+
+        $project = Project::find($request['projectid']);
+        $customer = Customer::find($customerId);
+        app(WebhookDispatcher::class)->dispatch('lead.created', $project, [
+            'customer' => $customer ? $customer->toArray() : null,
+            'customer_id' => $customerId,
+            'session_id' => $request['_token'],
+            'form_fields' => collect($request->all())->filter(function ($value, $key) {
+                return strpos($key, 'f-') === 0;
+            })->all(),
+            'custom_fields' => $request->input('crm_custom_field_data'),
+        ]);
+
+        return response()->json(['success' => 'Y', 'customer_id' => $customerId]);
     }
 
     //Post Customer & Project Relationship

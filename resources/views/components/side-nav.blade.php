@@ -5,7 +5,7 @@
           <i class="c01 fa fa-line-chart""></i>
           <span  class="c01" style="cursor: default">{{__('dashboard.dashboard')}}</span>
         <?php else: ?>
-          <a class="nav-link cMain text-md-left"     href="dashboard"><i class="fa fa-line-chart"></i>
+          <a class="nav-link cMain text-md-left"     href="{{ route('dashboard') }}"><i class="fa fa-line-chart"></i>
               <span  class="cMain">{{__('dashboard.dashboard')}}</span>
           </a>
         <?php endif; ?>
@@ -16,7 +16,7 @@
           <i class="c01 fas fa-th-large "></i>
           <span  class="c01" style="cursor: default">{{__('dashboard.projects')}}</span>
         <?php else: ?>
-          <a class="nav-link cMain text-md-left"     href="projects"><i class="fas fa-th-large "></i>
+          <a class="nav-link cMain text-md-left"     href="{{ route('projects') }}"><i class="fas fa-th-large "></i>
               <span  class="cMain">{{__('dashboard.projects')}}</span>
           </a>
         <?php endif; ?>
@@ -27,7 +27,7 @@
           <i class="c01 fas fa-photo-video "></i>
           <span  class="c01" style="cursor: default">{{__('dashboard.library')}}</span>
         <?php else: ?>
-          <a class="nav-link cMain text-md-left"     href="library"><i class="fas fa-photo-video "></i>
+          <a class="nav-link cMain text-md-left"     href="{{ route('library') }}"><i class="fas fa-photo-video "></i>
               <span  class="cMain">{{__('dashboard.library')}}</span>
           </a>
         <?php endif; ?>
@@ -38,8 +38,22 @@
           <i class="c01 fas fa-users  "></i>
           <span  class="c01" style="cursor: default">CRM</span>
         <?php else: ?>
-          <a class="nav-link cMain text-md-left"     href="crm"><i class="fas fa-users "></i>
+          <a class="nav-link cMain text-md-left"     href="{{ route('crm') }}"><i class="fas fa-users "></i>
               <span  class="cMain">CRM</span>
+          </a>
+        <?php endif; ?>
+      </li>
+      <li class="nav-item">
+        <?php if(Route::currentRouteName() == 'integrations.webhook'): ?>
+          <i class="c01 fas fa-plug"></i>
+          <span class="c01" style="cursor: default">{{__('integrations.integrations')}}</span>
+          <div class="ml-4 mt-1 c01" style="font-size: 13px;">{{__('integrations.webhook')}}</div>
+        <?php else: ?>
+          <a class="nav-link cMain text-md-left" href="{{ route('integrations.webhook') }}"><i class="fas fa-plug"></i>
+              <span class="cMain">{{__('integrations.integrations')}}</span>
+          </a>
+          <a class="nav-link cMain text-md-left ml-4 py-0" href="{{ route('integrations.webhook') }}" style="font-size: 13px;">
+              <span class="cMain">{{__('integrations.webhook')}}</span>
           </a>
         <?php endif; ?>
       </li>

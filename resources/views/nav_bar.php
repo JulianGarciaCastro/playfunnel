@@ -22,7 +22,7 @@ $isImpersonating = app()->bound('impersonate') && app('impersonate')->isImperson
           <!--<a class="home" href="/dashboard"><i class="d-lg-none fas fa-home c03"></i></a>-->
         </button>
 
-        <a href="/"><img src="images/SVG/Logo-Horizontal-BgDark.svg" class="logoImg col-6 col-md-2" alt="Descripción de la imagen"></a>        
+        <a href="/"><img src="<?= asset('images/SVG/Logo-Horizontal-BgDark.svg') ?>" class="logoImg col-6 col-md-2" alt="playFunnel"></a>        
        
         <div class="dropdown d-flex align-items-center">
          
@@ -39,12 +39,12 @@ $isImpersonating = app()->bound('impersonate') && app('impersonate')->isImperson
           <a class="navbar-brand d-flex align-items-center" href="#" data-toggle="dropdown"><i class="far fa-user-circle"></i></a>
           
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="profile"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
+            <a class="dropdown-item" href="<?= route('profile') ?>"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
             <?php if (false)  {?>
-            	<a class="dropdown-item" href="billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
+            	<a class="dropdown-item" href="/billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
             <?php } ?>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
+            <a class="dropdown-item" href="<?= route('logout') ?>"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
             </div>
         </div>
       
@@ -64,18 +64,23 @@ function goBack() {
 }
 </script>
 <script>
-  window.onload = function() { 
-    
-    /*---------Langs--*/
-    $("#langs-down").click(function() {
-      $("#langs a").each(function(){
-          if(!$(this).hasClass("active")){
-              $(this).toggleClass("d-none");       
-          }else{
-            $(this).parent().prepend($(this));
-          }   
+  document.addEventListener('DOMContentLoaded', function() {
+    var langsDown = document.getElementById('langs-down');
+    var langs = document.getElementById('langs');
+
+    if (!langsDown || !langs) {
+      return;
+    }
+
+    langsDown.addEventListener('click', function() {
+      Array.prototype.forEach.call(langs.querySelectorAll('a'), function(langLink) {
+        if (!langLink.classList.contains('active')) {
+          langLink.classList.toggle('d-none');
+        } else {
+          langs.insertBefore(langLink, langs.firstChild);
+        }
       });
-      $("#langs-down").toggleClass("rotate"); 
+      langsDown.classList.toggle('rotate');
     });
-  }
+  });
 </script>

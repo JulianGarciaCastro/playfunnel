@@ -46,7 +46,7 @@ $isImpersonating = app()->bound('impersonate') && app('impersonate')->isImperson
           <!--<a class="home" href="/dashboard"><i class="d-lg-none fas fa-home c03"></i></a>-->
         </button>
 
-        <a href="/projects"><img src="images/SVG/Logo-Horizontal-BgDark.svg" class="logoImg col-6 col-md-2" alt="Descripción de la imagen"></a>
+        <a href="/projects"><img src="<?= asset('images/SVG/Logo-Horizontal-BgDark.svg') ?>" class="logoImg col-6 col-md-2" alt="playFunnel"></a>
 
         <div class="dropdown d-flex align-items-center">
           <button id="guardarHeader"   type="submit" class="btn-WhiteBorder mr-4 d-lg-inline d-none" ><?= __('nav_bar.save') ?></button>
@@ -63,12 +63,12 @@ $isImpersonating = app()->bound('impersonate') && app('impersonate')->isImperson
           <a class="navbar-brand d-flex align-items-center" href="#" data-toggle="dropdown"><i class="far fa-user-circle"></i></a>
 
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="profile"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
+            <a class="dropdown-item" href="<?= route('profile') ?>"><i class="fas fa-address-card"></i><span ><?= __('nav_bar.profile') ?></span></a>
             <?php if (false)  {?>
-            	<a class="dropdown-item" href="billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
+            	<a class="dropdown-item" href="/billing"><i class="fas fa-credit-card"></i><span ><?= __('nav_bar.billing') ?></span></a>
             <?php } ?>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="logout"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
+            <a class="dropdown-item" href="<?= route('logout') ?>"><i class="fas fa-sign-out-alt"></i><span ><?= __('nav_bar.logout') ?></span></a>
             </div>
         </div>
 
@@ -91,18 +91,23 @@ function goBack() {
 }
 
 
-document.addEventListener('DOMContentLoaded', (e) => {
-    $("#langs-down").click(function() {
-      $("#langs-down").toggleClass("rotate");
-      $("#langs-2 a").each(function(){
-          if(!$(this).hasClass("active")){
+document.addEventListener('DOMContentLoaded', function() {
+    var langsDown = document.getElementById('langs-down');
+    var langs = document.getElementById('langs-2') || document.getElementById('langs');
 
-              $(this).toggleClass("d-none");
-          }else{
+    if (!langsDown || !langs) {
+      return;
+    }
 
-            $(this).parent().prepend($(this));
-          }
+    langsDown.addEventListener('click', function() {
+      Array.prototype.forEach.call(langs.querySelectorAll('a'), function(langLink) {
+        if (!langLink.classList.contains('active')) {
+          langLink.classList.toggle('d-none');
+        } else {
+          langs.insertBefore(langLink, langs.firstChild);
+        }
       });
+      langsDown.classList.toggle('rotate');
     });
 });
 
