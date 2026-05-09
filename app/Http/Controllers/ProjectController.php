@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
@@ -159,9 +160,10 @@ class ProjectController extends Controller
                                 ->where('id', $libraryId)
                                 ->first();
             
-            Log::debug('changeProjectLib() URL: ' . $library->url . "  PublicPath: " . public_path(  $library->url));
+            $libraryPath = Storage::disk('local')->path($library->url);
+            Log::debug('changeProjectLib() URL: ' . $library->url . "  StoragePath: " . $libraryPath);
             $ffprobe = FFProbe::create([  'ffmpeg.binaries'  => env("FFMPEG"), 'ffprobe.binaries' => env("FFPROBE")]);
-            $duration = $ffprobe->format($library->url)->get('duration');
+            $duration = $ffprobe->format($libraryPath)->get('duration');
             Log::debug('changeProjectLib() VideoDuration: ' . $duration );
             
             $cuepointSet = $projectLibrary->cuePoints()->orderBy('time', 'asc')->get();

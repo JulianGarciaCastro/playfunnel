@@ -165,7 +165,13 @@ class LibraryController extends Controller{
             $library->save();
 
             $previewFile = !empty($library->thumbnail) ? $library->thumbnail : $fileURL;
-            return response()->json(['success'=>'Y', 'file'=>$previewFile, 'id'=> $library->id, "type"=>$mediaType, "media"=>$fileURL ]);
+            return response()->json([
+                'success'=>'Y',
+                'file'=>Library::publicMediaUrl($previewFile),
+                'id'=> $library->id,
+                "type"=>$mediaType,
+                "media"=>$fileURL,
+            ]);
         }
 
         $arrErrors = array();
@@ -391,13 +397,13 @@ class LibraryController extends Controller{
 
             $previewFile = !empty($thumbnail) ? $thumbnail : $originalFile;
             if (Str::startsWith($lib->type, 'video') || strtoupper($lib->type) === 'VIDEO') {
-                $myLib = array("url" => $previewFile, "id"=>$lib->id, "type"=>"VIDEO", "media"=>$originalFile);
+                $myLib = array("url" => Library::publicMediaUrl($previewFile), "id"=>$lib->id, "type"=>"VIDEO", "media"=>$originalFile);
                 array_push($libMedia, $myLib);
                 continue;
             }
 
             if (Str::startsWith($lib->type, 'image') || strtoupper($lib->type) === 'IMAGE') {
-                $myLib = array("url" => $previewFile,  "id"=>$lib->id, "type"=>"IMAGE", "media"=>$originalFile);
+                $myLib = array("url" => Library::publicMediaUrl($previewFile),  "id"=>$lib->id, "type"=>"IMAGE", "media"=>$originalFile);
                 array_push($libMedia, $myLib);
             }
         }

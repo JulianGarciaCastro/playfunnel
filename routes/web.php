@@ -17,6 +17,7 @@ use App\Http\Middleware\LocaleCookieMiddleware;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\PageViewController;
 use App\Http\Controllers\ImpersonationController;
+use App\Http\Controllers\MediaFileController;
 
 use App\Http\Controllers\Auth\GoogleController;
 
@@ -33,6 +34,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
@@ -53,6 +55,9 @@ use Carbon\Carbon;
 
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.login');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+Route::get('/media-file/{path}', [MediaFileController::class, 'show'])
+    ->where('path', '.*')
+    ->name('media.file');
 
 
 Route::get('/', function () {
@@ -518,7 +523,7 @@ Route::middleware(LocaleCookieMiddleware::class)->group(function (){
         //$library = Library::where('createdby', Auth::id())
         $library = Library::where('id', $video_id)->first();
 
-        $tmp = new App\Http\Controllers\VideoStream($library->url);
+        $tmp = new App\Http\Controllers\VideoStream(Storage::disk('local')->path($library->url));
         $tmp->start();
     })->name('stream');
 
@@ -549,10 +554,10 @@ Route::middleware(LocaleCookieMiddleware::class)->group(function (){
 
         $library_img = Library::where('id', $project->publish_library_img)->first();
 
-        $publish_library_img = 'images/SVG/imageEmpty.svg';
+        $publish_library_img = asset('images/SVG/imageEmpty.svg');
         if($library_img){
             if($library_img->url){
-                $publish_library_img = $library_img->url;
+                $publish_library_img = Library::publicMediaUrl($library_img->url);
             }
         }
         $user = Auth::user();

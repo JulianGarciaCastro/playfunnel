@@ -1015,6 +1015,7 @@
 
 <script type="text/javascript">
     //var currentTab = "VIDEO";
+    const streamUrlTemplate = @json(route('stream', ':id'));
     var currentFolder = [];
     const folderNames = new Map();
     var videoEditorMedia = null;
@@ -1158,13 +1159,12 @@
         
         if (type.startsWith("video/")) {
             newMedia.attr('src', url || media);
-            media = "'" + media + "'";
-            playMedia = 'ontouchstart="doubleTouchFunction(\'video\', ' + media + ')" ondblclick="playVideo(' + media + ')"';
+            playMedia = 'ontouchstart="doubleTouchFunction(\'video\', ' + id + ')" ondblclick="playVideo(' + id + ')"';
         }
         if (type.startsWith("image/")) {
             newMedia.attr('src', url || media);
-            media = "'" + media + "'";
-            playMedia = 'ontouchstart="doubleTouchFunction(\'image\', ' + media + ')" ondblclick="playImage(' + media + ')"';
+            var imagePreview = "'" + (url || media) + "'";
+            playMedia = 'ontouchstart="doubleTouchFunction(\'image\', ' + imagePreview + ')" ondblclick="playImage(' + imagePreview + ')"';
         }
         if (type == "FOLDER") {
             if (url == id) {
@@ -1842,10 +1842,10 @@
     //}
 
 
-    function playVideo(media) {
-        console.log("playVideo() Media: " + media);
+    function playVideo(mediaId) {
+        console.log("playVideo() Media ID: " + mediaId);
 
-        $('source', $('#playVideo')).attr('src', media);
+        $('source', $('#playVideo')).attr('src', streamUrlTemplate.replace(':id', mediaId));
         $('#playMediaModal').modal('show');
         $('#playVideo').get(0).load();
         //$('#playVideo').get(0).play();
@@ -2259,7 +2259,7 @@
 					}
 
                     $.each(response.folders, function(i, item) {
-                    	newDiv = makeDiv(item.thumbnail, item.id, item.type, item.url);
+                    	newDiv = makeDiv(item.thumbnail_public_url || item.public_url || item.thumbnail, item.id, item.type, item.url);
                     	if (item.type == 'FOLDER') {
                             $('#content-folder').append(newDiv);
                         } else {

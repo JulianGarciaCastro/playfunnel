@@ -564,6 +564,7 @@
     
                         var mediaId = $(this).parent().next().attr("media-id");
                         var mediaSrc = $(this).parent().next().attr("media-src");
+                        var mediaPreview = $(this).parent().next().attr("media-preview");
                         var mediaImg = $(this).parent().next().attr("src");
     
                         blnSelected = true;
@@ -576,7 +577,7 @@
                         let target_input = $(target_img).parent().find('input');
                         console.log(target_path);
                         console.log(target_input);
-                        target_path.attr("src", mediaSrc);
+                        target_path.attr("src", mediaPreview || mediaImg || mediaSrc);
                         target_input.val(name);
                         $('#endVideoimageId').val(name);
                         setProjectChanged();
@@ -1501,6 +1502,7 @@
                         
                         var mediaId = $(this).parent().next().attr("media-id");
                         var mediaSrc = $(this).parent().next().attr("media-src");
+                        var mediaPreview = $(this).parent().next().attr("media-preview");
                         var mediaImg = $(this).parent().next().attr("src");
     
                         blnSelected = true;
@@ -1513,7 +1515,7 @@
                         let target_input = $(target_img).parent().find('input');
                         console.log(target_path);
                         console.log(target_input);
-                        target_path.attr("src", mediaSrc);
+                        target_path.attr("src", mediaPreview || mediaImg || mediaSrc);
                         target_input.val(name);
 
                         if(target_img =='#imgGetIn_view'){

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 use App\Models\ProjectLibrary;
 use App\Models\Project;
@@ -15,9 +16,45 @@ class Library extends Model
     
     protected $table = 'library';
 
+    protected $appends = [
+        'public_url',
+        'thumbnail_public_url',
+    ];
+
     protected $fillable = [
             'url'
         ];
+
+    public function getPublicUrlAttribute()
+    {
+        return self::publicMediaUrl($this->url);
+    }
+
+    public function getThumbnailPublicUrlAttribute()
+    {
+        return self::publicMediaUrl($this->thumbnail ?: $this->url);
+    }
+
+    public static function publicMediaUrl($path)
+    {
+        if (empty($path)) {
+            return '';
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://', '//'])) {
+            return $path;
+        }
+
+        if (Str::startsWith($path, ['media/'])) {
+            $encodedPath = collect(explode('/', $path))
+                ->map(fn ($segment) => rawurlencode($segment))
+                ->implode('/');
+
+            return url('/media-file/' . $encodedPath);
+        }
+
+        return asset($path);
+    }
     
     public function projectLibrary(){
         Log::debug('projectLibrary() mirando ProjectLibs');

@@ -31,7 +31,7 @@
                     @foreach ($projectLibs as $projectLib)
         			  <li id="list-{{$projectLib->id}}" name="{{$projectLib->id }}" position="{{$projectLib->position }}" class="nav-item" media-id="{{ $projectLib->libraryid }}" proyectlib-id="{{ $projectLib->id }}">
                         <a class=" widgetVideo nav-link c03  text-md-left p-0 m-0" >
-                          <img class="p-0 m-0" src="{{$projectLib->library->thumbnail }}" onclick="setMainMedia(this)" libraryid="{{ $projectLib->library->id }}" libraryurl="{{ $projectLib->library->url }}" projectlib="{{ $projectLib->id }}" />
+                          <img class="p-0 m-0" src="{{ $projectLib->library->thumbnail_public_url }}" onclick="setMainMedia(this)" libraryid="{{ $projectLib->library->id }}" libraryurl="{{ $projectLib->library->url }}" projectlib="{{ $projectLib->id }}" />
     					  <i class="d-none c07">â—„</i>
                         </a>
                       </li>

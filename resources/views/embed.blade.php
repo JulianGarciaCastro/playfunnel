@@ -245,7 +245,7 @@
         function setMainMedia(projectlib, autoplay){
             console.log('Entro a setMainMedia para video:', projectlib.name, ' (ID:', projectlib.id, ')');
             var mediaId      = projectlib.libraryid
-            var mediaImg     = projectlib.library.thumbnail; // Accede al thumbnail desde la relación 'library'
+            var mediaImg     = projectlib.library.thumbnail_public_url || projectlib.library.thumbnail; // Accede al thumbnail desde la relación 'library'
             var projectlibid = projectlib.id; // El ID de projectlib, no el ID de la librería del video
             let videoOn = document.getElementById('projectVideo');
 
@@ -352,10 +352,10 @@
             const nextIndexForThumbnail = currentProjectLibIndex + 1;
             if (nextIndexForThumbnail < projectLibs.length) {
                 const nextProjectLibForThumbnail = projectLibs[nextIndexForThumbnail];
-                if (nextProjectLibForThumbnail && nextProjectLibForThumbnail.library && nextProjectLibForThumbnail.library.thumbnail) {
+                if (nextProjectLibForThumbnail && nextProjectLibForThumbnail.library && (nextProjectLibForThumbnail.library.thumbnail_public_url || nextProjectLibForThumbnail.library.thumbnail)) {
                     // *** Aplicar un retraso de 2 segundos antes de cambiar el thumbnail ***
                     setTimeout(() => {
-                        videoOn.setAttribute('poster', nextProjectLibForThumbnail.library.thumbnail);
+                        videoOn.setAttribute('poster', nextProjectLibForThumbnail.library.thumbnail_public_url || nextProjectLibForThumbnail.library.thumbnail);
                         console.log(`Poster del video actual cambiado al thumbnail del siguiente video (ID: ${nextProjectLibForThumbnail.id}) después de 2 segundos de iniciar la reproducción.`);
                         thumbnailChangedForCurrentVideo = true; // Marcar como cambiado
                     }, 2000); // 2000 milisegundos = 2 segundos
